@@ -6,12 +6,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
+  async getHello() {
     return this.appService.getHello();
-  }
-
-  @Get('assets')
-  getAssets(): Promise<any> {
-    return this.appService.getAssets();
   }
 }
