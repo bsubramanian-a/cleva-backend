@@ -9,4 +9,9 @@ export class AppController {
   async getHello() {
     return this.appService.getHello();
   }
+
+  @Get('assets')
+  async getAssets() {
+    return this.appService.getAssets();
+  }
 }
