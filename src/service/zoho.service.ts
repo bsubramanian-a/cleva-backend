@@ -9,7 +9,6 @@ dotenv.config();
 export class ZohoCRMService {
   private readonly apiBaseUrl = 'https://accounts.zoho.com.au/oauth/v2';
   private readonly apiURL = 'https://www.zohoapis.com.au/crm/v2';
-  private oAuthCredentials;
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor(private readonly oauthService: OauthtokensService) {}
@@ -42,9 +41,43 @@ export class ZohoCRMService {
       });
   }
 
+  async getUsers(): Promise<any> {
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/Contacts?fields=Email`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+    }
+  }
+
+  async getJournals(): Promise<any> {
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/ChapterAssigned?fields=Email`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+          }, 
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+    }
+  }
+
   async getAssets(): Promise<any> {
     try {
-      console.log('refresh token', this.refreshAccessToken());
+      // console.log('refresh token', this.refreshAccessToken());
       //this.oAuthCredentials = await this.oauthService.findAll();
       //console.log(this.oAuthCredentials);
       //return this.oAuthCredentials;

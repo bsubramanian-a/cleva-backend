@@ -1,5 +1,6 @@
 import { Sequelize } from 'sequelize-typescript';
 import { Oauthtoken } from 'src/modules/oauthtokens/entities/oauthtoken.entity';
+import { User } from 'src/modules/users/entities/user.entity';
 import { SEQUELIZE, DEVELOPMENT, TEST, PRODUCTION } from '../constants';
 import { databaseConfig } from './database.config';
 
@@ -22,7 +23,7 @@ export const databaseProviders = [
           config = databaseConfig.development;
       }
       const sequelize = new Sequelize(config);
-      sequelize.addModels([Oauthtoken]);
+      sequelize.addModels([Oauthtoken, User]);
       await sequelize.sync();
       return sequelize;
     },
