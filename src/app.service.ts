@@ -49,14 +49,64 @@ export class AppService {
   async getJournals(){
     try{
       const journals = await this.ZohoCRMService.getJournals();
-      console.log("journals", journals);
+      // console.log("journals", journals);
+      return journals;
     }catch(err){
-      console.log("getJournalExcercises", err);
+      console.log("getJournal", err);
+    }
+  }
+
+  async getExercises(){
+    try{ 
+      const excercises = await this.ZohoCRMService.getExercises();
+      return excercises;
+    }catch(err){
+      console.log("getExercises", err);
+    }
+  }
+
+  async getSummary(){
+    try{ 
+      const summaries = await this.ZohoCRMService.getSummary();
+      return summaries;
+    }catch(err){
+      console.log("getSummary", err);
+    }
+  }
+
+  async getAdvice(){
+    try{ 
+      const advice = await this.ZohoCRMService.getAdvice();
+      return advice;
+    }catch(err){
+      console.log("getAdvice", err);
     }
   }
   
   async getAssets() {
-    const assets = this.ZohoCRMService.getAssets();
-    return assets;
+    try{ 
+      const assets = this.ZohoCRMService.getAssets();
+      return assets;
+    }catch(err){
+      console.log("getAssets", err);
+    }
+  }
+
+  async getLiabilities() {
+    try{ 
+      const liabilities = this.ZohoCRMService.getLiabilities();
+      return liabilities;
+    }catch(err){
+      console.log("getLiabilities", err);
+    }
+  }
+
+  async getProfile(email) {
+    try{ 
+      const profile = this.ZohoCRMService.getProfile(email);
+      return profile;
+    }catch(err){
+      console.log("getProfile", err);
+    }
   }
 }

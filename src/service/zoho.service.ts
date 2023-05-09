@@ -61,7 +61,7 @@ export class ZohoCRMService {
   async getJournals(): Promise<any> {
     try {
       const response = await axios.get(
-        `${this.apiURL}/ChapterAssigned?fields=Email`,
+        `${this.apiURL}/Chapter_Assigned?fields=Name,Email`,
         {
           headers: {
             Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
@@ -75,40 +75,106 @@ export class ZohoCRMService {
     }
   }
 
-  async getAssets(): Promise<any> {
+  async getExercises(): Promise<any> {
     try {
-      // console.log('refresh token', this.refreshAccessToken());
-      //this.oAuthCredentials = await this.oauthService.findAll();
-      //console.log(this.oAuthCredentials);
-      //return this.oAuthCredentials;
-      // const response = await axios.get(
-      //   `${this.apiURL}/Assets?fields=Name,Owner,Email`,
-      //   {
-      //     headers: {
-      //       Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
-      //     },
-      //   },
-      // );
-      // return response.data;
-      // const response = await axios.get(
-      //   `${this.apiURL}/Financial_Accounts?fields=Account_Type`,
-      //   {
-      //     headers: {
-      //       Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
-      //     },
-      //   },
-      // );
-      // return response.data;
+      const response = await axios.get(
+        `${this.apiURL}/Chapter_Exercises?fields=Name,Email`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+          }, 
+        },
+      );
+      return response.data;
     } catch (error) {
       console.log('Getting Error1');
       console.log(error?.response?.data);
-      if (error?.response?.data?.code == 'INVALID_TOKEN') {
-        const current_access_token: string = await this.refreshAccessToken();
-        console.log('current_access_token', current_access_token);
-        this.getAssets();
-      } else {
-        return error?.response?.data?.code;
-      }
+    }
+  }
+
+  async getSummary(): Promise<any> {
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/Chapter_Summary?fields=Name,Email`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+          }, 
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+    }
+  }
+
+  async getAdvice(): Promise<any> {
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/Advice?fields=Name,Email`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+          }, 
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+    }
+  }
+  
+  async getAssets(): Promise<any> {
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/Financial_Accounts/search?criteria=(Asset_or_Liability:equals:Asset)&fields=Name,Email,Asset_or_Liability,Currency,Current_Value`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+          }, 
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+    }
+  }
+
+  async getLiabilities(): Promise<any> {
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/Financial_Accounts/search?criteria=(Asset_or_Liability:equals:Liability)&fields=Name,Email,Asset_or_Liability,Currency,Current_Value`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+          }, 
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+    }
+  }
+
+  async getProfile(email:string): Promise<any> {
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/Accounts/search?criteria=(Owner.email:equals:${email})`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+          }, 
+        },
+      );
+      console.log("getProfile response", response);
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
     }
   }
 
