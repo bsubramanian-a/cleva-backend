@@ -39,7 +39,7 @@ export class AppService {
           return {token};
         }
       } else {
-        return "Incorrect password!";
+        return {status: 403, message: "Incorrect password!"};
       }
     }catch(err){
       console.log("login error", err);

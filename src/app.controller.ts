@@ -17,6 +17,7 @@ export class AppController {
 
   @Post('verify-email')
   async verifyEmail(@Body() loginData: any) {
+    // console.log("loginData", loginData)
     return this.appService.verifyEmail(loginData);
   }
 
@@ -27,6 +28,7 @@ export class AppController {
 
   @Get('journals')
   async getJournals() {
+    console.log("journals");
     return this.appService.getJournals();   
   }
 
