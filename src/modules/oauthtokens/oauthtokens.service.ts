@@ -23,8 +23,10 @@ export class OauthtokensService {
     return `This action returns a #${id} oauthtoken`;
   }
 
-  update(id: number) {
-    return `This action updates a #${id} oauthtoken`;
+  async update(id: number, data?: any) {
+    return await this.oauthRepository.update<Oauthtoken>(data, {
+      where: { id },
+    });
   }
 
   remove(id: number) {

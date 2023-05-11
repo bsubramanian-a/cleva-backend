@@ -42,12 +42,14 @@ export class ZohoCRMService {
   }
 
   async getUsers(): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const response = await axios.get(
         `${this.apiURL}/Contacts?fields=Email`,
         {
           headers: {
-            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+            Authorization: `Zoho-oauthtoken ${access_token}`,
           },
         },
       );
@@ -55,17 +57,22 @@ export class ZohoCRMService {
     } catch (error) {
       console.log('Getting Error1');
       console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getJournals();
+      }
     }
   }
 
-  async getJournals(access_token?:string): Promise<any> {
-    // console.log("inside get journal");
+  async getJournals(): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const response = await axios.get(
         `${this.apiURL}/Chapter_Assigned?fields=Name,Email`,
         {
           headers: {
-            Authorization: `Zoho-oauthtoken ${access_token || process.env.ACCESS_TOKEN}`,
+            Authorization: `Zoho-oauthtoken ${access_token}`,
           }, 
         },
       );
@@ -74,20 +81,21 @@ export class ZohoCRMService {
       console.log('Getting Error1');
       console.log(error?.response?.data);
       if(error?.response?.data?.code == 'INVALID_TOKEN'){
-        const access_token = await this.refreshAccessToken();
-        // console.log("new access token", access_token);
-        return this.getJournals(access_token);
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getJournals();
       }
     }
   }
 
-  async getExercises(): Promise<any> {
+  async getExercises(): Promise<any> { 
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const response = await axios.get(
         `${this.apiURL}/Chapter_Exercises?fields=Name,Email`,
         {
           headers: {
-            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+            Authorization: `Zoho-oauthtoken ${access_token}`,
           }, 
         },
       );
@@ -95,16 +103,22 @@ export class ZohoCRMService {
     } catch (error) {
       console.log('Getting Error1');
       console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getJournals();
+      }
     }
   }
 
   async getSummary(): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const response = await axios.get(
         `${this.apiURL}/Chapter_Summary?fields=Name,Email,Summary_Content`,
         {
           headers: {
-            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+            Authorization: `Zoho-oauthtoken ${access_token}`,
           }, 
         },
       );
@@ -112,16 +126,22 @@ export class ZohoCRMService {
     } catch (error) {
       console.log('Getting Error1');
       console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getJournals();
+      }
     }
   }
 
   async getAdvice(): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const response = await axios.get(
         `${this.apiURL}/Recommendations?fields=Name,Email,Recommendation_Description`,
         {
           headers: {
-            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+            Authorization: `Zoho-oauthtoken ${access_token}`,
           }, 
         },
       );
@@ -129,16 +149,22 @@ export class ZohoCRMService {
     } catch (error) {
       console.log('Getting Error1');
       console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getJournals();
+      }
     }
   }
   
   async getAssets(): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const response = await axios.get(
         `${this.apiURL}/Financial_Accounts/search?criteria=(Asset_or_Liability:equals:Asset)&fields=Name,Email,Asset_or_Liability,Currency,Current_Value`,
         {
           headers: {
-            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+            Authorization: `Zoho-oauthtoken ${access_token}`,
           }, 
         },
       );
@@ -146,16 +172,22 @@ export class ZohoCRMService {
     } catch (error) {
       console.log('Getting Error1');
       console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getJournals();
+      }
     }
   }
 
   async getLiabilities(): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const response = await axios.get(
         `${this.apiURL}/Financial_Accounts/search?criteria=(Asset_or_Liability:equals:Liability)&fields=Name,Email,Asset_or_Liability,Currency,Current_Value`,
         {
           headers: {
-            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+            Authorization: `Zoho-oauthtoken ${access_token}`,
           }, 
         },
       );
@@ -163,16 +195,22 @@ export class ZohoCRMService {
     } catch (error) {
       console.log('Getting Error1');
       console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getJournals();
+      }
     }
   }
 
   async getProfile(email:string): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const response = await axios.get(
         `${this.apiURL}/Accounts/search?criteria=(Owner.email:equals:${email})`,
         {
           headers: {
-            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+            Authorization: `Zoho-oauthtoken ${access_token}`,
           }, 
         },
       );
@@ -181,10 +219,14 @@ export class ZohoCRMService {
     } catch (error) {
       console.log('Getting Error1');
       console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getJournals();
+      }
     }
   }
 
-  private refreshAccessToken(): Promise<string> {
+  private refreshAccessToken(id?:number): Promise<string> {
     return new Promise((resolve, reject) => {
       const data = qs.stringify({
         client_id: process.env.CLIENT_ID,
@@ -205,8 +247,13 @@ export class ZohoCRMService {
   
       axios
         .request(config)
-        .then((response) => {
+        .then(async (response) => {
           console.log(JSON.stringify(response.data));
+          const update_data = {
+            access_token: response.data.access_token
+          };
+          
+          await this.oauthService.update(id, update_data)
           resolve(response.data.access_token);
         })
         .catch((error) => {
