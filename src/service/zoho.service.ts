@@ -58,13 +58,14 @@ export class ZohoCRMService {
     }
   }
 
-  async getJournals(): Promise<any> {
+  async getJournals(access_token?:string): Promise<any> {
+    // console.log("inside get journal");
     try {
       const response = await axios.get(
         `${this.apiURL}/Chapter_Assigned?fields=Name,Email`,
         {
           headers: {
-            Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
+            Authorization: `Zoho-oauthtoken ${access_token || process.env.ACCESS_TOKEN}`,
           }, 
         },
       );
@@ -72,6 +73,11 @@ export class ZohoCRMService {
     } catch (error) {
       console.log('Getting Error1');
       console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        const access_token = await this.refreshAccessToken();
+        // console.log("new access token", access_token);
+        return this.getJournals(access_token);
+      }
     }
   }
 
@@ -95,7 +101,7 @@ export class ZohoCRMService {
   async getSummary(): Promise<any> {
     try {
       const response = await axios.get(
-        `${this.apiURL}/Chapter_Summary?fields=Name,Email`,
+        `${this.apiURL}/Chapter_Summary?fields=Name,Email,Summary_Content`,
         {
           headers: {
             Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
@@ -112,7 +118,7 @@ export class ZohoCRMService {
   async getAdvice(): Promise<any> {
     try {
       const response = await axios.get(
-        `${this.apiURL}/Advice?fields=Name,Email`,
+        `${this.apiURL}/Recommendations?fields=Name,Email,Recommendation_Description`,
         {
           headers: {
             Authorization: `Zoho-oauthtoken ${process.env.ACCESS_TOKEN}`,
@@ -178,33 +184,36 @@ export class ZohoCRMService {
     }
   }
 
-  private async refreshAccessToken(): Promise<any> {
-    const data = qs.stringify({
-      client_id: process.env.CLIENT_ID,
-      client_secret: process.env.CLIENT_SECRET,
-      grant_type: 'refresh_token',
-      refresh_token: process.env.REFRESH_TOKEN,
-    });
-
-    const config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: `${this.apiBaseUrl}/token`,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      data: data,
-    };
-
-    axios
-      .request(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-        return response.data.access_token;
-      })
-      .catch((error) => {
-        console.log('Getting Error2');
-        console.log(error);
+  private refreshAccessToken(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const data = qs.stringify({
+        client_id: process.env.CLIENT_ID,
+        client_secret: process.env.CLIENT_SECRET,
+        grant_type: 'refresh_token',
+        refresh_token: process.env.REFRESH_TOKEN,
       });
-  }
+  
+      const config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: `${this.apiBaseUrl}/token`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        data: data,
+      };
+  
+      axios
+        .request(config)
+        .then((response) => {
+          console.log(JSON.stringify(response.data));
+          resolve(response.data.access_token);
+        })
+        .catch((error) => {
+          console.log('Getting Error2');
+          console.log(error);
+          reject(error);
+        });
+    });
+  }  
 }

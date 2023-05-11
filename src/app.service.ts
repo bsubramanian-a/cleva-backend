@@ -36,7 +36,7 @@ export class AppService {
         if(isNewUser){
           return {status: 'register', token};
         }else{
-          return {token};
+          return {status: 'login', token};
         }
       } else {
         return {status: 403, message: "Incorrect password!"};
