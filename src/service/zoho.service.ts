@@ -207,7 +207,7 @@ export class ZohoCRMService {
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const response = await axios.get(
-        `${this.apiURL}/Accounts/search?criteria=(Owner.email:equals:${email})`,
+        `${this.apiURL}/Contacts/search?criteria=(Email:equals:${email})`,
         {
           headers: {
             Authorization: `Zoho-oauthtoken ${access_token}`,
