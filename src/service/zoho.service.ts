@@ -178,6 +178,36 @@ export class ZohoCRMService {
       }
     }
   }
+  
+  async updateAssets(assets:any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+
+    const requestData = {
+      data: assets,
+    };
+    
+    try {
+      const response = await axios.put(
+        `${this.apiURL}/Financial_Accounts`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+          },
+        }
+      );
+      console.log("updateAssets response", response)
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getJournals();
+      }
+    }
+  }
 
   async getLiabilities(): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
@@ -214,7 +244,7 @@ export class ZohoCRMService {
           }, 
         },
       );
-      console.log("getProfile response", response);
+      // console.log("getProfile response", response);
       return response.data;
     } catch (error) {
       console.log('Getting Error1');

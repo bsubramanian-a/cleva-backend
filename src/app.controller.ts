@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -54,6 +54,11 @@ export class AppController {
   @Get('assets')
   async getAssets() {
     return this.appService.getAssets();
+  }
+ 
+  @Put('assets')
+  update( @Body() assets: any) {
+    return this.appService.updateAssets(assets);
   }
 
   @Get('liabilities')

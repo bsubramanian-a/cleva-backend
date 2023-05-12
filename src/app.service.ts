@@ -92,6 +92,10 @@ export class AppService {
     }
   }
 
+  async updateAssets(assets: any) {
+    return await this.ZohoCRMService.updateAssets(assets);
+  }
+
   async getLiabilities() {
     try{ 
       const liabilities = this.ZohoCRMService.getLiabilities();
