@@ -82,7 +82,7 @@ export class AppService {
       console.log("getAdvice", err);
     }
   }
-  
+
   async getAssets() {
     try{ 
       const assets = this.ZohoCRMService.getAssets();
@@ -112,5 +112,9 @@ export class AppService {
     }catch(err){
       console.log("getProfile", err);
     }
+  }
+
+  async updateProfile(datas: any, email:string) {
+    return await this.ZohoCRMService.updateProfile(datas, email);
   }
 }

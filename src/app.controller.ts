@@ -51,6 +51,12 @@ export class AppController {
     return this.appService.getProfile(email);
   }
 
+  @Put('profile')
+  updateProfile( @Body() datas: any, @Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.updateProfile(datas, email);
+  }
+
   @Get('assets')
   async getAssets() {
     return this.appService.getAssets();

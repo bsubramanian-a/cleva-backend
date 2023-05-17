@@ -182,7 +182,7 @@ export class ZohoCRMService {
   async updateAssets(assets:any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
-
+    // console.log("assets", assets);
     const requestData = {
       data: assets,
     };
@@ -194,6 +194,37 @@ export class ZohoCRMService {
         {
           headers: {
             Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      // console.log("updateAssets response", response)
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updateAssets(assets);
+      }
+    }
+  }
+
+  async updateProfile(datas:any, email:string): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    console.log("profile datas", datas, email);
+    const requestData = {
+      data: datas,
+    };
+    try {
+      const response = await axios.post(
+        `${this.apiURL}/Contacts/upsert?searchColumn=Email&searchValue=${email}`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -204,7 +235,7 @@ export class ZohoCRMService {
       console.log(error?.response?.data);
       if(error?.response?.data?.code == 'INVALID_TOKEN'){
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.getJournals();
+        return this.updateProfile(datas, email);
       }
     }
   }
