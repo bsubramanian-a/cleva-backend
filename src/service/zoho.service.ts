@@ -53,7 +53,7 @@ export class ZohoCRMService {
       );
       // console.log("getUserDetails response", response);
       if(response?.data?.data?.length > 0){
-        return response?.data?.data[0]?.Created_By?.id
+        return response?.data?.data[0]?.Account_Name?.id
       }
       return "";
     } catch (error) {
@@ -93,7 +93,7 @@ export class ZohoCRMService {
 
       if(ownerId != ""){
         const response = await axios.get(
-          `${this.apiURL}/Chapter_Assigned/search?criteria=(Created_By.id:equals:${ownerId})&fields=Name,Email,Created_By`,
+          `${this.apiURL}/Chapter_Assigned/search?criteria=(Account_HH.id:equals:${ownerId})&fields=Name,Email,Created_By`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
@@ -206,10 +206,11 @@ export class ZohoCRMService {
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const ownerId =  await this.getUserDetails(email, access_token);
+      // console.log("ownerId.........", ownerId)
 
       if(ownerId != ""){
         const financialAccountsPromise = axios.get(
-          `${this.apiURL}/Financial_Accounts/search?criteria=(Created_By.id:equals:${ownerId})Asset_or_Liability:equals:Asset&fields=Name,Email,Asset_or_Liability,Currency,Current_Value,Created_By`,
+          `${this.apiURL}/Financial_Accounts/search?criteria=((Household.id:equals:${ownerId})and(Asset_or_Liability:equals:Asset))&fields=Name,Email,Asset_or_Liability,Currency,Current_Value,Household`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
@@ -218,7 +219,7 @@ export class ZohoCRMService {
         );
         
         const assetsPromise = axios.get(
-          `${this.apiURL}/Assets/search?criteria=(Created_By.id:equals:${ownerId})&fields=Name,Email,Asset_or_Liability,Currency,Current_Value,Created_By`,
+          `${this.apiURL}/Assets/search?criteria=Household.id:equals:${ownerId}&fields=Name,Email,Asset_or_Liability,Currency,Current_Value,Household`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
@@ -251,7 +252,7 @@ export class ZohoCRMService {
       return {data: []};
     } catch (error) {
       console.log('Getting Error1');
-      console.log(error?.response?.data);
+      console.log(error);
       if(error?.response?.data?.code == 'INVALID_TOKEN'){
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getAssets(email);
@@ -377,7 +378,7 @@ export class ZohoCRMService {
 
       if(ownerId != ""){
         const response = await axios.get(
-          `${this.apiURL}/Financial_Accounts/search?criteria=(Created_By.id:equals:${ownerId})Asset_or_Liability:equals:Liability&fields=Name,Email,Asset_or_Liability,Currency,Current_Value,Created_By`,
+          `${this.apiURL}/Financial_Accounts/search?criteria=((Household.id:equals:${ownerId})and(Asset_or_Liability:equals:Liability))&fields=Name,Email,Asset_or_Liability,Currency,Current_Value,Household`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
