@@ -5,15 +5,15 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  async getHello() {
-    return this.appService.getHello();
-  }
+  // @Get()
+  // async getHello() {
+  //   return this.appService.getHello();
+  // }
 
-  @Get('test')
-  async getTest() {
-    return this.appService.getHello();
-  }
+  // @Get('test')
+  // async getTest() {
+  //   return this.appService.getHello();
+  // }
 
   @Post('verify-email')
   async verifyEmail(@Body() loginData: any) {
@@ -26,23 +26,27 @@ export class AppController {
   }
 
   @Get('journals')
-  async getJournals() {
-    return this.appService.getJournals();   
+  async getJournals(@Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.getJournals(email);   
   }
 
   @Get('exercises')
-  async getExercises() {
-    return this.appService.getExercises();
+  async getExercises(@Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.getExercises(email);
   }
 
   @Get('summary')
-  async getSummary() {
-    return this.appService.getSummary();
+  async getSummary(@Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.getSummary(email);
   }
 
   @Get('advice')
-  async getAdvice() {
-    return this.appService.getAdvice();
+  async getAdvice(@Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.getAdvice(email);
   }
 
   @Get('profile')
@@ -58,8 +62,9 @@ export class AppController {
   }
 
   @Get('assets')
-  async getAssets() {
-    return this.appService.getAssets();
+  async getAssets(@Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.getAssets(email);
   }
  
   @Put('assets')
@@ -68,7 +73,8 @@ export class AppController {
   }
 
   @Get('liabilities')
-  async getLiabilities() {
-    return this.appService.getLiabilities(); 
+  async getLiabilities(@Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.getLiabilities(email); 
   }
 }

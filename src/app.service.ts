@@ -8,10 +8,10 @@ import * as jwt from 'jsonwebtoken';
 export class AppService {
   constructor(private readonly ZohoCRMService: ZohoCRMService, private readonly userService: UsersService) {}
 
-  async getHello() {
-    const assets = this.ZohoCRMService.getAssets();
-    return assets;
-  }
+  // async getHello() {
+  //   const assets = this.ZohoCRMService.getAssets();
+  //   return assets;
+  // }
 
   async verifyEmail(loginData: any) {
     const users = await this.ZohoCRMService.getUsers();
@@ -46,9 +46,9 @@ export class AppService {
     }
   }  
 
-  async getJournals(){
+  async getJournals(email){
     try{
-      const journals = await this.ZohoCRMService.getJournals();
+      const journals = await this.ZohoCRMService.getJournals(email);
       // console.log("journals", journals);
       return journals;
     }catch(err){
@@ -56,36 +56,36 @@ export class AppService {
     }
   }
 
-  async getExercises(){
+  async getExercises(email){
     try{ 
-      const excercises = await this.ZohoCRMService.getExercises();
+      const excercises = await this.ZohoCRMService.getExercises(email);
       return excercises;
     }catch(err){
       console.log("getExercises", err);
     }
   }
 
-  async getSummary(){
+  async getSummary(email){
     try{ 
-      const summaries = await this.ZohoCRMService.getSummary();
+      const summaries = await this.ZohoCRMService.getSummary(email);
       return summaries;
     }catch(err){
       console.log("getSummary", err);
     }
   }
 
-  async getAdvice(){
+  async getAdvice(email){
     try{ 
-      const advice = await this.ZohoCRMService.getAdvice();
+      const advice = await this.ZohoCRMService.getAdvice(email);
       return advice;
     }catch(err){
       console.log("getAdvice", err);
     }
   }
 
-  async getAssets() {
+  async getAssets(email) {
     try{ 
-      const assets = this.ZohoCRMService.getAssets();
+      const assets = this.ZohoCRMService.getAssets(email);
       return assets;
     }catch(err){
       console.log("getAssets", err);
@@ -96,9 +96,9 @@ export class AppService {
     return await this.ZohoCRMService.updateAssets(assets);
   }
 
-  async getLiabilities() {
+  async getLiabilities(email) {
     try{ 
-      const liabilities = this.ZohoCRMService.getLiabilities();
+      const liabilities = this.ZohoCRMService.getLiabilities(email);
       return liabilities;
     }catch(err){
       console.log("getLiabilities", err);

@@ -41,6 +41,27 @@ export class ZohoCRMService {
       });
   }
 
+  async getUserDetails(email, access_token) : Promise<any> {
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/Contacts/search?criteria=(Email:equals:${email})`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+          }, 
+        },
+      );
+      // console.log("getUserDetails response", response);
+      if(response?.data?.data?.length > 0){
+        return response?.data?.data[0]?.Created_By?.id
+      }
+      return "";
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+    }
+  }
+
   async getUsers(): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
@@ -59,147 +80,255 @@ export class ZohoCRMService {
       console.log(error?.response?.data);
       if(error?.response?.data?.code == 'INVALID_TOKEN'){
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.getJournals();
+        return this.getUsers();
       }
     }
   }
 
-  async getJournals(): Promise<any> {
+  async getJournals(email:any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
-      const response = await axios.get(
-        `${this.apiURL}/Chapter_Assigned?fields=Name,Email`,
-        {
-          headers: {
-            Authorization: `Zoho-oauthtoken ${access_token}`,
-          }, 
-        },
-      );
-      return response.data;
-    } catch (error) {
-      console.log('Getting Error1');
-      console.log(error?.response?.data);
-      if(error?.response?.data?.code == 'INVALID_TOKEN'){
-        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.getJournals();
-      }
-    }
-  }
+      const ownerId =  await this.getUserDetails(email, access_token);
 
-  async getExercises(): Promise<any> { 
-    const tokenFromDb = await this.oauthService.findAll();
-    const access_token = tokenFromDb[0]?.dataValues?.access_token;
-    try {
-      const response = await axios.get(
-        `${this.apiURL}/Chapter_Exercises?fields=Name,Email`,
-        {
-          headers: {
-            Authorization: `Zoho-oauthtoken ${access_token}`,
-          }, 
-        },
-      );
-      return response.data;
-    } catch (error) {
-      console.log('Getting Error1');
-      console.log(error?.response?.data);
-      if(error?.response?.data?.code == 'INVALID_TOKEN'){
-        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.getJournals();
-      }
-    }
-  }
-
-  async getSummary(): Promise<any> {
-    const tokenFromDb = await this.oauthService.findAll();
-    const access_token = tokenFromDb[0]?.dataValues?.access_token;
-    try {
-      const response = await axios.get(
-        `${this.apiURL}/Chapter_Summary?fields=Name,Email,Summary_Content`,
-        {
-          headers: {
-            Authorization: `Zoho-oauthtoken ${access_token}`,
-          }, 
-        },
-      );
-      return response.data;
-    } catch (error) {
-      console.log('Getting Error1');
-      console.log(error?.response?.data);
-      if(error?.response?.data?.code == 'INVALID_TOKEN'){
-        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.getJournals();
-      }
-    }
-  }
-
-  async getAdvice(): Promise<any> {
-    const tokenFromDb = await this.oauthService.findAll();
-    const access_token = tokenFromDb[0]?.dataValues?.access_token;
-    try {
-      const response = await axios.get(
-        `${this.apiURL}/Recommendations?fields=Name,Email,Recommendation_Description`,
-        {
-          headers: {
-            Authorization: `Zoho-oauthtoken ${access_token}`,
-          }, 
-        },
-      );
-      return response.data;
-    } catch (error) {
-      console.log('Getting Error1');
-      console.log(error?.response?.data);
-      if(error?.response?.data?.code == 'INVALID_TOKEN'){
-        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.getJournals();
-      }
-    }
-  }
-  
-  async getAssets(): Promise<any> {
-    const tokenFromDb = await this.oauthService.findAll();
-    const access_token = tokenFromDb[0]?.dataValues?.access_token;
-    try {
-      const response = await axios.get(
-        `${this.apiURL}/Financial_Accounts/search?criteria=(Asset_or_Liability:equals:Asset)&fields=Name,Email,Asset_or_Liability,Currency,Current_Value`,
-        {
-          headers: {
-            Authorization: `Zoho-oauthtoken ${access_token}`,
-          }, 
-        },
-      );
-      return response.data;
-    } catch (error) {
-      console.log('Getting Error1');
-      console.log(error?.response?.data);
-      if(error?.response?.data?.code == 'INVALID_TOKEN'){
-        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.getJournals();
-      }
-    }
-  }
-  
-  async updateAssets(assets:any): Promise<any> {
-    const tokenFromDb = await this.oauthService.findAll();
-    const access_token = tokenFromDb[0]?.dataValues?.access_token;
-    // console.log("assets", assets);
-    const requestData = {
-      data: assets,
-    };
-    
-    try {
-      const response = await axios.put(
-        `${this.apiURL}/Financial_Accounts`,
-        requestData,
-        {
-          headers: {
-            Authorization: `Zoho-oauthtoken ${access_token}`,
-            'Content-Type': 'application/json',
+      if(ownerId != ""){
+        const response = await axios.get(
+          `${this.apiURL}/Chapter_Assigned/search?criteria=(Created_By.id:equals:${ownerId})&fields=Name,Email,Created_By`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            }, 
           },
+        );
+        return response.data;
+      }
+
+      return {data: []};
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getJournals(email);
+      }
+    }
+  }
+
+  async getExercises(email:any): Promise<any> { 
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const ownerId =  await this.getUserDetails(email, access_token);
+
+      if(ownerId != ""){
+        const response = await axios.get(
+          `${this.apiURL}/Chapter_Exercises/search?criteria=(Created_By.id:equals:${ownerId})&fields=Name,Email,Created_By`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            }, 
+          },
+        );
+        return response.data;
+      }
+
+      return {data: []};
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getExercises(email);
+      }
+    }
+  }
+
+  async getSummary(email:any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const ownerId =  await this.getUserDetails(email, access_token);
+
+      if(ownerId != ""){
+        const response = await axios.get(
+          `${this.apiURL}/Chapter_Summary/search?criteria=(Created_By.id:equals:${ownerId})&fields=Name,Email,Created_By,Summary_Content`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            }, 
+          },
+        );
+        return response.data;
+      }
+
+      return {data: []};
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getSummary(email);
+      }
+    }
+  }
+
+  async getAdvice(email:any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const ownerId =  await this.getUserDetails(email, access_token);
+
+      if(ownerId != ""){
+        const response = await axios.get(
+          `${this.apiURL}/Recommendations/search?criteria=(Created_By.id:equals:${ownerId})&fields=Name,Email,Created_By,Recommendation_Description`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            }, 
+          },
+        );
+        return response.data;
+      }
+
+      return {data: []};
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getAdvice(email);
+      }
+    }
+  }
+  
+  async getAssets(email:any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const ownerId =  await this.getUserDetails(email, access_token);
+
+      if(ownerId != ""){
+        const financialAccountsPromise = axios.get(
+          `${this.apiURL}/Financial_Accounts/search?criteria=(Created_By.id:equals:${ownerId})Asset_or_Liability:equals:Asset&fields=Name,Email,Asset_or_Liability,Currency,Current_Value,Created_By`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          }
+        );
+        
+        const assetsPromise = axios.get(
+          `${this.apiURL}/Assets/search?criteria=(Created_By.id:equals:${ownerId})&fields=Name,Email,Asset_or_Liability,Currency,Current_Value,Created_By`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          }
+        );
+        
+        const [financialAccountsResponse, assetsResponse] = await Promise.all([
+          financialAccountsPromise,
+          assetsPromise,
+        ]);
+
+        
+        // Add a differentiating property to objects from Financial_Accounts API
+        const assetsData = assetsResponse.data.data.map(item => {
+          return {
+            ...item,
+            apiSource: 'assets',
+          };
+        });
+        
+        const mergedResponse = {
+          data: [...assetsData, ...financialAccountsResponse.data.data],
+          info: financialAccountsResponse.data.info,
+        };
+        
+        return mergedResponse;        
+      }
+
+      return {data: []};
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getAssets(email);
+      }
+    }
+  }
+  
+  async updateAssets(assets: any[]): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+  
+    // Filter assets based on the "apiSource" field
+    const assetsWithAPI = assets.filter(asset => asset.apiSource);
+    const assetsWithoutAPI = assets.filter(asset => !asset.apiSource);
+    console.log("assetsWithAPI", assetsWithAPI);
+    console.log("assetsWithoutAPI", assetsWithoutAPI);
+  
+    try {
+      // Update assets with "apiSource" using the corresponding API
+      if (assetsWithAPI.length > 0) {
+        const requestData = {
+          data: assetsWithAPI,
+        };
+    
+        try {
+          const response = await axios.put(
+            `${this.apiURL}/Assets`,
+            requestData,
+            {
+              headers: {
+                Authorization: `Zoho-oauthtoken ${access_token}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          // console.log("Update assets with API response", response.data);
+          // Handle the response as needed
+        } catch (error) {
+          console.log('Error updating assets with API', error?.response?.data);
+          if (error?.response?.data?.code === 'INVALID_TOKEN') {
+            await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+            return this.updateAssets(assets);
+          }
+          // Handle other errors as needed
         }
-      );
-      // console.log("updateAssets response", response)
-      return response.data;
+      }
+    
+      // Update assets without "apiSource" using the Financial_Accounts API
+      if (assetsWithoutAPI.length > 0) {
+        const requestData = {
+          data: assetsWithoutAPI,
+        };
+    
+        try {
+          const response = await axios.put(
+            `${this.apiURL}/Financial_Accounts`,
+            requestData,
+            {
+              headers: {
+                Authorization: `Zoho-oauthtoken ${access_token}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          // console.log("Update assets without API response", response.data);
+          // Handle the response as needed
+        } catch (error) {
+          console.log('Error updating assets without API', error?.response?.data);
+          if (error?.response?.data?.code === 'INVALID_TOKEN') {
+            await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+            return this.updateAssets(assets);
+          }
+          // Handle other errors as needed
+        }
+      }
+
+      return {data: []};
     } catch (error) {
       console.log('Getting Error1');
       console.log(error?.response?.data);
@@ -240,25 +369,32 @@ export class ZohoCRMService {
     }
   }
 
-  async getLiabilities(): Promise<any> {
+  async getLiabilities(email:any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
-      const response = await axios.get(
-        `${this.apiURL}/Financial_Accounts/search?criteria=(Asset_or_Liability:equals:Liability)&fields=Name,Email,Asset_or_Liability,Currency,Current_Value`,
-        {
-          headers: {
-            Authorization: `Zoho-oauthtoken ${access_token}`,
-          }, 
-        },
-      );
-      return response.data;
+      const ownerId =  await this.getUserDetails(email, access_token);
+
+      if(ownerId != ""){
+        const response = await axios.get(
+          `${this.apiURL}/Financial_Accounts/search?criteria=(Created_By.id:equals:${ownerId})Asset_or_Liability:equals:Liability&fields=Name,Email,Asset_or_Liability,Currency,Current_Value,Created_By`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          }
+        );
+        
+        return response.data;
+      }
+
+      return {data: []};
     } catch (error) {
       console.log('Getting Error1');
       console.log(error?.response?.data);
       if(error?.response?.data?.code == 'INVALID_TOKEN'){
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.getJournals();
+        return this.getJournals(email);
       }
     }
   }
@@ -282,7 +418,7 @@ export class ZohoCRMService {
       console.log(error?.response?.data);
       if(error?.response?.data?.code == 'INVALID_TOKEN'){
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.getJournals();
+        return this.getProfile(email);
       }
     }
   }
