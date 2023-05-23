@@ -62,6 +62,29 @@ export class ZohoCRMService {
     }
   }
 
+  async getAccount(): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/Contacts`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getUsers();
+      }
+    }
+  }
+
   async getUsers(): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
@@ -412,7 +435,25 @@ export class ZohoCRMService {
           }, 
         },
       );
-      // console.log("getProfile response", response);
+
+      const account_id = response?.data?.data[0]?.Account_Name?.id;
+      let accounts = [];
+      if(account_id){
+        const nresponse = await axios.get(
+          `${this.apiURL}/Contacts/search?criteria=(Account_Name.id:equals:${account_id})`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            }, 
+          },
+        );
+
+        // console.log("nresponse", nresponse?.data);
+
+        if(nresponse?.data?.data?.length > 0){
+          response.data.data[0].accounts =  nresponse?.data?.data?.filter((acc:any) => acc?.Email != null && acc?.Email != email);
+        }
+      }
       return response.data;
     } catch (error) {
       console.log('Getting Error1');

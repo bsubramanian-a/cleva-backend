@@ -117,4 +117,13 @@ export class AppService {
   async updateProfile(datas: any, email:string) {
     return await this.ZohoCRMService.updateProfile(datas, email);
   }
+
+  async getAccount() {
+    try{ 
+      const profile = this.ZohoCRMService.getAccount();
+      return profile;
+    }catch(err){
+      console.log("getProfile", err);
+    }
+  }
 }

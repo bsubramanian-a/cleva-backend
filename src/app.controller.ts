@@ -77,4 +77,9 @@ export class AppController {
     const email = req?.user?.email;
     return this.appService.getLiabilities(email); 
   }
+
+  @Get('account')
+  async getAccount() {
+    return this.appService.getAccount(); 
+  }
 }
