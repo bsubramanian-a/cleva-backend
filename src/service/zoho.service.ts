@@ -62,6 +62,27 @@ export class ZohoCRMService {
     }
   }
 
+  async getOwnerId(email, access_token) : Promise<any> {
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/Contacts/search?criteria=(Email:equals:${email})`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+          }, 
+        },
+      );
+      // console.log("getUserDetails response", response);
+      if(response?.data?.data?.length > 0){
+        return response?.data?.data[0]?.Created_By?.id
+      }
+      return "";
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+    }
+  }
+
   async getAccount(): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
@@ -141,8 +162,8 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
-      const ownerId =  await this.getUserDetails(email, access_token);
-
+      const ownerId =  await this.getOwnerId(email, access_token);
+      console.log("ownerId", ownerId, email);
       if(ownerId != ""){
         const response = await axios.get(
           `${this.apiURL}/Chapter_Exercises/search?criteria=(Created_By.id:equals:${ownerId})&fields=Name,Email,Created_By`,
@@ -170,7 +191,7 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
-      const ownerId =  await this.getUserDetails(email, access_token);
+      const ownerId =  await this.getOwnerId(email, access_token);
 
       if(ownerId != ""){
         const response = await axios.get(
@@ -199,7 +220,7 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
-      const ownerId =  await this.getUserDetails(email, access_token);
+      const ownerId =  await this.getOwnerId(email, access_token);
 
       if(ownerId != ""){
         const response = await axios.get(
