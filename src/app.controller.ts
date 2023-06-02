@@ -20,6 +20,11 @@ export class AppController {
     return this.appService.verifyEmail(loginData);
   }
 
+  @Post('verify-social-email')
+  async verifySocialEmail(@Body() loginData: any) {
+    return this.appService.verifySocialEmail(loginData);
+  }
+
   @Post('login')
   async login(@Body() loginData: any) {
     return this.appService.login(loginData);

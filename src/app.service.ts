@@ -18,6 +18,38 @@ export class AppService {
     const user = users?.data?.find((user:any) => user?.Email === loginData?.email);
     return {isUserExist: user?.Email ? true: false};
   }
+  
+  async verifySocialEmail(data: any) {
+    let email = data?.email;
+    console.log("verifySocialEmail", email);
+    const users = await this.ZohoCRMService.getUsers();
+    const user = users?.data?.find((user:any) => user?.Email === email);
+    if(!user?.Email){
+      return {isUserExist : false}
+    }
+    
+    try{
+      let user = await this.userService.findOneByUserEmail(email);
+      let isNewUser = false;
+    
+      if (!user) {
+        isNewUser = true;
+        user = await this.userService.create(email);
+      }
+    
+      const payload = {email: user.email };
+      const secretKey = process.env.SECRET_KEY;
+      const token = jwt.sign(payload, secretKey);
+
+      if(isNewUser){
+        return {status: 'register', token};
+      }else{
+        return {status: 'login', token};
+      }
+    }catch(err){
+      console.log("login error", err);
+    }
+  }
 
   async login(loginData: any) {
     try{
