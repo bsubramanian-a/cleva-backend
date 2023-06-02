@@ -21,6 +21,13 @@ export class User extends Model<User> {
     allowNull: true,
   })
   password: string;
+  
+  @Column({
+    type: DataType.STRING,
+    unique: false,
+    allowNull: true,
+  })
+  otp: string;
 
   @Column({
     type: DataType.BOOLEAN,

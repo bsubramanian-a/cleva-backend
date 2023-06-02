@@ -3,20 +3,73 @@ import { Injectable } from '@nestjs/common';
 import { ZohoCRMService } from './service/zoho.service';
 import { UsersService } from './modules/users/users.service';
 import * as jwt from 'jsonwebtoken';
+import * as nodemailer from 'nodemailer';
+
+const transporter = nodemailer.createTransport({
+  host: process.env.MAIL_HOST,
+  port: process.env.MAIL_PORT,
+  secure: process.env.MAIL_SECURE,
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
+});
+
+const generateRandomNumber = () => {
+  const min = 100000; // Minimum value (inclusive)
+  const max = 999999; // Maximum value (inclusive)
+
+  // Generate a random number within the specified range
+  const randomNumber = Math.floor(Math.random() * (max - min + 1) + min);
+
+  return randomNumber.toString(); // Convert the number to a string
+};
 
 @Injectable()
 export class AppService {
   constructor(private readonly ZohoCRMService: ZohoCRMService, private readonly userService: UsersService) {}
 
-  // async getHello() {
-  //   const assets = this.ZohoCRMService.getAssets();
-  //   return assets;
-  // }
+  async sendVerificationEmail(email: string, verificationCode: string) {
+    try {
+      const mailOptions = {
+        from: process.env.MAIL_FROM,
+        to: email,
+        subject: 'Verification Email',
+        text: `Your verification code is: ${verificationCode}`,
+      };
 
+      await transporter.sendMail(mailOptions);
+      console.log('Verification email sent successfully');
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+    }
+  }
+  
   async verifyEmail(loginData: any) {
     const users = await this.ZohoCRMService.getUsers();
     const user = users?.data?.find((user:any) => user?.Email === loginData?.email);
-    return {isUserExist: user?.Email ? true: false};
+    const dbuser = await this.userService.findOneByUserEmail(loginData?.email);
+    if(user?.Email){
+      const randomCode = generateRandomNumber();
+      console.log("randomCode", randomCode);
+      await this.userService.update(dbuser?.id, { otp: randomCode });
+      await this.sendVerificationEmail(user?.Email, randomCode);
+      return {isUserExist: true}
+    }
+    return {isUserExist: false};
+  }
+  
+  async verifyOTP(otp: any, email:string) {
+    let user = await this.userService.findOneByUserEmail(email);
+    if(user?.otp == otp){
+      await this.userService.update(user?.id, { otp: "" });
+      return {isCorrect: true};
+    }
+
+    return {error: "Otp is incorrect, please try again"};
   }
   
   async verifySocialEmail(data: any) {
