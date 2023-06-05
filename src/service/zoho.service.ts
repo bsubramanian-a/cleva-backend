@@ -286,9 +286,19 @@ export class ZohoCRMService {
         });
         
         const mergedResponse = {
-          data: [...assetsData, ...financialAccountsResponse.data.data],
-          info: financialAccountsResponse.data.info,
+          data: [],
+          info: null,
         };
+
+        if (assetsData?.length > 0 && financialAccountsResponse?.data?.data) {
+          mergedResponse.data = [...assetsData, ...financialAccountsResponse.data.data];
+          mergedResponse.info = financialAccountsResponse.data.info;
+        } else if (assetsData?.length > 0) {
+          mergedResponse.data = assetsData;
+        } else if (financialAccountsResponse?.data?.data) {
+          mergedResponse.data = financialAccountsResponse.data.data;
+          mergedResponse.info = financialAccountsResponse.data.info;
+        }        
         
         return mergedResponse;        
       }
@@ -300,6 +310,159 @@ export class ZohoCRMService {
       if(error?.response?.data?.code == 'INVALID_TOKEN'){
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getAssets(email);
+      }
+    }
+  }
+
+  async addAsset(asset: any, email:string): Promise<any> {
+    const profile = await this.getProfile(email);
+    const household = profile?.data[0]?.Account_Name;
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    asset.Household = household;
+    try {
+      const requestData = {
+        data: [asset],
+      };
+      const response = await axios.post(
+        `${this.apiURL}/Assets`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log('Error adding assets with API', error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.addAsset(asset, email);
+      }
+    }
+  }
+
+  async deleteAsset(assetId: string): Promise<void> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    
+    try {
+      let deleted = false;
+  
+      // Attempt to delete from the Assets API
+      try {
+        const assetResponse = await axios.delete(
+          `${this.apiURL}/Assets/${assetId}`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          }
+        );
+  
+        if (assetResponse.status === 200) {
+          console.log('Asset deleted from Assets API successfully');
+          deleted = true;
+          return assetResponse?.data;
+        }
+      } catch (assetError) {
+        console.log('Error deleting asset from Assets API', assetError?.response?.data);
+      }
+  
+      // If not deleted from Assets API, attempt to delete from the Financial Accounts API
+      if (!deleted) {
+        try {
+          const financialAccountResponse = await axios.delete(
+            `${this.apiURL}/Financial_Accounts/${assetId}`,
+            {
+              headers: {
+                Authorization: `Zoho-oauthtoken ${access_token}`,
+              },
+            }
+          );
+  
+          if (financialAccountResponse.status === 200) {
+            console.log('Asset deleted from Financial Accounts API successfully');
+            deleted = true;
+            return financialAccountResponse?.data;
+          }
+        } catch (financialAccountError) {
+          console.log('Error deleting asset from Financial Accounts API', financialAccountError?.response?.data);
+        }
+      }
+  
+      // If not deleted from either API, asset ID was not found
+      if (!deleted) {
+        console.log('Asset ID not found');
+      }
+    } catch (error) {
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.deleteAsset(assetId);
+      }
+    }
+  }
+
+  async addLiability(liability: any, email:string): Promise<any> {
+    const profile = await this.getProfile(email);
+    const household = profile?.data[0]?.Account_Name;
+    
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    liability.Household = household;
+    liability.Asset_or_Liability = 'Liability';
+    
+    try {
+      const requestData = {
+        data: [liability],
+      };
+      const response = await axios.post(
+        `${this.apiURL}/Financial_Accounts`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log('Error adding assets with API', error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.addAsset(liability, email);
+      }
+    }
+  }
+
+  async deleteLiability(liabilityId: string): Promise<void> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+
+    try {
+      const financialAccountResponse = await axios.delete(
+        `${this.apiURL}/Financial_Accounts/${liabilityId}`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+          },
+        }
+      );
+
+      if (financialAccountResponse.status === 200) {
+        console.log('Asset deleted from Financial Accounts API successfully');
+        return financialAccountResponse?.data;
+      }
+    }catch (error) {
+      console.log('Error adding assets with API', error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.deleteLiability(liabilityId);
       }
     }
   }
