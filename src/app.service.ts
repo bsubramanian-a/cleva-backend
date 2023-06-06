@@ -41,7 +41,7 @@ export class AppService {
         text: `Your verification code is: ${verificationCode}`,
       };
 
-      await transporter.sendMail(mailOptions);
+      // await transporter.sendMail(mailOptions);
       console.log('Verification email sent successfully');
     } catch (error) {
       console.error('Error sending verification email:', error);

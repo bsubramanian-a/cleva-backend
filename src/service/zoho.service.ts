@@ -101,7 +101,7 @@ export class ZohoCRMService {
       console.log(error?.response?.data);
       if(error?.response?.data?.code == 'INVALID_TOKEN'){
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.getUsers();
+        return this.getAccount();
       }
     }
   }
@@ -633,7 +633,7 @@ export class ZohoCRMService {
         );
 
         const dependantResponse = await axios.get(
-          `${this.apiURL}/Dependants/search?criteria=(Dependant_of.id:equals:${account_id})&fields=Name,DOB,Record_Image,Email`,
+          `${this.apiURL}/Dependants/search?criteria=(Dependant_of.id:equals:${account_id})&fields=Name,DOB,Record_Image,Email,Dependant_Until2,Dependant_of`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
@@ -641,14 +641,41 @@ export class ZohoCRMService {
           },
         );
 
-        // console.log("nresponse", nresponse?.data);
-        console.log("dependantResponse", dependantResponse?.data);
-
         if(nresponse?.data?.data?.length > 0){
           response.data.data[0].accounts =  nresponse?.data?.data?.filter((acc:any) => acc?.Email != null && acc?.Email != email);          
         }
+
+        let employmentResponse;
+
+        if (response.data.data[0].accounts && response.data.data[0].accounts[0]?.id) {
+          console.log("inside", response.data.data[0].accounts[0]?.id)
+          employmentResponse = await axios.get(
+            `${this.apiURL}/Employment_Details/search?criteria=((Client_Name.id:equals:${response.data.data[0].id}) or (Client_Name.id:equals:${response.data.data[0].accounts[0].id}))`,
+            {
+              headers: {
+                Authorization: `Zoho-oauthtoken ${access_token}`,
+              },
+            }
+          );
+        } else {
+          employmentResponse = await axios.get(
+            `${this.apiURL}/Employment_Details/search?criteria=(Client_Name.id:equals:${response.data.data[0].id})`,
+            {
+              headers: {
+                Authorization: `Zoho-oauthtoken ${access_token}`,
+              },
+            }
+          );
+        }        
+
+        console.log("employmentResponse", employmentResponse?.data);
+
         if (dependantResponse?.data?.data?.length > 0) {
           response.data.data[0].dependants = dependantResponse?.data?.data
+        }
+
+        if (employmentResponse?.data?.data?.length > 0) {
+          response.data.data[0].employmentDetails = employmentResponse?.data?.data
         }
       }
       return response.data;
