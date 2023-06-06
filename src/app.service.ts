@@ -181,6 +181,14 @@ export class AppService {
     return await this.ZohoCRMService.updateAssets(assets);
   }
 
+  async addAsset(asset: any, email:string) {
+    return await this.ZohoCRMService.addAsset(asset, email);
+  }
+
+  async deleteAsset(id: string) {
+    return await this.ZohoCRMService.deleteAsset(id);
+  }
+
   async getLiabilities(email) {
     try{ 
       const liabilities = this.ZohoCRMService.getLiabilities(email);
@@ -188,6 +196,14 @@ export class AppService {
     }catch(err){
       console.log("getLiabilities", err);
     }
+  }
+
+  async addLiability(asset: any, email:string) {
+    return await this.ZohoCRMService.addLiability(asset, email);
+  }
+
+  async deleteLiability(id: string) {
+    return await this.ZohoCRMService.deleteLiability(id);
   }
 
   async getProfile(email) {

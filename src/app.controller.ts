@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -76,6 +76,17 @@ export class AppController {
     const email = req?.user?.email;
     return this.appService.getAssets(email);
   }
+
+  @Post('asset')
+  addAsset( @Body() assets: any, @Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.addAsset(assets, email);
+  }
+
+  @Delete('asset/:id')
+  deleteAsset(@Param('id') id: string) {
+    return this.appService.deleteAsset(id);
+  }
  
   @Put('assets')
   update( @Body() assets: any) {
@@ -86,6 +97,17 @@ export class AppController {
   async getLiabilities(@Req() req: any) {
     const email = req?.user?.email;
     return this.appService.getLiabilities(email); 
+  }
+
+  @Delete('liability/:id')
+  deleteLiability(@Param('id') id: string) {
+    return this.appService.deleteLiability(id);
+  }
+
+  @Post('liability')
+  addLiability( @Body() assets: any, @Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.addLiability(assets, email);
   }
 
   @Get('account')
