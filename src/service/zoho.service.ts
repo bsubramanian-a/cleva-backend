@@ -278,7 +278,7 @@ export class ZohoCRMService {
 
         
         // Add a differentiating property to objects from Financial_Accounts API
-        const assetsData = assetsResponse.data.data.map(item => {
+        const assetsData = assetsResponse.data?.data?.map(item => {
           return {
             ...item,
             apiSource: 'assets',
@@ -469,10 +469,23 @@ export class ZohoCRMService {
           },
         );
 
+        const dependantResponse = await axios.get(
+          `${this.apiURL}/Dependants/search?criteria=(Dependant_of.id:equals:${account_id})&fields=Name,DOB,Record_Image,Email`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            }, 
+          },
+        );
+
         // console.log("nresponse", nresponse?.data);
+        console.log("dependantResponse", dependantResponse?.data);
 
         if(nresponse?.data?.data?.length > 0){
-          response.data.data[0].accounts =  nresponse?.data?.data?.filter((acc:any) => acc?.Email != null && acc?.Email != email);
+          response.data.data[0].accounts =  nresponse?.data?.data?.filter((acc:any) => acc?.Email != null && acc?.Email != email);          
+        }
+        if (dependantResponse?.data?.data?.length > 0) {
+          response.data.data[0].dependants = dependantResponse?.data?.data
         }
       }
       return response.data;
