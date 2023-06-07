@@ -633,7 +633,7 @@ export class ZohoCRMService {
         );
 
         const dependantResponse = await axios.get(
-          `${this.apiURL}/Dependants/search?criteria=(Dependant_of.id:equals:${account_id})&fields=Name,DOB,Record_Image,Email,Dependant_Until2,Dependant_of`,
+          `${this.apiURL}/Dependants/search?criteria=(Dependant_of.id:equals:${account_id})&fields=Name,Age,Record_Image,Email,Dependant_Until2,Dependant_of`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
@@ -648,7 +648,6 @@ export class ZohoCRMService {
         let employmentResponse;
 
         if (response.data.data[0].accounts && response.data.data[0].accounts[0]?.id) {
-          console.log("inside", response.data.data[0].accounts[0]?.id)
           employmentResponse = await axios.get(
             `${this.apiURL}/Employment_Details/search?criteria=((Client_Name.id:equals:${response.data.data[0].id}) or (Client_Name.id:equals:${response.data.data[0].accounts[0].id}))`,
             {
@@ -668,7 +667,36 @@ export class ZohoCRMService {
           );
         }        
 
-        console.log("employmentResponse", employmentResponse?.data);
+        const expenseResponse = await axios.get(
+          `${this.apiURL}/Household_Expenses/search?criteria=(Household.id:equals:${account_id})`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            }, 
+          },
+        );
+
+        let insuranceResponse;
+
+        if (response.data.data[0].accounts && response.data.data[0].accounts[0]?.id) {
+          insuranceResponse = await axios.get(
+            `${this.apiURL}/INA/search?criteria=((Client_Name.id:equals:${response.data.data[0].id}) or (Client_Name.id:equals:${response.data.data[0].accounts[0].id}))`,
+            {
+              headers: {
+                Authorization: `Zoho-oauthtoken ${access_token}`,
+              },
+            }
+          );
+        } else {
+          employmentResponse = await axios.get(
+            `${this.apiURL}/Employment_Details/search?criteria=(Client_Name.id:equals:${response.data.data[0].id})`,
+            {
+              headers: {
+                Authorization: `Zoho-oauthtoken ${access_token}`,
+              },
+            }
+          );
+        }        
 
         if (dependantResponse?.data?.data?.length > 0) {
           response.data.data[0].dependants = dependantResponse?.data?.data
@@ -676,6 +704,14 @@ export class ZohoCRMService {
 
         if (employmentResponse?.data?.data?.length > 0) {
           response.data.data[0].employmentDetails = employmentResponse?.data?.data
+        }
+
+        if (expenseResponse?.data?.data?.length > 0) {
+          response.data.data[0].expenses = expenseResponse?.data?.data
+        }
+
+        if (insuranceResponse?.data?.data?.length > 0) {
+          response.data.data[0].insurance = insuranceResponse?.data?.data
         }
       }
       return response.data;
