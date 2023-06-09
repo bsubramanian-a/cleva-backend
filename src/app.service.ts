@@ -227,4 +227,20 @@ export class AppService {
       console.log("getProfile", err);
     }
   }
+
+  async updateDependant(datas: any) {
+    return await this.ZohoCRMService.updateDependant(datas);
+  }
+
+  async updateEmployment(datas: any) {
+    return await this.ZohoCRMService.updateEmployment(datas);
+  }
+
+  async updateExpenses(datas: any) {
+    return await this.ZohoCRMService.updateExpenses(datas);
+  }
+
+  async updateINA(datas: any) {
+    return await this.ZohoCRMService.updateINA(datas);
+  }
 }

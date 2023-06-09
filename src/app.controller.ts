@@ -105,7 +105,7 @@ export class AppController {
   }
 
   @Post('liability')
-  addLiability( @Body() assets: any, @Req() req: any) {
+  addLiability(@Body() assets: any, @Req() req: any) {
     const email = req?.user?.email;
     return this.appService.addLiability(assets, email);
   }
@@ -115,4 +115,23 @@ export class AppController {
     return this.appService.getAccount(); 
   }
   
+  @Put('dependant')
+  updateDependant(@Body() datas: any) {
+    return this.appService.updateDependant(datas);
+  }
+
+  @Put('employment')
+  updateEmployment(@Body() datas: any) {
+    return this.appService.updateEmployment(datas);
+  }
+
+  @Put('expenses')
+  updateExpenses(@Body() datas: any) {
+    return this.appService.updateExpenses(datas);
+  }
+
+  @Put('ina')
+  updateINA(@Body() datas: any) {
+    return this.appService.updateINA(datas);
+  }
 }

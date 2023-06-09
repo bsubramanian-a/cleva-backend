@@ -565,7 +565,7 @@ export class ZohoCRMService {
           },
         }
       );
-      console.log("updateAssets response", response)
+      // console.log("updateAssets response", response)
       return response.data;
     } catch (error) {
       console.log('Getting Error1');
@@ -607,6 +607,160 @@ export class ZohoCRMService {
     }
   }
 
+  async updateDependant(datas: any[]): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+  
+    const requestData = {
+      data: datas,
+    };
+
+    try {
+      const response = await axios.put(
+        `${this.apiURL}/Dependants`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        // Success message
+        return {status: response.status, "message": "Updated Successfully"};
+      } else {
+        // Generic failure message
+        return {status: response.status, "message": "Update failed. Please try again later."};
+      }
+    } catch (error) {
+      console.log('Error updating assets with API', error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updateDependant(datas);
+      }
+      return {"message": error?.message};
+      // Handle other errors as needed
+    }
+  }
+
+  async updateEmployment(datas: any[]): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+  
+    const requestData = {
+      data: datas,
+    };
+
+    try {
+      const response = await axios.put(
+        `${this.apiURL}/Employment_Details`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        // Success message
+        return {status: response.status, "message": "Updated Successfully"};
+      } else {
+        // Generic failure message
+        return {status: response.status, "message": "Update failed. Please try again later."};
+      }
+    } catch (error) {
+      console.log('Error updating assets with API', error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updateEmployment(datas);
+      }
+      return {"message": error?.message};
+      // Handle other errors as needed
+    }
+  }
+
+  async updateExpenses(datas: any[]): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+  
+    const requestData = {
+      data: datas,
+    };
+
+    try {
+      const response = await axios.put(
+        `${this.apiURL}/Household_Expenses`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        // Success message
+        return {status: response.status, "message": "Updated Successfully"};
+      } else {
+        // Generic failure message
+        return {status: response.status, "message": "Update failed. Please try again later."};
+      }
+    } catch (error) {
+      console.log('Error updating assets with API', error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updateExpenses(datas);
+      }
+      return {"message": error?.message};
+      // Handle other errors as needed
+    }
+  }
+
+  async updateINA(datas: any[]): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+  
+    const requestData = {
+      data: datas,
+    };
+
+    try {
+      const response = await axios.put(
+        `${this.apiURL}/INA`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      console.log("response", response?.data?.data[0]?.details);
+
+      if (response.status === 200) {
+        // Success message
+        return {status: response.status, "message": "Updated Successfully"};
+      } else {
+        // Generic failure message
+        return {status: response.status, "message": "Update failed. Please try again later."};
+      }
+    } catch (error) {
+      console.log('Error updating assets with API', error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updateINA(datas);
+      }
+      return {"message": error?.message};
+      // Handle other errors as needed
+    }
+  }
+
   async getProfile(email:string): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
@@ -633,7 +787,7 @@ export class ZohoCRMService {
         );
 
         const dependantResponse = await axios.get(
-          `${this.apiURL}/Dependants/search?criteria=(Dependant_of.id:equals:${account_id})&fields=Name,Age,Record_Image,Email,Dependant_Until2,Dependant_of`,
+          `${this.apiURL}/Dependants/search?criteria=(Dependant_of.id:equals:${account_id})&fields=Name,Age,Record_Image,Email,Dependant_Until2,Dependant_of,Dependant_of_Person`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
