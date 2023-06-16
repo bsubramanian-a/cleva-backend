@@ -803,7 +803,7 @@ export class ZohoCRMService {
 
         if (response.data.data[0].accounts && response.data.data[0].accounts[0]?.id) {
           employmentResponse = await axios.get(
-            `${this.apiURL}/Employment_Details/search?criteria=((Client_Name.id:equals:${response.data.data[0].id}) or (Client_Name.id:equals:${response.data.data[0].accounts[0].id}))`,
+            `${this.apiURL}/Employment_Details/search?criteria=((Client_Name.id:equals:${response.data.data[0].id}) or (Client_Name.id:equals:${response.data.data[0].accounts[0].id}))&sort_by=Created_Time&sort_order=desc`,
             {
               headers: {
                 Authorization: `Zoho-oauthtoken ${access_token}`,
