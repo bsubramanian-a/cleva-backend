@@ -5,16 +5,6 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  // @Get()
-  // async getHello() {
-  //   return this.appService.getHello();
-  // }
-
-  // @Get('test')
-  // async getTest() {
-  //   return this.appService.getHello();
-  // }
-
   @Post('verify-email')
   async verifyEmail(@Body() loginData: any) {
     return this.appService.verifyEmail(loginData);
