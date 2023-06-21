@@ -7,26 +7,31 @@ import { OauthtokensModule } from './modules/oauthtokens/oauthtokens.module';
 import { OauthtokensService } from './modules/oauthtokens/oauthtokens.service';
 import { oauthtokensProviders } from './modules/oauthtokens/oauthtokens.provider';
 import { UsersModule } from './modules/users/users.module';
+import { GoalsModule } from './modules/goals/goals.module';
 import { UsersService } from './modules/users/users.service';
 import { usersProviders } from './modules/users/users.providers';
 import { AuthMiddleware } from './middlewares/auth.middleware';
+import { goalsProviders } from './modules/goals/goals.providers';
+import { GoalsService } from './modules/goals/goals.service';
 
 @Module({
-  imports: [DatabaseModule, OauthtokensModule, UsersModule],
+  imports: [DatabaseModule, OauthtokensModule, UsersModule, GoalsModule],
   controllers: [AppController],
   providers: [
     AppService,
     OauthtokensService,
     UsersService,
     ZohoCRMService,
+    GoalsService,
     ...oauthtokensProviders,
-    ...usersProviders
+    ...usersProviders,
+    ...goalsProviders
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes('profile', 'journals', 'exercises', 'summary', 'advice', 'assets', 'liabilities', 'asset', 'liability');
+      .forRoutes('profile', 'journals', 'exercises', 'summary', 'advice', 'assets', 'liabilities', 'asset', 'liability', 'income', 'expenses', 'goals');
   }
 }

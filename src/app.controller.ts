@@ -120,6 +120,11 @@ export class AppController {
     return this.appService.updateExpenses(datas);
   }
 
+  @Put('income')
+  updateIncome(@Body() datas: any) {
+    return this.appService.updateIncome(datas);
+  }
+
   @Put('ina')
   updateINA(@Body() datas: any) {
     return this.appService.updateINA(datas);

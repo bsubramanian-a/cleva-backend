@@ -240,6 +240,10 @@ export class AppService {
     return await this.ZohoCRMService.updateExpenses(datas);
   }
 
+  async updateIncome(datas: any) {
+    return await this.ZohoCRMService.updateIncome(datas);
+  }
+
   async updateINA(datas: any) {
     return await this.ZohoCRMService.updateINA(datas);
   }

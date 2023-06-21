@@ -11,7 +11,6 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    ////console.log(createUserDto);
     return await this.userRepository.create<User>(createUserDto);
   }
 

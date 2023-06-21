@@ -721,6 +721,44 @@ export class ZohoCRMService {
     }
   }
 
+  async updateIncome(datas: any[]): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+  
+    const requestData = {
+      data: datas,
+    };
+
+    try {
+      const response = await axios.put(
+        `${this.apiURL}/Household_Income`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        // Success message
+        return {status: response.status, "message": "Updated Successfully"};
+      } else {
+        // Generic failure message
+        return {status: response.status, "message": "Update failed. Please try again later."};
+      }
+    } catch (error) {
+      console.log('Error updating assets with API', error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updateExpenses(datas);
+      }
+      return {"message": error?.message};
+      // Handle other errors as needed
+    }
+  }
+
   async updateINA(datas: any[]): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
@@ -819,7 +857,16 @@ export class ZohoCRMService {
               },
             }
           );
-        }        
+        }     
+        
+        const incomeResponse = await axios.get(
+          `${this.apiURL}/Household_Income/search?criteria=Household.id:equals:${account_id}&sort_by=Created_Time&sort_order=desc`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          }
+        );
 
         const expenseResponse = await axios.get(
           `${this.apiURL}/Household_Expenses/search?criteria=(Household.id:equals:${account_id})`,
@@ -858,6 +905,10 @@ export class ZohoCRMService {
 
         if (employmentResponse?.data?.data?.length > 0) {
           response.data.data[0].employmentDetails = employmentResponse?.data?.data
+        }
+
+        if(incomeResponse?.data?.data?.length > 0){
+          response.data.data[0].income = incomeResponse?.data?.data;
         }
 
         if (expenseResponse?.data?.data?.length > 0) {
