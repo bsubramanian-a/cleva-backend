@@ -11,95 +11,107 @@ export class Goal extends Model<Goal> {
   @Column({
     type: DataType.STRING,
     unique: false,
-    allowNull: false,
+    allowNull: true,
   })
-  title: string;
-
-  @Column({
-    type: DataType.STRING,
-    unique: false,
-    allowNull: false,
-  })
-  ownerId: string;
-
- @Column({
-    type: DataType.ENUM,
-    unique: false,
-    values: ['single', 'joint', 'cleva'],
-    allowNull: false,
-  })
-  ownerType: string;
+  zohoGoalId: string;
 
   @Column({
     type: DataType.ENUM,
     unique: false,
     values: ['To Do', 'Doing', 'Paused'],
-    allowNull: false,
+    allowNull: true,
   })
   status: string;
 
   @Column({
+    type: DataType.STRING,
+    unique: false,
+    allowNull: true,
+  })
+  owner: string;
+
+  @Column({
     type: DataType.ENUM,
     unique: false,
-    values: ['Goal Type1', 'Goal Type2', 'Goal Type3'],
-    allowNull: false,
+    values: ['Property', 'Travel', 'Kids Education & Investments', "Lifestyle", "Assets & Liabilities", "Save for Something Big", "Super/Retirement", "Other"],
+    allowNull: true,
   })
   goalType: string;
 
   @Column({
     type: DataType.STRING,
     unique: false,
-    allowNull: false,
+    allowNull: true,
   })
-  money_need: string;
+  title: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     unique: false,
-    allowNull: false,
+    allowNull: true,
   })
-  money_have: string;
+  description: string;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  isFinancial?: boolean;
 
   @Column({
     type: DataType.DATE,
     unique: false,
-    allowNull: false,
+    allowNull: true,
   })
   targetDate: Date;
 
   @Column({
     type: DataType.STRING,
     unique: false,
-    allowNull: false,
+    allowNull: true,
   })
-  responsible: string;
+  money_need: string;
+
+  @Column({
+    type: DataType.STRING,
+    unique: false,
+    allowNull: true,
+  })
+  money_have: string;
 
   @Column({
     type: DataType.DATE,
     unique: false,
-    allowNull: false,
+    allowNull: true,
   })
   when_money_need: Date;
+
+  @Column({
+    type: DataType.STRING,
+    unique: false,
+    allowNull: true,
+  })
+  responsible: string;
 
   @Column({
     type: DataType.ENUM,
     unique: false,
     values: ['Weekly', 'Fortnightly', 'Monthly'],
-    allowNull: false,
+    allowNull: true,
   })
   frequent_money_save: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.STRING, 
     unique: false,
     values: ['A Must Have', 'Nice To Have', 'Maybe One Day'],
-    allowNull: false,
+    allowNull: true,
   })
   goal_priority: string;
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: false,
+    allowNull: true,
     defaultValue: false,
   })
   delete_status?: boolean;

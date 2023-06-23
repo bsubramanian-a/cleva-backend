@@ -3,6 +3,7 @@ import axios from 'axios';
 import * as dotenv from 'dotenv';
 import * as qs from 'qs';
 import { OauthtokensService } from 'src/modules/oauthtokens/oauthtokens.service';
+
 dotenv.config();
 
 @Injectable()
@@ -435,7 +436,7 @@ export class ZohoCRMService {
       console.log('Error adding assets with API', error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.addAsset(liability, email);
+        return this.addLiability(liability, email);
       }
     }
   }
@@ -474,8 +475,8 @@ export class ZohoCRMService {
     // Filter assets based on the "apiSource" field
     const assetsWithAPI = assets.filter(asset => asset.apiSource);
     const assetsWithoutAPI = assets.filter(asset => !asset.apiSource);
-    console.log("assetsWithAPI", assetsWithAPI);
-    console.log("assetsWithoutAPI", assetsWithoutAPI);
+    // console.log("assetsWithAPI", assetsWithAPI);
+    // console.log("assetsWithoutAPI", assetsWithoutAPI);
   
     try {
       // Update assets with "apiSource" using the corresponding API
@@ -602,7 +603,7 @@ export class ZohoCRMService {
       console.log(error?.response?.data);
       if(error?.response?.data?.code == 'INVALID_TOKEN'){
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.getJournals(email);
+        return this.getLiabilities(email);
       }
     }
   }
@@ -967,4 +968,107 @@ export class ZohoCRMService {
         });
     });
   }  
+
+  async getGoalsByAccount(email:any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const ownerId =  await this.getUserDetails(email, access_token);
+
+      if(ownerId != ""){
+        const response = await axios.get(
+          `${this.apiURL}/Goals/search?criteria=Household.id:equals:${ownerId}&sort_by=Created_Time&sort_order=desc`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          }
+        );
+        
+        return response.data;
+      }
+
+      return {data: []};
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getGoalsByAccount(email);
+      }
+    }
+  }
+
+  async getGoalsById(id:any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/Goals/search?criteria=id:equals:${id}`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log('Error updating assets with API', error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getGoalsById(id);
+      }
+      return {"message": error?.message};
+      // Handle other errors as needed
+    }
+  }
+
+  async updateGoal(datas: any[], goalRepository:any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+  
+    const requestData = {
+      data: datas,
+    };
+
+    const currentGoal = await this.getGoalsById(datas[0]?.id);
+    // console.log("currentGoal", currentGoal?.data[0]);
+
+    if(currentGoal?.data?.length > 0){
+      const { id, Description, Current_Value, Name, Target_Date, Is_Financial_Goal, Target_Value, Goal_Type } = currentGoal?.data[0];
+
+      await goalRepository.create({ zohoGoalId: id, description: Description, money_have: Current_Value, title: Name, targetDate: Target_Date, isFinancial: Is_Financial_Goal, money_need: Target_Value, goalType: Goal_Type});
+    }
+
+    try {
+      const response = await axios.put(
+        `${this.apiURL}/Goals`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          }, 
+        }
+      );
+
+      if (response.status === 200) {
+        // Success message
+        return {status: response.status, "message": "Updated Successfully"};
+      } else {
+        // Generic failure message
+        return {status: response.status, "message": "Update failed. Please try again later."};
+      }
+    } catch (error) {
+      console.log('Error updating assets with API', error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updateGoal(datas, goalRepository); 
+      }
+      return {"message": error?.message};
+      // Handle other errors as needed
+    }
+  }
 }

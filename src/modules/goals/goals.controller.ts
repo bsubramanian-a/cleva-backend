@@ -7,6 +7,8 @@ import {
   Param,
   Patch,
   Post,
+  Put,
+  Req,
   Res,
 } from '@nestjs/common';
 import { GoalsService } from './goals.service';
@@ -54,5 +56,16 @@ export class GoalsController {
         error: error.message,
       });
     }
+  }
+
+  @Get('goalsbyaccount')
+  async getLiabilities(@Req() req: any) {
+    const email = req?.user?.email;
+    return this.goalsService.getGoalsByAccount(email); 
+  }
+
+  @Put('updategoals')
+  updateGoal( @Body() data: any) {
+    return this.goalsService.updateGoal(data);
   }
 }
