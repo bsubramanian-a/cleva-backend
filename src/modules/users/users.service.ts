@@ -32,6 +32,12 @@ export class UsersService {
     });
   }
 
+  async findOneByAppleUserId(apple_user_id: string): Promise<User> {
+    return await this.userRepository.findOne<User>({
+      where: { apple_user_id, delete_status: false },
+    });
+  }
+
   async findOne(id: number) {
     return `This action returns a #${id} user`;
   }
@@ -41,6 +47,16 @@ export class UsersService {
     return await this.userRepository.update<User>(updateUserDto, {
       where: { id },
     });
+  }
+
+  async updateUser(id: number, updateUserDto: any) {
+    const updated = await this.userRepository.update<User>(updateUserDto?.dataValues, {
+      where: { id },
+    });
+
+    console.log("updated", updated);
+
+    return updated;
   }
 
   async remove(id: number) {

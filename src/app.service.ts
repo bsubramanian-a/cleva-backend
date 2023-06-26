@@ -71,6 +71,58 @@ export class AppService {
 
     return {error: "Otp is incorrect, please try again"};
   }
+
+  async appleLogin(data: any) {
+    console.log("apple login data", data);
+    let email = data?.email;
+    let apple_user_id = data?.apple_user_id;
+  
+    if (!email) {
+      const user = await this.userService.findOneByAppleUserId(apple_user_id);
+  
+      if (!user) {
+        return { status: 'failed', message: "Login failed, please try a different method!" };
+      }
+  
+      email = user.dataValues.email;
+    } else {
+      let user = await this.userService.findOneByUserEmail(email);
+  
+      if (user) {
+        // User already exists with the given email, update the apple_user_id
+        user.apple_user_id = apple_user_id;
+        await this.userService.updateUser(user.id, user);
+      } else {
+        // User doesn't exist with the given email, create a new user
+        user = await this.userService.create({ email, apple_user_id });
+      }
+    }
+  
+    const users = await this.ZohoCRMService.getUsers();
+    const existingUser = users?.data?.find((user: any) => user.Email === email);
+  
+    if (!existingUser?.Email) {
+      return { isUserExist: false };
+    }
+  
+    try {
+      let user = await this.userService.findOneByUserEmail(email);
+      let isNewUser = false;
+  
+      if (!user) {
+        isNewUser = true;
+        user = await this.userService.create({ email });
+      }
+  
+      const payload = { email: user.email };
+      const secretKey = process.env.SECRET_KEY;
+      const token = jwt.sign(payload, secretKey);
+  
+      return { status: isNewUser ? 'register' : 'login', token };
+    } catch (err) {
+      console.log("login error", err);
+    }
+  }  
   
   async verifySocialEmail(data: any) {
     let email = data?.email;

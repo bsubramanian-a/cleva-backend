@@ -15,6 +15,11 @@ export class AppController {
     return this.appService.verifyOTP(otpData?.otp, otpData?.email);
   }
 
+  @Post('verify-apple-email')
+  async appleLogin(@Body() loginData: any) {
+    return this.appService.appleLogin(loginData);
+  }
+
   @Post('verify-social-email')
   async verifySocialEmail(@Body() loginData: any) {
     return this.appService.verifySocialEmail(loginData);

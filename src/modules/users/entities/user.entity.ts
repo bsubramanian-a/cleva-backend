@@ -30,6 +30,13 @@ export class User extends Model<User> {
   otp: string;
 
   @Column({
+    type: DataType.STRING,
+    unique: false,
+    allowNull: true,
+  })
+  apple_user_id: string;
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,
