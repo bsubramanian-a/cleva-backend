@@ -16,5 +16,5 @@ export class UpdateGoalDto extends PartialType(CreateGoalDto) {
   readonly responsible: string;
   readonly frequent_money_save: string;
   readonly goal_priority: string;
-  readonly delete_status?: boolean;
+  readonly delete_status: boolean;
 }
