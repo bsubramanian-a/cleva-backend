@@ -21,11 +21,34 @@ export class GoalsController {
   @Post()
   async create(@Body() createGoalDto: any, @Res() response: Response) { 
     try {
-      const createdGoal = await this.goalsService.create(createGoalDto);
-      response.status(HttpStatus.CREATED).json({
-        status: 'success',
-        message: 'Goal created successfully',
-        data: createdGoal,
+      let money_save = this.calculateSavings(createGoalDto?.targetDate, createGoalDto?.frequent_money_save, parseFloat(createGoalDto?.money_have), parseFloat(createGoalDto?.money_need))?.toFixed(2);
+      await this.goalsService.create(createGoalDto);
+      
+      const goalData = {
+        "Goal_Owner_s": createGoalDto?.Goal_Owner_s,
+        "Need_Money_By": createGoalDto?.when_money_need,
+        "Description": createGoalDto?.description,
+        "Current_Value": createGoalDto?.money_have,
+        "Name": createGoalDto?.title,
+        "Target_Date": createGoalDto?.targetDate,
+        "Target_Value": createGoalDto?.money_need,
+        "Goal_Type": createGoalDto?.goalType,
+        "Priority": [
+          createGoalDto?.goal_priority
+        ],
+        "Household": createGoalDto?.Household,
+        "Save_Frequency": createGoalDto?.frequent_money_save,
+        "Is_Financial_Goal" : createGoalDto?.isFinancial == "No" ? false : true
+      }
+
+      const res = await this.goalsService.createGoal(goalData);
+
+      const dateObj = new Date(createGoalDto?.targetDate);
+      const formattedDate = dateObj.toLocaleDateString('en-US');
+
+      response.status(HttpStatus.OK).json({
+        status: res?.status,
+        message: `To achieve your goal of $${createGoalDto?.money_need} by ${formattedDate} you need to pay off ${money_save} per ${createGoalDto?.frequent_money_save == 'Weekly' ? 'week' : (createGoalDto?.frequent_money_save == 'Monthly' ? 'month' : 'fortnight')}`,
       });
     } catch (error) {
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -34,6 +57,35 @@ export class GoalsController {
         error: error.message,
       });
     }
+  }
+
+  calculateSavings(targetDate, frequency, money_have, money_need) {
+    const targetDateObj:any = new Date(targetDate);
+    const currentDate:any = new Date();
+  
+    // Calculate the time difference in months, weeks, or fortnights based on the frequency
+    let timeDifference;
+    switch (frequency) {
+      case 'Monthly':
+        timeDifference = (targetDateObj.getFullYear() - currentDate.getFullYear()) * 12 + targetDateObj.getMonth() - currentDate.getMonth();
+        if (targetDateObj.getDate() < currentDate.getDate()) {
+          timeDifference--;
+        }
+        break;
+      case 'Weekly':
+        timeDifference = Math.ceil((targetDateObj - currentDate) / (1000 * 60 * 60 * 24 * 7));
+        break;
+      case 'Fortnightly':
+        timeDifference = Math.ceil((targetDateObj - currentDate) / (1000 * 60 * 60 * 24 * 14));
+        break;
+      default:
+        throw new Error('Invalid frequency');
+    }
+  
+    // Calculate the amount to save in each period
+    const amountToSave = (money_need - money_have) / timeDifference;
+  
+    return amountToSave;
   }
 
   @Patch(':id')

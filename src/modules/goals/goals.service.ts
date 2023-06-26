@@ -48,4 +48,13 @@ export class GoalsService {
       console.log("getGoalsByAccount", err);
     }
   }
+
+  async createGoal(data) {
+    try{ 
+      const goals = await this.ZohoCRMService.createGoal(data, this.goalRepository);
+      return goals;
+    }catch(err){
+      console.log("getGoalsByAccount", err);
+    }
+  }
 }

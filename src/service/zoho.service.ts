@@ -1025,6 +1025,47 @@ export class ZohoCRMService {
     }
   }
 
+  async createGoal(datas: any[], goalRepository:any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+  
+    console.log("datas", datas);
+    const requestData = {
+      data: [datas],
+    };
+
+    try {
+      const response = await axios.post(
+        `${this.apiURL}/Goals`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          }, 
+        }
+      );
+
+      console.log("response", response?.data);
+
+      if (response.status === 200 || response?.status == 201) {
+        // Success message
+        return {status: response.status, "message": "Created Successfully"};
+      } else {
+        // Generic failure message
+        return {status: response.status, "message": "Create failed. Please try again later."};
+      }
+    } catch (error) {
+      console.log('Error updating assets with API', error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updateGoal(datas, goalRepository); 
+      }
+      return {"message": error?.message};
+      // Handle other errors as needed
+    }
+  }
+
   async updateGoal(datas: any[], goalRepository:any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;

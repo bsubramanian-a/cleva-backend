@@ -73,7 +73,6 @@ export class AppService {
   }
 
   async appleLogin(data: any) {
-    console.log("apple login data", data);
     let email = data?.email;
     let apple_user_id = data?.apple_user_id;
   
