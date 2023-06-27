@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   Req,
   Res,
 } from '@nestjs/common';
@@ -21,7 +22,12 @@ export class GoalsController {
   @Post()
   async create(@Body() createGoalDto: any, @Res() response: Response) { 
     try {
-      let money_save = this.calculateSavings(createGoalDto?.targetDate, createGoalDto?.frequent_money_save, parseFloat(createGoalDto?.money_have), parseFloat(createGoalDto?.money_need))?.toFixed(2);
+      const money_save = this.calculateSavings(
+        createGoalDto?.targetDate,
+        createGoalDto?.frequent_money_save,
+        parseFloat(createGoalDto?.money_have),
+        parseFloat(createGoalDto?.money_need),
+      )?.toFixed(2);
       await this.goalsService.create(createGoalDto);
       
       const goalData = {
@@ -38,7 +44,8 @@ export class GoalsController {
         ],
         "Household": createGoalDto?.Household,
         "Save_Frequency": createGoalDto?.frequent_money_save,
-        "Is_Financial_Goal" : createGoalDto?.isFinancial == "No" ? false : true
+        "Is_Financial_Goal" : createGoalDto?.isFinancial == "No" ? false : true,
+        "Status": 'To Do',
       }
 
       const res = await this.goalsService.createGoal(goalData);
@@ -46,9 +53,19 @@ export class GoalsController {
       const dateObj = new Date(createGoalDto?.targetDate);
       const formattedDate = dateObj.toLocaleDateString('en-US');
 
+      const frequency =
+        createGoalDto?.frequent_money_save == 'Weekly'
+          ? 'week'
+          : createGoalDto?.frequent_money_save == 'Monthly'
+          ? 'month'
+          : 'fortnight';
+
       response.status(HttpStatus.OK).json({
         status: res?.status,
-        message: `To achieve your goal of $${createGoalDto?.money_need} by ${formattedDate} you need to pay off ${money_save} per ${createGoalDto?.frequent_money_save == 'Weekly' ? 'week' : (createGoalDto?.frequent_money_save == 'Monthly' ? 'month' : 'fortnight')}`,
+        targetDate: formattedDate,
+        money_need: createGoalDto?.money_need,
+        money_save: money_save,
+        frequent_money_save: frequency
       });
     } catch (error) {
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -120,4 +137,10 @@ export class GoalsController {
   updateGoal( @Body() data: any) {
     return this.goalsService.updateGoal(data);
   }
+
+  @Get('chartData')
+  getChartData(@Query('interval') interval: string, @Query('zohoGoalId') zohoGoalId: string) {
+    // Call the service method to fetch chart data based on the specified interval and zohoGoalId
+    return this.goalsService.getChartData(interval, zohoGoalId);
+  }  
 }

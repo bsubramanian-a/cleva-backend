@@ -969,6 +969,43 @@ export class ZohoCRMService {
     });
   }  
 
+  private refreshAccessTokenV4(id?:number): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const data = qs.stringify({
+        client_id: process.env.CLIENT_ID,
+        client_secret: process.env.CLIENT_SECRET,
+        grant_type: 'refresh_token',
+        refresh_token: process.env.REFRESH_TOKEN,
+      });
+  
+      const config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: `${this.apiBaseUrl}/token?refresh_token=${process.env.REFRESH_TOKEN}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&grant_type=refresh_token`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+  
+      axios
+        .request(config)
+        .then(async (response) => {
+          console.log(JSON.stringify(response.data));
+          const update_data = {
+            access_token: response.data.access_token
+          };
+          
+          await this.oauthService.update(id, update_data)
+          resolve(response.data.access_token);
+        })
+        .catch((error) => {
+          console.log('Getting Error2');
+          console.log(error);
+          reject(error);
+        });
+    });
+  }  
+
   async getGoalsByAccount(email:any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
@@ -977,7 +1014,7 @@ export class ZohoCRMService {
 
       if(ownerId != ""){
         const response = await axios.get(
-          `${this.apiURL}/Goals/search?criteria=Household.id:equals:${ownerId}&sort_by=Created_Time&sort_order=desc`,
+          `https://www.zohoapis.com.au/crm/v4/Goals/search?criteria=Household.id:equals:${ownerId}&sort_by=Created_Time&sort_order=desc`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
@@ -1010,7 +1047,7 @@ export class ZohoCRMService {
           headers: {
             Authorization: `Zoho-oauthtoken ${access_token}`,
           },
-        }
+        },
       );
 
       return response.data;
@@ -1020,16 +1057,16 @@ export class ZohoCRMService {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getGoalsById(id);
       }
-      return {"message": error?.message};
+      return { message: error?.message };
       // Handle other errors as needed
     }
   }
 
-  async createGoal(datas: any[], goalRepository:any): Promise<any> {
+  async createGoal(datas: any[], goalRepository: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
   
-    console.log("datas", datas);
+    console.log('datas', datas);
     const requestData = {
       data: [datas],
     };
@@ -1066,21 +1103,24 @@ export class ZohoCRMService {
     }
   }
 
-  async updateGoal(datas: any[], goalRepository:any): Promise<any> {
+  async updateGoal(datas: any, goalRepository:any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
   
     const requestData = {
-      data: datas,
+      data: [datas],
     };
 
-    const currentGoal = await this.getGoalsById(datas[0]?.id);
-    // console.log("currentGoal", currentGoal?.data[0]);
+    // console.log("requestData", requestData);
+
+    const currentGoal = await this.getGoalsById(datas?.id);
+    // console.log("currentGoal", currentGoal, datas);
 
     if(currentGoal?.data?.length > 0){
-      const { id, Description, Current_Value, Name, Target_Date, Is_Financial_Goal, Target_Value, Goal_Type } = currentGoal?.data[0];
+      const { id, Description, Current_Value, Name, Target_Date, Is_Financial_Goal, Target_Value, Goal_Type, Status} = currentGoal?.data[0];
+      console.log("updateGoal", id);
 
-      await goalRepository.create({ zohoGoalId: id, description: Description, money_have: Current_Value, title: Name, targetDate: Target_Date, isFinancial: Is_Financial_Goal, money_need: Target_Value, goalType: Goal_Type});
+      await goalRepository.create({ zohoGoalId: id, description: Description, money_have: Current_Value, title: Name, targetDate: Target_Date, isFinancial: Is_Financial_Goal, money_need: Target_Value, goalType: Goal_Type, status: Status});
     }
 
     try {
@@ -1094,6 +1134,8 @@ export class ZohoCRMService {
           }, 
         }
       );
+
+      // console.log("response", response?.data);
 
       if (response.status === 200) {
         // Success message

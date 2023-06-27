@@ -33,7 +33,7 @@ export class Goal extends Model<Goal> {
   @Column({
     type: DataType.ENUM,
     unique: false,
-    values: ['Property', 'Travel', 'Kids Education & Investments', "Lifestyle", "Assets & Liabilities", "Save for Something Big", "Super/Retirement", "Other"],
+    values: ['Property', 'Travel', 'Kids Education & Investments', "Lifestyle", "Assets & Liabilities", "Save for Something Big", "Super/Retirement", "Other", "My super fund goal"],
     allowNull: true,
   })
   goalType: string;
