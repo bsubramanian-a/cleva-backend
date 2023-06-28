@@ -77,7 +77,7 @@ export class GoalsService {
     console.log("data", data);
 
     const aggregatedData = {};
-    console.log("tabSelection", tabSelection); 
+    // console.log("tabSelection", tabSelection); 
     // Aggregate the data based on the specified interval
     for (const entry of data) {
       const timestamp = entry.createdAt.toISOString();

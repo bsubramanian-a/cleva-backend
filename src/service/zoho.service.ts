@@ -1032,6 +1032,8 @@ export class ZohoCRMService {
         //   })
         // }
 
+        // console.log("response?.data goals by account", response?.data);
+
         if (response?.data?.data?.length > 0) {
           for (const goal of response.data.data) {
             // console.log("goal", goal);
@@ -1202,19 +1204,20 @@ export class ZohoCRMService {
       data: [updatedDatas],
     };
 
-    // console.log("requestData", requestData);
+    console.log("requestData update", requestData);
     // console.log("datas", datas);
-
-    const currentGoal = await this.getGoalsById(datas?.id);
-    // console.log("currentGoal", currentGoal, datas);
-
-    if(currentGoal?.data?.length > 0){
-      const { id, Description, Current_Value, Name, Target_Date, Is_Financial_Goal, Target_Value, Goal_Type, Status} = currentGoal?.data[0];
-      console.log("updateGoal", id);
-
-      await goalRepository.create({ zohoGoalId: id, description: Description, money_have: datas?.Current_Value, title: Name, targetDate: Target_Date, isFinancial: Is_Financial_Goal, money_need: Target_Value, goalType: Goal_Type, status: Status});
+    if(datas?.Current_Value){
+      const currentGoal = await this.getGoalsById(datas?.id);
+      // console.log("currentGoal", currentGoal, datas);
+  
+      if(currentGoal?.data?.length > 0){
+        const { id, Description, Current_Value, Name, Target_Date, Is_Financial_Goal, Target_Value, Goal_Type, Status} = currentGoal?.data[0];
+        console.log("updateGoal", id);
+  
+        await goalRepository.create({ zohoGoalId: id, description: Description, money_have: datas?.Current_Value, title: Name, targetDate: Target_Date, isFinancial: Is_Financial_Goal, money_need: Target_Value, goalType: Goal_Type, status: Status});
+      }
     }
-
+  
     try {
       const response = await axios.put(
         `${this.apiURL}/Goals`,
