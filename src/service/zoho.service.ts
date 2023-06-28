@@ -1,3 +1,4 @@
+import { Goal } from './../modules/goals/entities/goal.entity';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
@@ -1014,14 +1015,53 @@ export class ZohoCRMService {
 
       if(ownerId != ""){
         const response = await axios.get(
-          `https://www.zohoapis.com.au/crm/v4/Goals/search?criteria=Household.id:equals:${ownerId}&sort_by=Created_Time&sort_order=desc`,
+          `${this.apiURL}/Goals/search?criteria=Household.id:equals:${ownerId}&sort_by=Created_Time&sort_order=desc`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
             },
           }
         );
+
+        // let goals = response?.data;
+        // let goalIds = [];
         
+        // if(response?.data?.data?.length > 0){
+        //   goals?.data?.map((goals:any) => {
+        //     goalIds?.push(goals?.id); 
+        //   })
+        // }
+
+        if (response?.data?.data?.length > 0) {
+          for (const goal of response.data.data) {
+            // console.log("goal", goal);
+        
+            const goalxcontacts = await axios.get(
+              `${this.apiURL}/Goals_X_Contacts/search?criteria=(Goals.id:equals:${goal?.id})&fields=Goal_Owner_s,Goals`,
+              {
+                headers: {
+                  Authorization: `Zoho-oauthtoken ${access_token}`,
+                },
+              }
+            );
+        
+            if (goalxcontacts?.data?.data?.length > 0) {
+              goal['owners'] = goalxcontacts?.data?.data;
+            }
+          }
+        }        
+        
+        // const goalxcontacts = await axios.get(
+        //   `${this.apiURL}/Goals_X_Contacts/search?criteria=(Goals.id:in:${goalIds})&fields=Goal_Owner_s,Goals`,
+        //   {
+        //     headers: {
+        //       Authorization: `Zoho-oauthtoken ${access_token}`,
+        //     },
+        //   }
+        // );
+        
+        // console.log("goalxcontacts", goalxcontacts);
+
         return response.data;
       }
 
@@ -1062,13 +1102,16 @@ export class ZohoCRMService {
     }
   }
 
-  async createGoal(datas: any[], goalRepository: any): Promise<any> {
+  async createGoal(datas: any, goalRepository: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
   
     console.log('datas', datas);
+
+    const { currentHouseHoldOwners, Goal_Owner_s, ownerId, ...updatedDatas} = datas;
+
     const requestData = {
-      data: [datas],
+      data: [updatedDatas],
     };
 
     try {
@@ -1083,11 +1126,57 @@ export class ZohoCRMService {
         }
       );
 
-      console.log("response", response?.data);
+      console.log("create goal owner", datas);
+
+      if(datas?.Goal_Owner_s){
+        let tempOwner = [];
+        if(datas?.Goal_Owner_s == 'Joint'){
+          datas?.currentHouseHoldOwners?.map((cHO:any) => {
+            let temp = {
+              Goal_Owner_s: {id: cHO?.id, name: cHO?.name},
+              Goals: {
+                "name": datas?.Name,
+                "id": response?.data?.data[0]?.details?.id
+              }
+            }
+
+            tempOwner?.push(temp);
+          })
+        }else{
+          let temp = {
+            Goal_Owner_s: {id: datas?.ownerId, name: datas?.Goal_Owner_s},
+            Goals: {
+              "name": datas?.Name,
+              "id": response?.data?.data[0]?.details?.id
+            }
+          }
+  
+          tempOwner?.push(temp);
+        }
+
+        console.log("tempOwner", tempOwner)
+
+        const requestData = {
+          data: tempOwner,
+        };  
+    
+        const createOwner = await axios.post(
+          `${this.apiURL}/Goals_X_Contacts`,
+          requestData,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+              'Content-Type': 'application/json',
+            }, 
+          }
+        );  
+
+        console.log("createOwner", createOwner);
+      }
 
       if (response.status === 200 || response?.status == 201) {
         // Success message
-        return {status: response.status, "message": "Created Successfully"};
+        return {status: response.status, "message": "Created Successfully", zohoGoalId: response?.data?.data[0]?.details?.id};
       } else {
         // Generic failure message
         return {status: response.status, "message": "Create failed. Please try again later."};
@@ -1106,12 +1195,15 @@ export class ZohoCRMService {
   async updateGoal(datas: any, goalRepository:any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
-  
+
+    console.log("update goal data", datas);
+    const { currentGoalOwners, currentHouseHoldOwners, Goal_Owner2_s, Goal_Owner_s, ...updatedDatas } = datas;
     const requestData = {
-      data: [datas],
+      data: [updatedDatas],
     };
 
     // console.log("requestData", requestData);
+    // console.log("datas", datas);
 
     const currentGoal = await this.getGoalsById(datas?.id);
     // console.log("currentGoal", currentGoal, datas);
@@ -1120,7 +1212,7 @@ export class ZohoCRMService {
       const { id, Description, Current_Value, Name, Target_Date, Is_Financial_Goal, Target_Value, Goal_Type, Status} = currentGoal?.data[0];
       console.log("updateGoal", id);
 
-      await goalRepository.create({ zohoGoalId: id, description: Description, money_have: Current_Value, title: Name, targetDate: Target_Date, isFinancial: Is_Financial_Goal, money_need: Target_Value, goalType: Goal_Type, status: Status});
+      await goalRepository.create({ zohoGoalId: id, description: Description, money_have: datas?.Current_Value, title: Name, targetDate: Target_Date, isFinancial: Is_Financial_Goal, money_need: Target_Value, goalType: Goal_Type, status: Status});
     }
 
     try {
@@ -1135,8 +1227,68 @@ export class ZohoCRMService {
         }
       );
 
-      // console.log("response", response?.data);
+      if((datas?.Goal_Owner_s?.id || datas?.Goal_Owner_s == 'Joint') && datas?.currentGoalOwners?.length > 0){
+        const cownerids = datas?.currentGoalOwners.map(owner => owner.id).join(',');
+        console.log("cownerids", cownerids);
 
+        const goalxcontactsdelete = await axios.delete(
+          `${this.apiURL}/Goals_X_Contacts?ids=${cownerids}&wf_trigger=true`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          }
+        );
+
+        console.log("goalxcontactsdelete res", goalxcontactsdelete)
+      }
+
+      if(datas?.Goal_Owner_s?.id || datas?.Goal_Owner_s == 'Joint'){
+        let tempOwner = [];
+        if(datas?.Goal_Owner_s == 'Joint'){
+          datas?.currentHouseHoldOwners?.map((cHO:any) => {
+            let temp = {
+              Goal_Owner_s: {id: cHO?.id, name: cHO?.name},
+              Goals: {
+                "name": datas?.Name,
+                "id": datas?.id
+              }
+            }
+
+            tempOwner?.push(temp);
+          })
+        }else{
+          let temp = {
+            Goal_Owner_s: datas?.Goal_Owner_s,
+            Goals: {
+              "name": datas?.Name,
+              "id": datas?.id
+            }
+          }
+  
+          tempOwner?.push(temp);
+        }
+
+        // console.log("tempOwner", tempOwner)
+
+        const requestData = {
+          data: tempOwner,
+        };  
+    
+        const createOwner = await axios.post(
+          `${this.apiURL}/Goals_X_Contacts`,
+          requestData,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+              'Content-Type': 'application/json',
+            }, 
+          }
+        );  
+
+        // console.log("createOwner", createOwner);
+      }
+     
       if (response.status === 200) {
         // Success message
         return {status: response.status, "message": "Updated Successfully"};

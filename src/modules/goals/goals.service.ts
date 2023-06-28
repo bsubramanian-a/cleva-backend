@@ -10,146 +10,168 @@ import { Op } from 'sequelize';
 export class GoalsService {
   constructor(
     @Inject(GOAL_REPOSITORY) private readonly goalRepository: typeof Goal,
-    private readonly ZohoCRMService: ZohoCRMService
+    private readonly ZohoCRMService: ZohoCRMService,
   ) {}
 
   async create(createGoalDto: any): Promise<Goal> {
     try {
       return await this.goalRepository.create<Goal>(createGoalDto);
     } catch (error) {
-      console.log(":error", error);
+      console.log(':error', error);
       throw new Error('Failed to create goal');
     }
   }
-  
+
   async update(id: number, updateGoalDto: any): Promise<any> {
     try {
       return await this.goalRepository.update<Goal>(updateGoalDto, {
-        where: {id},
+        where: { id },
       });
     } catch (error) {
-      throw new Error('Failed to update goal'); 
-    } 
+      throw new Error('Failed to update goal');
+    }
   }
 
   async getGoalsByAccount(email) {
-    try{ 
+    try {
       const goals = this.ZohoCRMService.getGoalsByAccount(email);
       return goals;
-    }catch(err){
-      console.log("getGoalsByAccount", err);
+    } catch (err) {
+      console.log('getGoalsByAccount', err);
     }
   }
 
   async updateGoal(data) {
-    try{ 
+    try {
       const goals = this.ZohoCRMService.updateGoal(data, this.goalRepository);
       return goals;
-    }catch(err){
-      console.log("getGoalsByAccount", err);
+    } catch (err) {
+      console.log('getGoalsByAccount', err);
     }
   }
 
   async createGoal(data) {
-    try{ 
-      const goals = await this.ZohoCRMService.createGoal(data, this.goalRepository);
+    try {
+      const goals = await this.ZohoCRMService.createGoal(
+        data,
+        this.goalRepository,
+      );
       return goals;
-    }catch(err){
-      console.log("getGoalsByAccount", err);
+    } catch (err) {
+      console.log('getGoalsByAccount', err);
     }
   }
 
-  async getChartData(tabSelection: string, zohoGoalId:string): Promise<{ x: string[], y: number[] }> {
-    let startDate: Date | undefined;
-    let interval: 'day' | 'week' | 'month' | 'year' = 'day'; // Adjust the interval as needed
-  
-    // if (tabSelection !== 'All') {
-    //   if (tabSelection === '6 mo') {
-    //     startDate = new Date();
-    //     startDate.setMonth(startDate.getMonth() - 6);
-    //     interval = 'week'; // Aggregate by week
-    //   } else if (tabSelection === '1 yr') {
-    //     startDate = new Date();
-    //     startDate.setFullYear(startDate.getFullYear() - 1);
-    //     interval = 'month'; // Aggregate by month
-    //   } else if (tabSelection === '3 yrs') {
-    //     startDate = new Date();
-    //     startDate.setFullYear(startDate.getFullYear() - 3);
-    //     interval = 'year'; // Aggregate by month
-    //   } else if (tabSelection === '5 yrs') {
-    //     startDate = new Date();
-    //     startDate.setFullYear(startDate.getFullYear() - 5);
-    //     interval = 'year'; // Aggregate by month
-    //   } else {
-    //     startDate = new Date();
-    //     startDate.setFullYear(startDate.getFullYear() - 10);
-    //     interval = 'year'; // Aggregate by month
-    //   }
-    // }
+  async getChartData(
+    tabSelection: string,
+    zohoGoalId: string,
+    todayValue:any
+  ): Promise<{ x: string[]; y: number[] }> {
 
-    // console.log("startDate", startDate);
-    // console.log("tabSelection", tabSelection);
-    // console.log("zohoGoalId", zohoGoalId);
-    // console.log("interval", interval);
-  
-    const whereClause: any = {
-      zohoGoalId: {
-        [Op.eq]: zohoGoalId,
-      },
-    };
-    
-    if (startDate) {
-      whereClause.createdAt = {
-        [Op.gte]: startDate,
-      };
-    }
-    
     const data = await this.goalRepository.findAll({
-      where: whereClause,
+      where: {zohoGoalId},
       order: [['createdAt', 'ASC']],
-      raw: true
+      raw: true,
     });
 
-    // console.log("data", data);
-    
-    // Initialize the aggregatedData object with the appropriate keys for the selected interval
-    const aggregatedData: Record<string, number> = {};
+    console.log("data", data);
 
-    // Sort the data by createdAt in ascending order
-    data.sort((a: any, b: any) => a.createdAt - b.createdAt);
-
-    // Iterate over the data to calculate the aggregated values
-    data.forEach((entry: any, index: number) => {
+    const aggregatedData = {};
+    console.log("tabSelection", tabSelection); 
+    // Aggregate the data based on the specified interval
+    for (const entry of data) {
       const timestamp = entry.createdAt.toISOString();
       const currentValue = entry.money_have;
-    
-      aggregatedData[timestamp] = parseFloat(currentValue);
-    });
-  
-    console.log("aggregatedData", aggregatedData);
-    const xValues: string[] = Object.keys(aggregatedData);
-    const yValues: number[] = Object.values(aggregatedData);
-  
-    return { x: xValues, y: yValues };
-  }  
+      console.log("current value", currentValue);
+      const intervalKey = await this.getIntervalKey(timestamp, tabSelection);
+      console.log("intervalKey", intervalKey);
 
-  getIntervalKey(timestamp: string, interval: 'day' | 'week' | 'month' | 'year'): string {
+      if (!aggregatedData[intervalKey]) {
+        aggregatedData[intervalKey] = {
+          sum: 0,
+          count: 0,
+        };
+      }
+
+      aggregatedData[intervalKey].sum += parseInt(currentValue);
+      aggregatedData[intervalKey].count += 1;
+    }
+
+    // const intervalKeys = Object.keys(aggregatedData);
+    // let lastIntervalKey;
+
+    // if (intervalKeys.length > 0) {
+    //   lastIntervalKey = intervalKeys[intervalKeys.length - 1];
+    // } else {
+    //   // If no intervals exist, create one for the current date
+    //   const today = new Date();
+    //   lastIntervalKey = await this.getIntervalKey(today.toISOString(), tabSelection);
+
+    //   aggregatedData[lastIntervalKey] = {
+    //     sum: 0,
+    //     count: 0,
+    //   };
+    // }
+
+    // console.log("lastIntervalKey", lastIntervalKey);
+    // console.log("aggregatedData", aggregatedData);
+
+    // // Add the current value from Zoho to the last interval
+    // aggregatedData[lastIntervalKey].sum += parseInt(todayValue);
+    // aggregatedData[lastIntervalKey].count += 1;
+
+
+    const chartData = {
+      x: [],
+      y: [],
+    };
+
+    // Prepare chart data based on the aggregated data
+    Object.keys(aggregatedData).forEach((key) => {
+      const averageValue:any = aggregatedData[key].sum / aggregatedData[key].count;
+
+      chartData.x.push(key);
+      chartData.y.push(parseInt(averageValue));
+    });
+
+    console.log("chartData", chartData);
+
+    return chartData;
+  }
+
+  async getIntervalKey(timestamp, interval) {
     const date = new Date(timestamp);
   
-    switch (interval) {
-      case 'day':
-        return date.toISOString().substring(0, 10); // YYYY-MM-DD
-      case 'week': {
-        const firstDayOfWeek = new Date(date.getTime());
-        firstDayOfWeek.setDate(date.getDate() - date.getDay()); // Set to the first day (Sunday) of the week
-        return firstDayOfWeek.toISOString().substring(0, 10); // YYYY-MM-DD
-      }
-      case 'month':
-        return date.toISOString().substring(0, 7); // YYYY-MM
-      case 'year':
-        return date.toISOString().substring(0, 4); // YYYY
-      default:
-        throw new Error(`Invalid interval: ${interval}`);
+    if (interval === 'All') {
+      // For the 'All' interval, return the year as the interval key
+      return date.getFullYear().toString();
+    } else if (interval === '6 mo') {
+      // For the '6 mo' interval, return the year and half as the interval key
+      const year = date.getFullYear();
+      const half = date.getMonth() < 6 ? '1h' : '2h';
+      return `${year} ${half}`;
+    } else if (interval === '1 yr') {
+      // For the '1 yr' interval, return the year as the interval key
+      return date.getFullYear().toString();
+    } else if (interval === '3 yrs') {
+      // For the '3 yr' interval, return the decade as the interval key
+      const year = date.getFullYear();
+      const decade = Math.floor(year / 3) * 3;
+      return `${decade}-${decade + 2}`;
+    } else if (interval === '5 yrs') {
+      // For the '5 yr' interval, return the decade as the interval key
+      const year = date.getFullYear();
+      const decade = Math.floor(year / 5) * 5;
+      return `${decade}-${decade + 4}`;
+    } else if (interval === '10 yrs') {
+      // For the '10 yr' interval, return the decade as the interval key
+      const year = date.getFullYear();
+      const decade = Math.floor(year / 10) * 10;
+      return `${decade}-${decade + 9}`;
     }
-  }  
+  
+    // Handle other interval options as needed
+    // ...
+  }
+  
 }

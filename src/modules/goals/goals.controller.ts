@@ -28,10 +28,11 @@ export class GoalsController {
         parseFloat(createGoalDto?.money_have),
         parseFloat(createGoalDto?.money_need),
       )?.toFixed(2);
-      await this.goalsService.create(createGoalDto);
       
       const goalData = {
+        "ownerId": createGoalDto?.ownerId,
         "Goal_Owner_s": createGoalDto?.Goal_Owner_s,
+        currentHouseHoldOwners: createGoalDto?.currentHouseHoldOwners,
         "Need_Money_By": createGoalDto?.when_money_need,
         "Description": createGoalDto?.description,
         "Current_Value": createGoalDto?.money_have,
@@ -49,6 +50,12 @@ export class GoalsController {
       }
 
       const res = await this.goalsService.createGoal(goalData);
+      console.log("zoho create goal res", res);
+
+      const { currentHouseHoldOwners, ...updatedCreateGoalDto } = createGoalDto;
+      let newData = { zohoGoalId: res?.zohoGoalId, ...updatedCreateGoalDto };
+
+      await this.goalsService.create(newData);
 
       const dateObj = new Date(createGoalDto?.targetDate);
       const formattedDate = dateObj.toLocaleDateString('en-US');
@@ -139,8 +146,8 @@ export class GoalsController {
   }
 
   @Get('chartData')
-  getChartData(@Query('interval') interval: string, @Query('zohoGoalId') zohoGoalId: string) {
+  getChartData(@Query('interval') interval: string, @Query('zohoGoalId') zohoGoalId: string, @Query('todayValue') todayValue: any) {
     // Call the service method to fetch chart data based on the specified interval and zohoGoalId
-    return this.goalsService.getChartData(interval, zohoGoalId);
+    return this.goalsService.getChartData(interval, zohoGoalId, todayValue);
   }  
 }
