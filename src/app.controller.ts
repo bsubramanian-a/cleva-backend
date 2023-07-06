@@ -69,7 +69,7 @@ export class AppController {
   @Get('assets')
   async getAssets(@Req() req: any) {
     const email = req?.user?.email;
-    return this.appService.getAssets(email);
+  return this.appService.getAssets(email);
   }
 
   @Post('asset')
@@ -86,6 +86,11 @@ export class AppController {
   @Put('assets')
   update( @Body() assets: any) {
     return this.appService.updateAssets(assets);
+  }
+
+  @Put('accounts')
+  updateaccounts( @Body() accounts: any) {
+    return this.appService.updateAccounts(accounts);
   }
 
   @Get('liabilities')
@@ -133,5 +138,11 @@ export class AppController {
   @Put('ina')
   updateINA(@Body() datas: any) {
     return this.appService.updateINA(datas);
+  }
+
+  @Get('accounts')
+  async getAccounts(@Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.getAccounts(email); 
   }
 }

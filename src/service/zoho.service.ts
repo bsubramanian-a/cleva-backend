@@ -483,7 +483,7 @@ export class ZohoCRMService {
       // Update assets with "apiSource" using the corresponding API
       if (assetsWithAPI.length > 0) {
         const requestData = {
-          data: assetsWithAPI,
+          data: assetsWithAPI
         };
     
         try {
@@ -1128,7 +1128,7 @@ export class ZohoCRMService {
         }
       );
 
-      console.log("create goal owner", datas);
+      // console.log("create goal owner", datas);
 
       if(datas?.Goal_Owner_s){
         let tempOwner = [];
@@ -1306,6 +1306,67 @@ export class ZohoCRMService {
         return this.updateGoal(datas, goalRepository); 
       }
       return {"message": error?.message};
+      // Handle other errors as needed
+    }
+  }
+
+  async getAccounts(email:any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const ownerId =  await this.getUserDetails(email, access_token);
+
+      if(ownerId != ""){
+        const response = await axios.get(
+          `${this.apiURL}/Financial_Accounts/search?criteria=(Household.id:equals:${ownerId})`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          }
+        );
+        
+        return response.data;
+      }
+
+      return {data: []};
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getAccounts(email);
+      }
+    }
+  }
+
+  async updateAccounts(accounts: any[]): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+
+    const requestData = {
+      data: [accounts],
+    };  
+
+    try {
+      const response = await axios.put(
+        `${this.apiURL}/Financial_Accounts`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      // console.log("Update assets with API response", response.data);
+      // Handle the response as needed
+    } catch (error) {
+      console.log('Error updating assets with API', error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updateAccounts(accounts);
+      }
       // Handle other errors as needed
     }
   }

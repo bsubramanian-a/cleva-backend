@@ -249,6 +249,15 @@ export class AppService {
     }
   }
 
+  async getAccounts(email) {
+    try{ 
+      const liabilities = this.ZohoCRMService.getAccounts(email);
+      return liabilities;
+    }catch(err){
+      console.log("getAccounts", err);
+    }
+  }
+
   async addLiability(asset: any, email:string) {
     return await this.ZohoCRMService.addLiability(asset, email);
   }
@@ -297,5 +306,9 @@ export class AppService {
 
   async updateINA(datas: any) {
     return await this.ZohoCRMService.updateINA(datas);
+  }
+
+  async updateAccounts(accounts: any) {
+    return await this.ZohoCRMService.updateAccounts(accounts);
   }
 }
