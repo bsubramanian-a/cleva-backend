@@ -1318,7 +1318,7 @@ export class ZohoCRMService {
 
       if(ownerId != ""){
         const response = await axios.get(
-          `${this.apiURL}/Financial_Accounts/search?criteria=(Household.id:equals:${ownerId})`,
+          `${this.apiURL}/Financial_Accounts/search?criteria=(Household.id:equals:${ownerId})&sort_by=Created_Time&sort_order=desc`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
