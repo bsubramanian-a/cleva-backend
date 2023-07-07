@@ -1,0 +1,6 @@
+{
+    "version": 2,
+    "routes": [
+      { "src": "/(.*)", "dest": "main.ts", "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"] }
+    ]
+}
