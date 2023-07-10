@@ -7,6 +7,7 @@ export interface IDatabaseConfigAttributes {
   dialect?: string;
   urlDatabase?: string;
   logging?: boolean;
+  dialectModule?: any;
 }
 
 export interface IDatabaseConfig {

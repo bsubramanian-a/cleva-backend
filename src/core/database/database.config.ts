@@ -11,6 +11,7 @@ export const databaseConfig: IDatabaseConfig = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: process.env.DB_DIALECT,
+    dialectModule: pg,
   },
   test: {
     username: process.env.DB_USER,
@@ -19,6 +20,7 @@ export const databaseConfig: IDatabaseConfig = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: process.env.DB_DIALECT,
+    dialectModule: pg,
   },
   production: {
     username: process.env.DB_USER,
@@ -27,5 +29,6 @@ export const databaseConfig: IDatabaseConfig = {
     host: process.env.DB_HOST,
     logging: false,
     dialect: process.env.DB_DIALECT,
+    dialectModule: pg,
   },
 };
