@@ -4,6 +4,9 @@ import { ZohoCRMService } from './service/zoho.service';
 import { UsersService } from './modules/users/users.service';
 import * as jwt from 'jsonwebtoken';
 import * as nodemailer from 'nodemailer';
+import { StreamChat } from 'stream-chat';
+
+const chatClient = new StreamChat(process.env.STREAM_KEY, process.env.STREAM_SECRET);
 
 const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
@@ -113,11 +116,20 @@ export class AppService {
         user = await this.userService.create({ email });
       }
   
-      const payload = { email: user.email };
+      const zohoUser: any = await this.ZohoCRMService.getUser(user?.email)
+      const payload = { email: user.email};
       const secretKey = process.env.SECRET_KEY;
       const token = jwt.sign(payload, secretKey);
+
+      const streamToken = await chatClient.createToken(zohoUser?.id?.toString());
+
+      const userDetails = {
+        name: zohoUser?.Full_Name,
+        id: zohoUser?.id,
+        streamToken
+      }
   
-      return { status: isNewUser ? 'register' : 'login', token };
+      return { status: isNewUser ? 'register' : 'login', token, user: userDetails };
     } catch (err) {
       console.log("login error", err);
     }
@@ -140,15 +152,24 @@ export class AppService {
         isNewUser = true;
         user = await this.userService.create(email);
       }
-    
-      const payload = {email: user.email };
+
+      const zohoUser: any = await this.ZohoCRMService.getUser(user?.email)
+      const payload = {email: user.email};
       const secretKey = process.env.SECRET_KEY;
       const token = jwt.sign(payload, secretKey);
 
+      const streamToken = await chatClient.createToken(zohoUser?.id?.toString());
+
+      const userDetails = {
+        name: zohoUser?.Full_Name,
+        id: zohoUser?.id,
+        streamToken
+      }
+
       if(isNewUser){
-        return {status: 'register', token};
+        return {status: 'register', token, user: userDetails};
       }else{
-        return {status: 'login', token};
+        return {status: 'login', token, user: userDetails};
       }
     }catch(err){
       console.log("login error", err);
@@ -166,13 +187,24 @@ export class AppService {
       }
     
       if (user.password === loginData.password) {
-        const payload = {email: user.email };
+        const zohoUser: any = await this.ZohoCRMService.getUser(user?.email)
+
+        const payload = {email: user.email};
         const secretKey = process.env.SECRET_KEY;
         const token = jwt.sign(payload, secretKey);
+
+        const streamToken = await chatClient.createToken(zohoUser?.id?.toString());
+
+        const userDetails = {
+          name: zohoUser?.Full_Name,
+          id: zohoUser?.id,
+          streamToken
+        }
+        
         if(isNewUser){
-          return {status: 'register', token};
+          return {status: 'register', token, user: userDetails};
         }else{
-          return {status: 'login', token};
+          return {status: 'login', token, user: userDetails};
         }
       } else {
         return {status: 403, message: "Incorrect password!"};

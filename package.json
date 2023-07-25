@@ -46,6 +46,7 @@
     "sequelize": "^6.31.1",
     "sequelize-cli": "^6.6.0",
     "sequelize-typescript": "^2.1.5",
+    "stream-chat": "^8.10.1",
     "zcrmsdk": "^1.1.0"
   },
   "devDependencies": {

@@ -43,24 +43,63 @@ export class ZohoCRMService {
       });
   }
 
-  async getUserDetails(email, access_token) : Promise<any> {
+  async getUser(email: string): Promise<string> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+
     try {
       const response = await axios.get(
         `${this.apiURL}/Contacts/search?criteria=(Email:equals:${email})`,
         {
           headers: {
             Authorization: `Zoho-oauthtoken ${access_token}`,
-          }, 
-        },
+          },
+        }
       );
-      // console.log("getUserDetails response", response);
-      if(response?.data?.data?.length > 0){
-        return response?.data?.data[0]?.Account_Name?.id
+  
+      if (response?.data?.data?.length > 0) {
+        return response?.data?.data[0];
       }
-      return "";
+  
+      return '';
     } catch (error) {
-      console.log('Getting Error1');
-      console.log(error?.response?.data);
+      console.log('Getting Error:', error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getUserDetails(email);
+      }
+
+      return "";
+    }
+  }
+
+  async getUserDetails(email: string): Promise<string> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/Contacts/search?criteria=(Email:equals:${email})`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+          },
+        }
+      );
+  
+      if (response?.data?.data?.length > 0) {
+        return response?.data?.data[0]?.Account_Name?.id || '';
+      }
+  
+      return '';
+    } catch (error) {
+      console.log('Getting Error:', error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getUserDetails(email);
+      }
+
+      return "";
     }
   }
 
@@ -135,7 +174,7 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
-      const ownerId =  await this.getUserDetails(email, access_token);
+      const ownerId =  await this.getUserDetails(email);
 
       if(ownerId != ""){
         const response = await axios.get(
@@ -251,7 +290,7 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
-      const ownerId =  await this.getUserDetails(email, access_token);
+      const ownerId =  await this.getUserDetails(email);
       // console.log("ownerId.........", ownerId)
 
       if(ownerId != ""){
@@ -583,7 +622,7 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
-      const ownerId =  await this.getUserDetails(email, access_token);
+      const ownerId =  await this.getUserDetails(email);
 
       if(ownerId != ""){
         const response = await axios.get(
@@ -1011,7 +1050,7 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
-      const ownerId =  await this.getUserDetails(email, access_token);
+      const ownerId =  await this.getUserDetails(email);
 
       if(ownerId != ""){
         const response = await axios.get(
@@ -1314,7 +1353,7 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
-      const ownerId =  await this.getUserDetails(email, access_token);
+      const ownerId =  await this.getUserDetails(email);
 
       if(ownerId != ""){
         const response = await axios.get(
