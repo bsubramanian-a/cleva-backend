@@ -170,6 +170,29 @@ export class ZohoCRMService {
     }
   }
 
+  async getCoaches(email: string): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/users/search?criteria=(email.id:equals:${email})`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+      if(error?.response?.data?.code == 'INVALID_TOKEN'){
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getCoaches(email);
+      }
+    }
+  }
+
   async getJournals(email:any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
