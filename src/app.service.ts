@@ -52,17 +52,47 @@ export class AppService {
   }
   
   async verifyEmail(loginData: any) {
-    const users = await this.ZohoCRMService.getUsers();
-    const user = users?.data?.find((user:any) => user?.Email === loginData?.email);
-    const dbuser = await this.userService.findOneByUserEmail(loginData?.email);
-    if(user?.Email){
-      const randomCode = generateRandomNumber();
-      console.log("randomCode", randomCode);
-      await this.userService.update(dbuser?.id, { otp: randomCode });
-      await this.sendVerificationEmail(user?.Email, randomCode);
-      return {isUserExist: true}
+    const userType = loginData.user_type;
+    // console.log("userType in verify email", userType);
+    let dbuser = await this.userService.findOneByUserEmail(loginData?.email);
+
+    if(!dbuser){
+      dbuser = await this.userService.create({email: loginData?.email});
     }
-    return {isUserExist: false};
+
+    if(userType == 'advisor_coach') {
+      const coachResult = await this.ZohoCRMService.getCoaches(loginData?.email);
+
+      // console.log("coachResult", coachResult?.users)
+
+      if(coachResult?.users?.length > 0){
+        // const coach = coachResult?.users[0];
+        const randomCode = generateRandomNumber();
+        // console.log("randomCode", randomCode);
+
+        await this.userService.update(dbuser?.id, { otp: randomCode });
+
+        // console.log("dbuser in coach", dbuser);
+        await this.sendVerificationEmail(loginData?.email, randomCode);
+
+        return {isUserExist: true};
+      }
+
+      return {isUserExist: false};
+    } else {
+      const users = await this.ZohoCRMService.getUsers();
+      const user = users?.data?.find((user:any) => user?.Email === loginData?.email);
+
+      if(user?.Email){
+        const randomCode = generateRandomNumber();
+        console.log("randomCode", randomCode);
+        await this.userService.update(dbuser?.id, { otp: randomCode });
+        await this.sendVerificationEmail(user?.Email, randomCode);
+
+        return {isUserExist: true}
+      }
+      return {isUserExist: false};
+    }
   }
   
   async verifyOTP(otp: any, email:string) {
@@ -76,6 +106,7 @@ export class AppService {
   }
 
   async appleLogin(data: any) {
+    const userType = data.user_type;
     let email = data?.email;
     let apple_user_id = data?.apple_user_id;
   
@@ -126,7 +157,9 @@ export class AppService {
       const userDetails = {
         name: zohoUser?.Full_Name,
         id: zohoUser?.id,
-        streamToken
+        streamToken,
+        owner: zohoUser?.Owner,
+        userType
       }
   
       return { status: isNewUser ? 'register' : 'login', token, user: userDetails };
@@ -136,6 +169,7 @@ export class AppService {
   }  
   
   async verifySocialEmail(data: any) {
+    const userType = data.user_type;
     let email = data?.email;
     console.log("verifySocialEmail", email);
     const users = await this.ZohoCRMService.getUsers();
@@ -163,7 +197,9 @@ export class AppService {
       const userDetails = {
         name: zohoUser?.Full_Name,
         id: zohoUser?.id,
-        streamToken
+        streamToken,
+        owner: zohoUser?.Owner,
+        userType
       }
 
       if(isNewUser){
@@ -178,6 +214,7 @@ export class AppService {
 
   async login(loginData: any) {
     try{
+      const userType = loginData.user_type;
       let user = await this.userService.findOneByUserEmail(loginData?.email);
       let isNewUser = false;
     
@@ -187,8 +224,17 @@ export class AppService {
       }
     
       if (user.password === loginData.password) {
-        const zohoUser: any = await this.ZohoCRMService.getUser(user?.email)
+        let zohoUser: any;
 
+        if(userType == 'advisor_coach') {
+          let coach = await this.ZohoCRMService.getCoaches(user?.email);
+          zohoUser = coach?.users[0];
+        } else {
+          zohoUser = await this.ZohoCRMService.getUser(user?.email);
+        }
+
+        // console.log("zohoUser", zohoUser);
+        
         const payload = {email: user.email};
         const secretKey = process.env.SECRET_KEY;
         const token = jwt.sign(payload, secretKey);
@@ -196,9 +242,11 @@ export class AppService {
         const streamToken = await chatClient.createToken(zohoUser?.id?.toString());
 
         const userDetails = {
-          name: zohoUser?.Full_Name,
+          name: userType == 'advisor_coach' ? zohoUser?.full_name : zohoUser?.Full_Name,
           id: zohoUser?.id,
-          streamToken
+          streamToken,
+          owner: zohoUser?.Owner,
+          userType
         }
         
         if(isNewUser){

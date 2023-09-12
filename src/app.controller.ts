@@ -1,9 +1,39 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req } from '@nestjs/common';
 import { AppService } from './app.service';
+import * as KJUR from 'jsrsasign';
+
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
+
+  generateSignature(sdkKey, sdkSecret, sessionName, role, sessionKey, userIdentity) {
+    const iat = Math.round(new Date().getTime() / 1000) - 30
+    const exp = iat + 60 * 60 * 2
+    const oHeader = { alg: 'HS256', typ: 'JWT' }
+
+    const oPayload = {
+      app_key: sdkKey,
+      tpc: sessionName,
+      role_type: role,
+      session_key: sessionKey,
+      user_identity: userIdentity,
+      version: 1,
+      iat: iat,
+      exp: exp
+    }
+
+    const sHeader = JSON.stringify(oHeader)
+    const sPayload = JSON.stringify(oPayload)
+    const sdkJWT = KJUR.jws.JWS.sign('HS256', sHeader, sPayload, sdkSecret)
+    return sdkJWT
+  }
+
+  @Get('get-zoom-token')
+  async getZoomtoken(@Req() req: any) {
+    // generateSignature(sdkKey, sdkSecret, sessionName, role, sessionKey, userIdentity) {
+    return this.generateSignature(process.env.ZOOM_VIDEO_SDK_KEY, process.env.ZOOM_VIDEO_SDK_SECRET, 'Cool Cars', 1, 'session123', 'user123')
+  }
 
   @Post('verify-email')
   async verifyEmail(@Body() loginData: any) {
