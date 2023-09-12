@@ -73,7 +73,7 @@ export class AppService {
         await this.userService.update(dbuser?.id, { otp: randomCode });
 
         // console.log("dbuser in coach", dbuser);
-        // await this.sendVerificationEmail(loginData?.email, randomCode);
+        await this.sendVerificationEmail(loginData?.email, randomCode);
 
         return {isUserExist: true};
       }
@@ -87,7 +87,7 @@ export class AppService {
         const randomCode = generateRandomNumber();
         console.log("randomCode", randomCode);
         await this.userService.update(dbuser?.id, { otp: randomCode });
-        // await this.sendVerificationEmail(user?.Email, randomCode);
+        await this.sendVerificationEmail(user?.Email, randomCode);
 
         return {isUserExist: true}
       }
