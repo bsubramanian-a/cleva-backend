@@ -1,13 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 import * as KJUR from 'jsrsasign';
-
+import { Subject } from 'rxjs';
+const { v4: uuidv4 } = require('uuid');
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  generateSignature(sdkKey, sdkSecret, sessionName, role, sessionKey, userIdentity) {
+  generateSignature(sdkKey, sdkSecret, sessionName, role, userIdentity) {
     const iat = Math.round(new Date().getTime() / 1000) - 30
     const exp = iat + 60 * 60 * 2
     const oHeader = { alg: 'HS256', typ: 'JWT' }
@@ -16,7 +17,7 @@ export class AppController {
       app_key: sdkKey,
       tpc: sessionName,
       role_type: role,
-      session_key: sessionKey,
+      session_key: uuidv4(),
       user_identity: userIdentity,
       version: 1,
       iat: iat,
@@ -30,9 +31,8 @@ export class AppController {
   }
 
   @Get('get-zoom-token')
-  async getZoomtoken(@Req() req: any) {
-    // generateSignature(sdkKey, sdkSecret, sessionName, role, sessionKey, userIdentity) {
-    return this.generateSignature(process.env.ZOOM_VIDEO_SDK_KEY, process.env.ZOOM_VIDEO_SDK_SECRET, 'Cool Cars', 1, 'session123', 'user123')
+  async getZoomtoken(@Query('subject') subject: string, @Query('userId') userId: string, @Req() req: any) {
+    return this.generateSignature(process.env.ZOOM_VIDEO_SDK_KEY, process.env.ZOOM_VIDEO_SDK_SECRET, subject, 1, userId);
   }
 
   @Post('verify-email')

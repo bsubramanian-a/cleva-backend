@@ -63,7 +63,7 @@ export class AppService {
     if(userType == 'advisor_coach') {
       const coachResult = await this.ZohoCRMService.getCoaches(loginData?.email);
 
-      // console.log("coachResult", coachResult?.users)
+      console.log("coachResult", coachResult?.users);
 
       if(coachResult?.users?.length > 0){
         // const coach = coachResult?.users[0];
