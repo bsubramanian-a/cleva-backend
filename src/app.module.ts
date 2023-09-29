@@ -13,6 +13,7 @@ import { usersProviders } from './modules/users/users.providers';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { goalsProviders } from './modules/goals/goals.providers';
 import { GoalsService } from './modules/goals/goals.service';
+import { ZoomService } from './service/zoom.service';
 
 @Module({
   imports: [DatabaseModule, OauthtokensModule, UsersModule, GoalsModule],
@@ -23,6 +24,7 @@ import { GoalsService } from './modules/goals/goals.service';
     UsersService,
     ZohoCRMService,
     GoalsService,
+    ZoomService,
     ...oauthtokensProviders,
     ...usersProviders,
     ...goalsProviders

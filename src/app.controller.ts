@@ -2,11 +2,19 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req } fr
 import { AppService } from './app.service';
 import * as KJUR from 'jsrsasign';
 import { Subject } from 'rxjs';
+import { ZoomService } from './service/zoom.service';
 const { v4: uuidv4 } = require('uuid');
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appService: AppService, private readonly zoomService: ZoomService) {}
+
+  @Post('create-meeting')
+  async createMeeting(@Body() body: { topic: string, startTime: string, endTime: string }): Promise<any> {
+    const { topic, startTime, endTime } = body;
+    const meeting = await this.zoomService.createMeeting(topic, startTime, endTime);
+    return meeting;
+  }
 
   generateSignature(sdkKey, sdkSecret, sessionName, role, userIdentity) {
     const iat = Math.round(new Date().getTime() / 1000) - 30
