@@ -10,10 +10,14 @@ export class AppController {
   constructor(private readonly appService: AppService, private readonly zoomService: ZoomService) {}
 
   @Post('create-meeting')
-  async createMeeting(@Body() body: { topic: string, startTime: string, endTime: string }): Promise<any> {
+  async createMeeting(@Body() body: { topic: string, startTime: string, endTime: string }, @Req() req: any): Promise<any> {
     const { topic, startTime, endTime } = body;
+    const email = req?.user?.email;
     const meeting = await this.zoomService.createMeeting(topic, startTime, endTime);
     return meeting;
+
+    // const checkScheduleAvailable = this.appService.checkScheduleAvailable(startTime, endTime, email);
+
   }
 
   generateSignature(sdkKey, sdkSecret, sessionName, role, userIdentity) {

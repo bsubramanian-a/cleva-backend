@@ -391,4 +391,8 @@ export class AppService {
   async updateAccounts(accounts: any) {
     return await this.ZohoCRMService.updateAccounts(accounts);
   }
+
+  async checkScheduleAvailable(startTime: any, endTime: any, email: any) {
+    return await this.ZohoCRMService.checkScheduleAvailable(startTime, endTime, email);    
+  }
 }

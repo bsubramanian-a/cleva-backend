@@ -1432,4 +1432,59 @@ export class ZohoCRMService {
       // Handle other errors as needed
     }
   }
+
+  async checkScheduleAvailable(startTime: any, endTime: any, email: any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    
+    try {
+      const ownerId = await this.getUserDetails(email); // need to send coach id from frontend not owner id
+      console.log("owner id", ownerId);
+
+      // Make a request to fetch all events for the specified owner
+      const response = await axios.get(
+        `${this.apiURL}/Events`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+          },
+        }
+      );
+      console.log("response===========", response?.data?.data);
+
+      if(response?.data?.data){
+        const events = response.data.data;
+
+        // Filter events based on the specified time range
+        const eventsWithinTimeRange = events.filter((event: any) => {
+          const eventStartTime = new Date(event.Start_DateTime);
+          const eventEndTime = new Date(event.End_DateTime);
+    
+          // Check if the event falls within the specified time range
+          return (
+            eventStartTime >= new Date(startTime) &&
+            eventEndTime <= new Date(endTime)
+          );
+        });
+    
+        // If eventsWithinTimeRange is not empty, meetings are scheduled at the specified time
+        if (eventsWithinTimeRange.length > 0) {
+          return true;
+        }
+
+        return false;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') { 
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id); 
+        return this.checkScheduleAvailable(startTime, endTime, email);
+      }
+      // Handle other errors as needed
+      throw error;
+    }
+  }  
 }
