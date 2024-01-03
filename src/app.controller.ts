@@ -7,19 +7,52 @@ const { v4: uuidv4 } = require('uuid');
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService, private readonly zoomService: ZoomService) {}
+  constructor(private readonly appService: AppService, private readonly zoomService: ZoomService) { }
 
-  @Post('create-meeting')
-  async createMeeting(@Body() body: { topic: string, startTime: string, endTime: string }, @Req() req: any): Promise<any> {
-    const { topic, startTime, endTime } = body;
-    const email = req?.user?.email;
-    const meeting = await this.zoomService.createMeeting(topic, startTime, endTime);
-    return meeting;
-
-    // const checkScheduleAvailable = this.appService.checkScheduleAvailable(startTime, endTime, email);
-
+  @Post('end-meeting')
+  async endMeeting(@Body() body: any): Promise<any> {
+    console.log("body", body);
   }
 
+  @Post('create-meeting')
+  async createMeeting(@Body() body: { topic: string, time: string, date: string, userId: string, coachId: string }, @Req() req: any): Promise<any> {
+    const { topic, time, date, userId, coachId } = body;
+    const email = req?.user?.email;
+
+    const endTime = this.addMinutesToTime(time, 30);
+
+    console.log("topic", topic);
+    console.log("time", time);
+    console.log("endTime", endTime);
+    console.log("date", date);
+    console.log("userId", userId);
+    console.log("coachId", coachId);
+
+    const meeting = await this.zoomService.createMeeting(topic, time, endTime, userId, coachId);
+    return "meeting";
+  }
+
+  addMinutesToTime(timeString: string, minutes: number): string {
+    console.log("timeString", timeString);
+    console.log("minutes", minutes);
+    const timeRegex = /^(0?[1-9]|1[0-2]):[0-5][0-9] ?[APap][Mm]$/;
+    if (!timeRegex.test(timeString)) {
+      throw new Error('Invalid time format. Use hh:mm AM/PM.');
+    }
+  
+    const [hours, originalMinutes, period] = timeString.split(/:| /);
+  
+    const totalMinutes = parseInt(hours, 10) * 60 + parseInt(originalMinutes, 10) + minutes;
+    const newHours = (Math.floor(totalMinutes / 60) % 12 + 12) % 12 || 12; // Handle 12-hour time
+    const newMinutes = totalMinutes % 60;
+  
+    // Determine the new period correctly
+    const newPeriod = totalMinutes >= 720 ? 'PM' : 'AM'; // 720 minutes is 12 hours
+  
+    const formattedTime = `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')} ${newPeriod}`;
+    return formattedTime;
+  }  
+  
   generateSignature(sdkKey, sdkSecret, sessionName, role, userIdentity) {
     const iat = Math.round(new Date().getTime() / 1000) - 30
     const exp = iat + 60 * 60 * 2
@@ -75,7 +108,7 @@ export class AppController {
   @Get('journals')
   async getJournals(@Req() req: any) {
     const email = req?.user?.email;
-    return this.appService.getJournals(email);   
+    return this.appService.getJournals(email);
   }
 
   @Get('exercises')
@@ -103,7 +136,7 @@ export class AppController {
   }
 
   @Put('profile')
-  updateProfile( @Body() datas: any, @Req() req: any) {
+  updateProfile(@Body() datas: any, @Req() req: any) {
     const email = req?.user?.email;
     return this.appService.updateProfile(datas, email);
   }
@@ -111,11 +144,11 @@ export class AppController {
   @Get('assets')
   async getAssets(@Req() req: any) {
     const email = req?.user?.email;
-  return this.appService.getAssets(email);
+    return this.appService.getAssets(email);
   }
 
   @Post('asset')
-  addAsset( @Body() assets: any, @Req() req: any) {
+  addAsset(@Body() assets: any, @Req() req: any) {
     const email = req?.user?.email;
     return this.appService.addAsset(assets, email);
   }
@@ -124,21 +157,21 @@ export class AppController {
   deleteAsset(@Param('id') id: string) {
     return this.appService.deleteAsset(id);
   }
- 
+
   @Put('assets')
-  update( @Body() assets: any) {
+  update(@Body() assets: any) {
     return this.appService.updateAssets(assets);
   }
 
   @Put('accounts')
-  updateaccounts( @Body() accounts: any) {
+  updateaccounts(@Body() accounts: any) {
     return this.appService.updateAccounts(accounts);
   }
 
   @Get('liabilities')
   async getLiabilities(@Req() req: any) {
     const email = req?.user?.email;
-    return this.appService.getLiabilities(email); 
+    return this.appService.getLiabilities(email);
   }
 
   @Delete('liability/:id')
@@ -154,9 +187,9 @@ export class AppController {
 
   @Get('account')
   async getAccount() {
-    return this.appService.getAccount(); 
+    return this.appService.getAccount();
   }
-  
+
   @Put('dependant')
   updateDependant(@Body() datas: any) {
     return this.appService.updateDependant(datas);
@@ -185,6 +218,6 @@ export class AppController {
   @Get('accounts')
   async getAccounts(@Req() req: any) {
     const email = req?.user?.email;
-    return this.appService.getAccounts(email); 
+    return this.appService.getAccounts(email);
   }
 }

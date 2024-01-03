@@ -7,9 +7,10 @@ import { access } from 'fs';
 export class ZoomService {
   private zoomApiUrl = process.env.ZOOM_API_URL;
 
-  constructor() {}
+  constructor() { }
 
-  async createMeeting(topic: string, startTime: string, endTime: string): Promise<any> {
+  async createMeeting(topic: string, startTime: string, endTime: string, userId: string, coachId: string): Promise<any> {
+    console.log("createMeeting")
     const starttime = new Date(startTime);
     const endtime = new Date(endTime);
 
@@ -27,9 +28,10 @@ export class ZoomService {
     };
 
     const requestConfig1: AxiosRequestConfig = { // Specify the type of the request configuration
-      headers: headers1, // Include the headers
-      // Add any other properties you need here 
+      headers: headers1,
     };
+
+    console.log("before res");
 
     const response = await axios.post(
       process.env.ZOOM_ACCESS_TOKEN_URL,
@@ -37,43 +39,51 @@ export class ZoomService {
       requestConfig1
     );
 
+    console.log("response", response);
+
     const accessToken = response.data.access_token;
+
+    console.log("accessToken", accessToken);
 
     const headers = {
       "Authorization": `Bearer ${accessToken}`,
-    };    
-
-    const requestConfig: AxiosRequestConfig = { // Specify the type of the request configuration
-      headers, // Include the headers
-      // Add any other properties you need here 
     };
 
-    try { 
-        const response = await axios.post(
-            `${this.zoomApiUrl}/users/me/meetings`,
-            {
-                topic,
-                type: 1, // 2 indicates a scheduled meeting
-                start_time: startTime, // Specify the start time for the meeting
-                duration: Math.floor((endtime?.getTime() - starttime?.getTime()) / 60000), // Calculate the duration in minutes
-                is_public: true,
-                settings: {
-                  join_before_host: true,
-                  // host_video: false, // Disable host video
-                  // participant_video: false, // Disable participant video
-                  // Other meeting settings...
-                  // "alternative_hosts": "testawebon1@gmail.com"
-                }
-            },
-            requestConfig
-        );
+    const requestConfig: AxiosRequestConfig = {
+      headers,
+    };
 
-        console.log("zoom created meeting", response);
+    try {
 
-        return response.data;
-    } catch (error) { 
-        console.log("zoom error", error)
-        throw error.response.data;
+      // const response = await axios.get(
+      //   `${this.zoomApiUrl}/meetings/81675575808`, requestConfig
+      // );
+      const response = await axios.post(
+          `${this.zoomApiUrl}/users/me/meetings`,
+          {
+              topic,
+              type: 3, // 2 indicates a scheduled meeting
+              start_time: startTime, // Specify the start time for the meeting
+              duration: Math.floor((endtime?.getTime() - starttime?.getTime()) / 60000),
+              is_public: true,
+              settings: {
+                join_before_host: true,
+                // host_video: false, // Disable host video
+                // participant_video: false, // Disable participant video
+                // Other meeting settings...
+                // "alternative_hosts": "testawebon1@gmail.com"
+                auto_recording: "cloud"
+              }
+          },
+          requestConfig
+      );
+
+      console.log("zoom created meeting", response);
+
+      return response.data;
+    } catch (error) {
+      console.log("zoom error", error)
+      throw error.response.data;
     }
   }
 }
