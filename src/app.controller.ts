@@ -10,7 +10,7 @@ export class AppController {
   constructor(private readonly appService: AppService, private readonly zoomService: ZoomService) { }
 
   @Post('end-meeting')
-  async endMeeting(@Body() body: any): Promise<any> {
+  async endMeeting(@Body() body: any) {
     console.log("body", body);
   }
 
@@ -19,17 +19,21 @@ export class AppController {
     const { topic, time, date, userId, coachId } = body;
     const email = req?.user?.email;
 
-    const endTime = this.addMinutesToTime(time, 30);
+    const startTimeString = `${date} ${time}`;
+    const endTimeString = `${date} ${this.addMinutesToTime(time, 30)}`;
+  
+    const starttime = new Date(startTimeString);
+    const endtime = new Date(endTimeString);
 
-    console.log("topic", topic);
-    console.log("time", time);
-    console.log("endTime", endTime);
-    console.log("date", date);
-    console.log("userId", userId);
-    console.log("coachId", coachId);
+    const meeting = await this.zoomService.createMeeting(topic, starttime, endtime, userId, coachId);
 
-    const meeting = await this.zoomService.createMeeting(topic, time, endTime, userId, coachId);
-    return "meeting";
+    // console.log("meeting create res", meeting);
+
+    const meetingData = {
+      topic, id: meeting?.id, createdAt: meeting?.created_at, coachUrl: meeting?.start_url, joinUrl: meeting?.join_url, email, userId, coachId, starttime, endtime
+    }
+
+    return this.appService.addMeeting(meetingData);
   }
 
   addMinutesToTime(timeString: string, minutes: number): string {
@@ -39,20 +43,19 @@ export class AppController {
     if (!timeRegex.test(timeString)) {
       throw new Error('Invalid time format. Use hh:mm AM/PM.');
     }
-  
+
     const [hours, originalMinutes, period] = timeString.split(/:| /);
-  
+
     const totalMinutes = parseInt(hours, 10) * 60 + parseInt(originalMinutes, 10) + minutes;
     const newHours = (Math.floor(totalMinutes / 60) % 12 + 12) % 12 || 12; // Handle 12-hour time
     const newMinutes = totalMinutes % 60;
-  
+
     // Determine the new period correctly
     const newPeriod = totalMinutes >= 720 ? 'PM' : 'AM'; // 720 minutes is 12 hours
-  
+
     const formattedTime = `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')} ${newPeriod}`;
     return formattedTime;
-  }  
-  
+  }
   generateSignature(sdkKey, sdkSecret, sessionName, role, userIdentity) {
     const iat = Math.round(new Date().getTime() / 1000) - 30
     const exp = iat + 60 * 60 * 2
@@ -103,6 +106,12 @@ export class AppController {
   @Post('login')
   async login(@Body() loginData: any) {
     return this.appService.login(loginData);
+  }
+
+  @Get('meetings/:type')
+  async getMeetings(@Req() req: any, @Param('type') type: string) {
+    const email = req?.user?.email;
+    return this.appService.getMeetings(email, type);
   }
 
   @Get('journals')

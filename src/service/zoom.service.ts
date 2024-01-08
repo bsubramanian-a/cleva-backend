@@ -9,10 +9,12 @@ export class ZoomService {
 
   constructor() { }
 
-  async createMeeting(topic: string, startTime: string, endTime: string, userId: string, coachId: string): Promise<any> {
-    console.log("createMeeting")
+  async createMeeting(topic: string, startTime: Date, endTime: Date, userId: string, coachId: string): Promise<any> {
+    console.log("createMeeting", startTime, endTime);
     const starttime = new Date(startTime);
     const endtime = new Date(endTime);
+
+    console.log("createMeeting dates", starttime, endtime);
 
     const zoomApiKey = process.env.SERVER_2_SERVER_KEY;
     const zoomApiSecret = process.env.SERVER_2_SERVER_SECRET;
@@ -31,19 +33,13 @@ export class ZoomService {
       headers: headers1,
     };
 
-    console.log("before res");
-
     const response = await axios.post(
       process.env.ZOOM_ACCESS_TOKEN_URL,
       requestBody,
       requestConfig1
     );
 
-    console.log("response", response);
-
     const accessToken = response.data.access_token;
-
-    console.log("accessToken", accessToken);
 
     const headers = {
       "Authorization": `Bearer ${accessToken}`,
@@ -54,12 +50,11 @@ export class ZoomService {
     };
 
     try {
-
       // const response = await axios.get(
       //   `${this.zoomApiUrl}/meetings/81675575808`, requestConfig
       // );
       const response = await axios.post(
-          `${this.zoomApiUrl}/users/me/meetings`,
+          `${this.zoomApiUrl}/users/z3Vu00vuRm6XktiHEuEsiA/meetings`,
           {
               topic,
               type: 3, // 2 indicates a scheduled meeting
@@ -78,7 +73,7 @@ export class ZoomService {
           requestConfig
       );
 
-      console.log("zoom created meeting", response);
+      // console.log("zoom created meeting", response);
 
       return response.data;
     } catch (error) {

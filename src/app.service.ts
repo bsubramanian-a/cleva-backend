@@ -147,7 +147,8 @@ export class AppService {
         user = await this.userService.create({ email });
       }
   
-      const zohoUser: any = await this.ZohoCRMService.getUser(user?.email)
+      const zohoUser: any = await this.ZohoCRMService.getUser(user?.email);
+      const coach = await this.ZohoCRMService.getCoaches(zohoUser?.Owner?.email);
       const payload = { email: user.email};
       const secretKey = process.env.SECRET_KEY;
       const token = jwt.sign(payload, secretKey);
@@ -159,7 +160,8 @@ export class AppService {
         id: zohoUser?.id,
         streamToken,
         owner: zohoUser?.Owner,
-        userType
+        userType,
+        coach_url: userType == 'advisor_coach' ? "" : coach?.users[0]?.Zoho_Bookings_Link
       }
   
       return { status: isNewUser ? 'register' : 'login', token, user: userDetails };
@@ -188,6 +190,7 @@ export class AppService {
       }
 
       const zohoUser: any = await this.ZohoCRMService.getUser(user?.email)
+      const coach = await this.ZohoCRMService.getCoaches(zohoUser?.Owner?.email);
       const payload = {email: user.email};
       const secretKey = process.env.SECRET_KEY;
       const token = jwt.sign(payload, secretKey);
@@ -199,7 +202,8 @@ export class AppService {
         id: zohoUser?.id,
         streamToken,
         owner: zohoUser?.Owner,
-        userType
+        userType,
+        coach_url: userType == 'advisor_coach' ? "" : coach?.users[0]?.Zoho_Bookings_Link
       }
 
       if(isNewUser){
@@ -217,6 +221,7 @@ export class AppService {
       const userType = loginData.user_type;
       let user = await this.userService.findOneByUserEmail(loginData?.email);
       let isNewUser = false;
+      let coach;
     
       if (!user) {
         isNewUser = true;
@@ -231,6 +236,7 @@ export class AppService {
           zohoUser = coach?.users[0];
         } else {
           zohoUser = await this.ZohoCRMService.getUser(user?.email);
+          coach = await this.ZohoCRMService.getCoaches(zohoUser?.Owner?.email);
         }
 
         // console.log("zohoUser", zohoUser);
@@ -246,7 +252,8 @@ export class AppService {
           id: zohoUser?.id,
           streamToken,
           owner: zohoUser?.Owner,
-          userType
+          userType,
+          coach_url: userType == 'advisor_coach' ? "" : coach?.users[0]?.Zoho_Bookings_Link
         }
         
         if(isNewUser){
@@ -261,6 +268,20 @@ export class AppService {
       console.log("login error", err);
     }
   }  
+
+  async getMeetings(email, type){
+    try{
+      const meetings = await this.ZohoCRMService.getMeetings(email, type);
+
+      return meetings;
+    }catch(err){
+      console.log("getJournal", err);
+    }
+  }
+
+  async addMeeting(meetingData: any) {
+    return await this.ZohoCRMService.addMeeting(meetingData);
+  }
 
   async getJournals(email){
     try{
