@@ -3,19 +3,97 @@ import { AppService } from './app.service';
 import * as KJUR from 'jsrsasign';
 import { Subject } from 'rxjs';
 import { ZoomService } from './service/zoom.service';
+import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 const { v4: uuidv4 } = require('uuid');
 
+@ApiExtraModels()
+export class CreateMeetingDto {
+  @ApiProperty() topic: string;
+  @ApiProperty() time: string;
+  @ApiProperty() date: string;
+  @ApiProperty() userId: string;
+  @ApiProperty() coachId: string;
+}
+// export class MeetingData {
+//   topic: string;
+//   id: string;
+//   createdAt: string;
+//   coachUrl: string;
+//   joinUrl: string;
+//   email: string; 
+//   userId: string; 
+//   coachId: string; 
+//   starttime: string; 
+//   endtime: string;
+// }
+
+
+@ApiBearerAuth()
 @Controller()
+
 export class AppController {
   constructor(private readonly appService: AppService, private readonly zoomService: ZoomService) { }
 
-  @Post('end-meeting')
-  async endMeeting(@Body() body: any) {
-    console.log("body", body);
+  @Get('get-zoom-token')
+  @ApiTags('Zoom Integrations')
+  @ApiOperation({ summary: 'Get Zoom Token', description: 'Use this to get the token from zoom.' })  
+  @ApiResponse({ status: 201, description: 'The Meeting has been successfully end.'})
+  @ApiResponse({ status: 403, description: 'Forbidden.'}) 
+  async getZoomtoken(@Query('subject') subject: string, @Query('userId') userId: string, @Req() req: any) {
+    return this.generateSignature(process.env.ZOOM_VIDEO_SDK_KEY, process.env.ZOOM_VIDEO_SDK_SECRET, subject, 1, userId);
   }
 
+  @Post('login')
+  @ApiTags('Login, Verify OTP, Verify Social Email')
+  @ApiOperation({ summary: 'Get Zoom Token', description: 'Use this to get the token from zoom.' })  
+  @ApiResponse({ status: 201, description: 'The Meeting has been successfully end.'})
+  @ApiResponse({ status: 403, description: 'Forbidden.'})
+  async login(@Body() loginData: any) {
+    return this.appService.login(loginData);
+  }
+
+  @Post('verify-otp')
+  @ApiTags('Login, Verify OTP, Verify Social Email')
+  @ApiOperation({ summary: 'Get Zoom Token', description: 'Use this to get the token from zoom.' })  
+  @ApiResponse({ status: 201, description: 'The Meeting has been successfully end.'})
+  @ApiResponse({ status: 403, description: 'Forbidden.'})
+  async verifyOTP(@Body() otpData: any) {
+    return this.appService.verifyOTP(otpData?.otp, otpData?.email);
+  }
+
+  @Post('verify-email')
+  @ApiTags('Login, Verify OTP, Verify Social Email')
+  @ApiOperation({ summary: 'Get Zoom Token', description: 'Use this to get the token from zoom.' })  
+  @ApiResponse({ status: 201, description: 'The Meeting has been successfully end.'})
+  @ApiResponse({ status: 403, description: 'Forbidden.'})
+  async verifyEmail(@Body() loginData: any) {
+    return this.appService.verifyEmail(loginData);
+  } 
+
+  @Post('verify-apple-email')
+  @ApiTags('Login, Verify OTP, Verify Social Email')
+  @ApiOperation({ summary: 'Get Zoom Token', description: 'Use this to get the token from zoom.' })  
+  @ApiResponse({ status: 201, description: 'The Meeting has been successfully end.'})
+  @ApiResponse({ status: 403, description: 'Forbidden.'})
+  async appleLogin(@Body() loginData: any) {
+    return this.appService.appleLogin(loginData);
+  }
+
+  @Post('verify-social-email')
+  @ApiTags('Login, Verify OTP, Verify Social Email')
+  @ApiOperation({ summary: 'Get Zoom Token', description: 'Use this to get the token from zoom.' })  
+  @ApiResponse({ status: 201, description: 'The Meeting has been successfully end.'})
+  @ApiResponse({ status: 403, description: 'Forbidden.'})
+  async verifySocialEmail(@Body() loginData: any) {
+    return this.appService.verifySocialEmail(loginData);
+  }  
+
   @Post('create-meeting')
-  async createMeeting(@Body() body: { topic: string, time: string, date: string, userId: string, coachId: string }, @Req() req: any): Promise<any> {
+  @ApiTags('Meeting Management')
+  @ApiOperation({ summary: 'Create Meeting', description: 'Use this to create meetings. This will also create a record in Zoho CRM also.' })  
+  @ApiResponse({ status: 201, description: 'The Meeting has been successfully created.'})
+  @ApiResponse({ status: 403, description: 'Forbidden.'}) 
+  async createMeeting( @Body() body: CreateMeetingDto, @Req() req: any): Promise<any> {
     const { topic, time, date, userId, coachId } = body;
     const email = req?.user?.email;
 
@@ -35,6 +113,25 @@ export class AppController {
 
     return this.appService.addMeeting(meetingData);
   }
+
+  @Get('meetings/:type')
+  @ApiTags('Meeting Management')
+  @ApiOperation({ summary: 'Get Meeting Type', description: 'This is used to get type of meeting.' }) 
+  async getMeetings(@Req() req: any, @Param('type') type: string) {
+    const email = req?.user?.email;
+    return this.appService.getMeetings(email, type);
+  }
+
+  @Post('end-meeting')
+  @ApiTags('Meeting Management')
+  @ApiOperation({ summary: 'End Meeting', description: 'Use this to end the meetings. This will also create a record in Zoho CRM also.' })  
+  @ApiResponse({ status: 201, description: 'The Meeting has been successfully end.'})
+  @ApiResponse({ status: 403, description: 'Forbidden.'}) 
+  async endMeeting(@Body() body: any) {
+    console.log("body", body);
+  }  
+
+  
 
   addMinutesToTime(timeString: string, minutes: number): string {
     console.log("timeString", timeString);
@@ -78,41 +175,11 @@ export class AppController {
     return sdkJWT
   }
 
-  @Get('get-zoom-token')
-  async getZoomtoken(@Query('subject') subject: string, @Query('userId') userId: string, @Req() req: any) {
-    return this.generateSignature(process.env.ZOOM_VIDEO_SDK_KEY, process.env.ZOOM_VIDEO_SDK_SECRET, subject, 1, userId);
-  }
+  
 
-  @Post('verify-email')
-  async verifyEmail(@Body() loginData: any) {
-    return this.appService.verifyEmail(loginData);
-  }
+  
 
-  @Post('verify-otp')
-  async verifyOTP(@Body() otpData: any) {
-    return this.appService.verifyOTP(otpData?.otp, otpData?.email);
-  }
-
-  @Post('verify-apple-email')
-  async appleLogin(@Body() loginData: any) {
-    return this.appService.appleLogin(loginData);
-  }
-
-  @Post('verify-social-email')
-  async verifySocialEmail(@Body() loginData: any) {
-    return this.appService.verifySocialEmail(loginData);
-  }
-
-  @Post('login')
-  async login(@Body() loginData: any) {
-    return this.appService.login(loginData);
-  }
-
-  @Get('meetings/:type')
-  async getMeetings(@Req() req: any, @Param('type') type: string) {
-    const email = req?.user?.email;
-    return this.appService.getMeetings(email, type);
-  }
+  
 
   @Get('journals')
   async getJournals(@Req() req: any) {

@@ -6,10 +6,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Cleva')
+    .setTitle('Cleva Accounting Application')
     .setDescription('The Cleva API description')
-    .setVersion('1.0')
-    .addTag('cleva')
+    .setVersion('1.0')   
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
