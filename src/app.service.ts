@@ -52,6 +52,7 @@ export class AppService {
   }
   
   async verifyEmail(loginData: any) {
+    console.log("logindata", loginData);
     const userType = loginData.user_type;
     // console.log("userType in verify email", userType);
     let dbuser = await this.userService.findOneByUserEmail(loginData?.email);
@@ -175,6 +176,7 @@ export class AppService {
     let email = data?.email;
     console.log("verifySocialEmail", email);
     const users = await this.ZohoCRMService.getUsers();
+    console.log("users from zoho crm service", users)
     const user = users?.data?.find((user:any) => user?.Email === email);
     if(!user?.Email){
       return {isUserExist : false}
@@ -222,21 +224,37 @@ export class AppService {
       let user = await this.userService.findOneByUserEmail(loginData?.email);
       let isNewUser = false;
       let coach;
+
+      console.log("user",user);
+      console.log("loginData", loginData);
     
       if (!user) {
         isNewUser = true;
+        console.log("yes new user", loginData);
         user = await this.userService.create(loginData);
+      } else if(user.password == null) {
+        let updateuser = await this.userService.update(user.id, { email: loginData.email, password: loginData.password });
+        console.log("updateuser", updateuser);
+        user = await this.userService.findOneByUserEmail(loginData?.email);
+        console.log("updated user", user);
       }
+
+
+      console.log("passwords",user.password, loginData.password)
     
       if (user.password === loginData.password) {
         let zohoUser: any;
 
         if(userType == 'advisor_coach') {
+          console.log("userType", userType);
           let coach = await this.ZohoCRMService.getCoaches(user?.email);
           zohoUser = coach?.users[0];
         } else {
+          console.log("userType", userType);
           zohoUser = await this.ZohoCRMService.getUser(user?.email);
-          coach = await this.ZohoCRMService.getCoaches(zohoUser?.Owner?.email);
+          console.log("zohoUser", zohoUser);
+          coach = await this.ZohoCRMService.getCoaches(zohoUser?.Owner?.email);          
+          console.log("coach", coach);
         }
 
         // console.log("zohoUser", zohoUser);
@@ -244,8 +262,12 @@ export class AppService {
         const payload = {email: user.email};
         const secretKey = process.env.SECRET_KEY;
         const token = jwt.sign(payload, secretKey);
+        console.log("payload",payload)
+        console.log("token",token)
+        console.log("secretKey",secretKey)
 
         const streamToken = await chatClient.createToken(zohoUser?.id?.toString());
+        console.log("streamToken",streamToken)
 
         const userDetails = {
           name: userType == 'advisor_coach' ? zohoUser?.full_name : zohoUser?.Full_Name,
@@ -255,10 +277,14 @@ export class AppService {
           userType,
           coach_url: userType == 'advisor_coach' ? "" : coach?.users[0]?.Zoho_Bookings_Link
         }
+        console.log("userDetails",userDetails)
+        console.log("isNewUser",isNewUser)
         
         if(isNewUser){
+          console.log("coming inside new user")
           return {status: 'register', token, user: userDetails};
         }else{
+          console.log("coming inside login")
           return {status: 'login', token, user: userDetails};
         }
       } else {
@@ -370,6 +396,7 @@ export class AppService {
   async getProfile(email) {
     try{ 
       const profile = this.ZohoCRMService.getProfile(email);
+      console.log("profile", profile);
       return profile;
     }catch(err){
       console.log("getProfile", err);

@@ -11,6 +11,7 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    console.log("createUserDto", createUserDto);
     return await this.userRepository.create<User>(createUserDto);
   }
 
@@ -50,6 +51,8 @@ export class UsersService {
   }
 
   async updateUser(id: number, updateUserDto: any) {
+    console.log("updateUserDto", updateUserDto);
+    console.log("id", id);
     const updated = await this.userRepository.update<User>(updateUserDto?.dataValues, {
       where: { id },
     });

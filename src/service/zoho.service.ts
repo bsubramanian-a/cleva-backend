@@ -58,7 +58,7 @@ export class ZohoCRMService {
         }
       );
 
-      console.log("response", response);
+      console.log("contact search response", response?.data?.data);
 
       if (response?.data?.data?.length > 0) {
         return response?.data?.data[0];
@@ -171,7 +171,7 @@ export class ZohoCRMService {
       );
       return response.data;
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error2');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -192,9 +192,10 @@ export class ZohoCRMService {
           },
         },
       );
+      console.log("users from zoho 2", response.data);
       return response.data;
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error4');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -220,7 +221,7 @@ export class ZohoCRMService {
       }
       return [];
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error3');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -243,7 +244,7 @@ export class ZohoCRMService {
       );
       return response.data;
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error5');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -284,7 +285,7 @@ export class ZohoCRMService {
         return [];
       }
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error6');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -398,7 +399,7 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error7');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -427,7 +428,7 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error8');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -456,7 +457,7 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error9');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -485,7 +486,7 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error10');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -554,7 +555,7 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error11');
       console.log(error);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -787,7 +788,7 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error12');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -817,7 +818,7 @@ export class ZohoCRMService {
       // console.log("updateAssets response", response)
       return response.data;
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error13');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -847,7 +848,7 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error14');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -1170,7 +1171,7 @@ export class ZohoCRMService {
       }
       return response.data;
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error15');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -1197,6 +1198,8 @@ export class ZohoCRMService {
         },
         data: data,
       };
+
+      console.log("config",config);
 
       axios
         .request(config)
@@ -1247,7 +1250,7 @@ export class ZohoCRMService {
           resolve(response.data.access_token);
         })
         .catch((error) => {
-          console.log('Getting Error2');
+          console.log('Getting Error3');
           console.log(error);
           reject(error);
         });
@@ -1316,7 +1319,7 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error16');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -1578,7 +1581,7 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error17');
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
@@ -1662,7 +1665,7 @@ export class ZohoCRMService {
         return false;
       }
     } catch (error) {
-      console.log('Getting Error1');
+      console.log('Getting Error18');
       console.log(error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
