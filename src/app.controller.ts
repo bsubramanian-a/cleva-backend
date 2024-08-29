@@ -105,7 +105,7 @@ export class AppController {
 
     const meeting = await this.zoomService.createMeeting(topic, starttime, endtime, userId, coachId);
 
-    // console.log("meeting create res", meeting);
+    // //console.log("meeting create res", meeting);
 
     const meetingData = {
       topic, id: meeting?.id, createdAt: meeting?.created_at, coachUrl: meeting?.start_url, joinUrl: meeting?.join_url, email, userId, coachId, starttime, endtime
@@ -128,14 +128,14 @@ export class AppController {
   @ApiResponse({ status: 201, description: 'The Meeting has been successfully end.'})
   @ApiResponse({ status: 403, description: 'Forbidden.'}) 
   async endMeeting(@Body() body: any) {
-    console.log("body", body);
+    //console.log("body", body);
   }  
 
   
 
   addMinutesToTime(timeString: string, minutes: number): string {
-    console.log("timeString", timeString);
-    console.log("minutes", minutes);
+    //console.log("timeString", timeString);
+    //console.log("minutes", minutes);
     const timeRegex = /^(0?[1-9]|1[0-2]):[0-5][0-9] ?[APap][Mm]$/;
     if (!timeRegex.test(timeString)) {
       throw new Error('Invalid time format. Use hh:mm AM/PM.');
@@ -173,13 +173,7 @@ export class AppController {
     const sPayload = JSON.stringify(oPayload)
     const sdkJWT = KJUR.jws.JWS.sign('HS256', sHeader, sPayload, sdkSecret)
     return sdkJWT
-  }
-
-  
-
-  
-
-  
+  }  
 
   @Get('journals')
   async getJournals(@Req() req: any) {
@@ -190,8 +184,36 @@ export class AppController {
   @Get('exercises')
   async getExercises(@Req() req: any) {
     const email = req?.user?.email;
+    //console.log("req1",req.user)
+    //console.log("email1", email);
     return this.appService.getExercises(email);
   }
+
+  @Get('supersorted')
+  async getSuperSorted(@Req() req: any) {
+    const email = req?.user?.email;
+    //console.log("req",req.user)
+    //console.log("email", email);
+    return this.appService.getSuperSorted(email);
+  }
+
+  @Get('rollingaccountbalance')
+  async getRollingAccountBalance(@Req() req: any) {
+    const email = req?.user?.email;
+    //console.log("req",req.user)
+    //console.log("email", email);
+    return this.appService.getRollingAccountBalance(email);
+  }
+
+  @Get('notes')
+  async getNotes(@Req() req: any) {
+    const email = req?.user?.email;
+    //console.log("req",req.user)
+    //console.log("email", email);
+    return this.appService.getNotes(email);
+  }
+
+  
 
   @Get('summary')
   async getSummary(@Req() req: any) {

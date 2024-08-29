@@ -10,11 +10,11 @@ export class ZoomService {
   constructor() { }
 
   async createMeeting(topic: string, startTime: Date, endTime: Date, userId: string, coachId: string): Promise<any> {
-    console.log("createMeeting", startTime, endTime);
+    //console.log("createMeeting", startTime, endTime);
     const starttime = new Date(startTime);
     const endtime = new Date(endTime);
 
-    console.log("createMeeting dates", starttime, endtime);
+    //console.log("createMeeting dates", starttime, endtime);
 
     const zoomApiKey = process.env.SERVER_2_SERVER_KEY;
     const zoomApiSecret = process.env.SERVER_2_SERVER_SECRET;
@@ -73,11 +73,11 @@ export class ZoomService {
           requestConfig
       );
 
-      // console.log("zoom created meeting", response);
+      // //console.log("zoom created meeting", response);
 
       return response.data;
     } catch (error) {
-      console.log("zoom error", error)
+      //console.log("zoom error", error)
       throw error.response.data;
     }
   }
