@@ -37,10 +37,10 @@ export class ZohoCRMService {
     axios
       .request(config)
       .then((response) => {
-        //console.log(JSON.stringify(response.data));
+        console.log(JSON.stringify(response.data));
       })
       .catch((error) => {
-        //console.log(error);
+        console.log(error);
       });
   }
 
@@ -58,7 +58,7 @@ export class ZohoCRMService {
         }
       );
 
-      //console.log("contact search response", response?.data?.data);
+      console.log("contact search response", response?.data?.data);
 
       if (response?.data?.data?.length > 0) {
         return response?.data?.data[0];
@@ -66,7 +66,7 @@ export class ZohoCRMService {
 
       return '';
     } catch (error) {
-      //console.log('Getting Error:', error?.response?.data);
+      console.log('Getting Error:', error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getUserDetails(email);
@@ -96,7 +96,7 @@ export class ZohoCRMService {
 
       return '';
     } catch (error) {
-      //console.log('Getting Error:', error?.response?.data);
+      console.log('Getting Error:', error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getUserById(id);
@@ -123,7 +123,7 @@ export class ZohoCRMService {
       }
       return '';
     } catch (error) {
-      //console.log('Getting Error:', error?.response?.data);
+      console.log('Getting Error:', error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getUserId(email);
@@ -136,8 +136,8 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
 
-    //console.log("tokenFromDb", tokenFromDb); 
-    //console.log("access_token", access_token);
+    console.log("tokenFromDb", tokenFromDb); 
+    console.log("access_token", access_token);
 
     try {
       const response = await axios.get(
@@ -149,16 +149,16 @@ export class ZohoCRMService {
         }
       );
 
-      //console.log("contact search response", response?.data?.data);
+      console.log("contact search response", response?.data?.data);
 
       if (response?.data?.data?.length > 0) {
-        //console.log("contact search response account name", response?.data?.data[0]?.Account_Name);
+        console.log("contact search response account name", response?.data?.data[0]?.Account_Name);
         return response?.data?.data[0]?.Account_Name?.id || '';
       }
 
       return '';
     } catch (error) {
-      //console.log('Getting Error:', error?.response?.data);
+      console.log('Getting Error:', error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getUserDetails(email);
@@ -180,13 +180,13 @@ export class ZohoCRMService {
       );
       
       if (response?.data?.data?.length > 0) {
-        ////console.log("getUserDetails response", response?.data?.data);
+        //console.log("getUserDetails response", response?.data?.data);
         return response?.data?.data[0]?.Created_By?.id
       }
       return "";
     } catch (error) {
-      //console.log('Getting Error1');
-      //console.log(error?.response?.data);
+      console.log('Getting Error1');
+      console.log(error?.response?.data);
     }
   }
 
@@ -204,8 +204,8 @@ export class ZohoCRMService {
       );
       return response.data;
     } catch (error) {
-      //console.log('Getting Error2');
-      //console.log(error?.response?.data);
+      console.log('Getting Error2');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getAccount();
@@ -225,11 +225,11 @@ export class ZohoCRMService {
           },
         },
       );
-      //console.log("users from zoho 2", response.data);
+      console.log("users from zoho 2", response.data);
       return response.data;
     } catch (error) {
-      //console.log('Getting Error4');
-      //console.log(error?.response?.data);
+      console.log('Getting Error4');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getUsers();
@@ -254,8 +254,8 @@ export class ZohoCRMService {
       }
       return [];
     } catch (error) {
-      //console.log('Getting Error3');
-      //console.log(error?.response?.data);
+      console.log('Getting Error3');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getCoachById(id);
@@ -277,8 +277,8 @@ export class ZohoCRMService {
       );
       return response.data;
     } catch (error) {
-      //console.log('Getting Error5');
-      //console.log(error?.response?.data);
+      console.log('Getting Error5');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getCoaches(email);
@@ -318,8 +318,8 @@ export class ZohoCRMService {
         return [];
       }
     } catch (error) {
-      //console.log('Getting Error6');
-      //console.log(error?.response?.data);
+      console.log('Getting Error6');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getMeetings(email, type);
@@ -356,7 +356,7 @@ export class ZohoCRMService {
     const user: any = await this.getUserById(userId);
     const coach: any = await this.getCoachById(coachId);
 
-    //console.log("coach", coach);
+    console.log("coach", coach);
 
     const meetingData = {
       "$meeting_details": {
@@ -385,7 +385,7 @@ export class ZohoCRMService {
       "Remind_At": result?.zohoFormattedReminder
     }
 
-    //console.log("meeting data", meetingData);
+    console.log("meeting data", meetingData);
 
     const requestData = {
       data: [meetingData],
@@ -402,9 +402,9 @@ export class ZohoCRMService {
           },
         }
       );
-      //console.log("Create meeting with API response", response?.data, response?.data?.data[0]?.details);
+      console.log("Create meeting with API response", response?.data, response?.data?.data[0]?.details);
     } catch (error) {
-      //console.log('Error creating meeting with API', error?.response);
+      console.log('Error creating meeting with API', error?.response);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.addMeeting(data);
@@ -432,8 +432,8 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      //console.log('Getting Error7');
-      //console.log(error?.response?.data);
+      console.log('Getting Error7');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getJournals(email);
@@ -443,7 +443,7 @@ export class ZohoCRMService {
 
   async getRollingAccountBalance(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    //console.log("tokenFromDb", tokenFromDb);
+    console.log("tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
@@ -470,8 +470,8 @@ export class ZohoCRMService {
       }
       return { data: [], message: "No data available" };
     } catch (error) {
-      //console.log('Getting Error1118');
-      //console.log(error?.response?.data);
+      console.log('Getting Error1118');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getRollingAccountBalance(email);
@@ -481,14 +481,14 @@ export class ZohoCRMService {
 
   async getSuperSorted(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    //console.log("tokenFromDb", tokenFromDb);
+    console.log("tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
       
       //const ownerId = await this.getOwnerId(email, access_token);
       console.log("userId supersorted", userId, email);
-      // console.log("super sorted url ",`${this.apiURL}/Super_Sorted/search?criteria=(Contact.id:equals:${userId})&fields=Advantage_Rules_Tax_Benefits,Aust_Fixed_Income,Australian_Equities,Coach_Super_Notes,Contact,Contribute_a_Bit_More,Created_By,Currency,Date_Edited,Date_Edited_Coach,Email,Email_Opt_Out,Exchange_Rate,Fees_Insurance_Multiple_Accounts,Have_Enough_On_Track,Infrastructure,International_Equities,Intnl_Fixed_Income,Invested_Above_Average_Super_Fund,Invested_Needs_Goals_Objectives,Linked_to_Account,Modified_By,My_Super_Notes,Property,Retirement_Goal_Text,Retirement_Goal,Secondary_Email,Record_Image,Name,Owner,Super_Sorted_Scale,Super_Sorted_Score,Super_Target_Goal,Super_Target_Age_Goal,Super_Target_Goal_Date,Tag,Understanding_of_Insurance_in_Super,Valid_Death_Benefit`)
+      console.log("super sorted url ",`${this.apiURL}/Super_Sorted/search?criteria=(Contact.id:equals:${userId})&fields=Advantage_Rules_Tax_Benefits,Aust_Fixed_Income,Australian_Equities,Coach_Super_Notes,Contact,Contribute_a_Bit_More,Created_By,Currency,Date_Edited,Date_Edited_Coach,Email,Email_Opt_Out,Exchange_Rate,Fees_Insurance_Multiple_Accounts,Have_Enough_On_Track,Infrastructure,International_Equities,Intnl_Fixed_Income,Invested_Above_Average_Super_Fund,Invested_Needs_Goals_Objectives,Linked_to_Account,Modified_By,My_Super_Notes,Property,Retirement_Goal_Text,Retirement_Goal,Secondary_Email,Record_Image,Name,Owner,Super_Sorted_Scale,Super_Sorted_Score,Super_Target_Goal,Super_Target_Age_Goal,Super_Target_Goal_Date,Tag,Understanding_of_Insurance_in_Super,Valid_Death_Benefit`)
       console.log("access_token", access_token);
       if (userId != "") {
         const response = await axios.get(
@@ -508,8 +508,8 @@ export class ZohoCRMService {
       }
       return { data: [], message: "No data available" };
     } catch (error) {
-      //console.log('Getting Error1118');
-      //console.log(error?.response?.data);
+      console.log('Getting Error1118');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getSuperSorted(email);
@@ -517,15 +517,245 @@ export class ZohoCRMService {
     }
   }
 
+  async getPlanBEstatePlanWill(email: any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    console.log("tokenFromDb", tokenFromDb);
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const userId = await this.getUserId(email);
+      
+      //const ownerId = await this.getOwnerId(email, access_token);
+      console.log("userId getPlanBEstatePlanWill", userId, email);
+      console.log("getPlanBEstatePlanWill url ",`${this.apiURL}/Plan_B_Estate_Plan_Will/search?criteria=(Contact.id:equals:${userId})&fields=Account,Beneficiary_Name,Contact,Created_By,Currency,Date_last_reviewed,Do_you_have_a_POA,Do_you_have_a_will,Do_you_have_beneficiary_on_superfund,Email,Email_Opt_Out,Estate_Plan_Will_Up_To_Date,Exchange_Rate,Executor_of_your_Will,Have_a_Will_Estate_Plan,Is_it_current,Key_Life_Changes_Since_Last_Review,Location_of_the_Will,Modified_By,Plan_B_EPW_Goal_Statement,Record_Image,Name,Owner,Secondary_Email,Tag`)
+      console.log("access_token", access_token);
+      if (userId != "") {
+        const response = await axios.get(
+          `${this.apiURL}/Plan_B_Estate_Plan_Will/search?criteria=(Contact.id:equals:${userId})&fields=Account,Beneficiary_Name,Contact,Created_By,Currency,Date_last_reviewed,Do_you_have_a_POA,Do_you_have_a_will,Do_you_have_beneficiary_on_superfund,Email,Email_Opt_Out,Estate_Plan_Will_Up_To_Date,Exchange_Rate,Executor_of_your_Will,Have_a_Will_Estate_Plan,Is_it_current,Key_Life_Changes_Since_Last_Review,Location_of_the_Will,Modified_By,Plan_B_EPW_Goal_Statement,Record_Image,Name,Owner,Secondary_Email,Tag`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          },
+        );
+        console.log("PlanBEstatePlanWill response.data",response.data);
+        if (response.data?.data?.length > 0) {
+          return response.data; 
+        } else {
+          return { data: [], message: "No data available" };
+        }
+      }
+      return { data: [], message: "No data available" };
+    } catch (error) {
+      console.log('Getting Error11199');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getPlanBEstatePlanWill(email);
+      }
+    }
+  }
+
+  async getMoneyOnAutoDrive(email: any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    console.log("tokenFromDb", tokenFromDb);
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const userId = await this.getUserId(email);
+      
+      //const ownerId = await this.getOwnerId(email, access_token);
+      console.log("userId MoneyOnAutoDrive", userId, email);
+      console.log("MoneyOnAutoDrive url ",`${this.apiURL}/Money_on_Auto_Drive/search?criteria=(Contact.id:equals:${userId})&fields=Account,Contact,Created_By,Create_your_MOAD_Plan,Currency,Email,Email_Opt_Out,Exchange_Rate,Have_a_list_of_Sav_exp,Last_Reviewed,MOAD_Goal_Statement,Modified_By,Record_Image,Name,Owner,Review_Every_12_months,Secondary_Email,Tag,Turn_On_Maintain_MOAD`)
+      console.log("access_token", access_token);
+      if (userId != "") {
+        const response = await axios.get(
+          `${this.apiURL}/Money_on_Auto_Drive/search?criteria=(Contact.id:equals:${userId})&fields=Account,Contact,Created_By,Create_your_MOAD_Plan,Currency,Email,Email_Opt_Out,Exchange_Rate,Have_a_list_of_Sav_exp,Last_Reviewed,MOAD_Goal_Statement,Modified_By,Record_Image,Name,Owner,Review_Every_12_months,Secondary_Email,Tag,Turn_On_Maintain_MOAD`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          },
+        );
+        console.log("MoneyOnAutoDrive response.data",response.data);
+        if (response.data?.data?.length > 0) {
+          return response.data; 
+        } else {
+          return { data: [], message: "No data available" };
+        }
+      }
+      return { data: [], message: "No data available" };
+    } catch (error) {
+      console.log('Getting Error1118');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getMoneyOnAutoDrive(email);
+      }
+    }
+  }  
+
+  async getPlanBEmergencyFund(email: any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    console.log("tokenFromDb", tokenFromDb);
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const userId = await this.getUserId(email);
+      
+      //const ownerId = await this.getOwnerId(email, access_token);
+      console.log("userId PlanBEmergencyFund", userId, email);
+      console.log("PlanBEmergencyFund url ",`${this.apiURL}/Plan_B_Emergency_Fund/search?criteria=(Contact.id:equals:${userId})&fields=Account,Calculated_3_months,Contact,Created_By,Currency,Do_I_have_enough,Email,Email_Opt_Out,Emergency_Fund_Goal,Exchange_Rate,Have_a_goal_for_EF,Have_I_linked_accounts,Modified_By,Record_Image,Name,Owner,Secondary_Email,Tag`)
+      console.log("access_token", access_token);
+      if (userId != "") {
+        const response = await axios.get(
+          `${this.apiURL}/Plan_B_Emergency_Fund/search?criteria=(Contact.id:equals:${userId})&fields=Account,Calculated_3_months,Contact,Created_By,Currency,Do_I_have_enough,Email,Email_Opt_Out,Emergency_Fund_Goal,Exchange_Rate,Have_a_goal_for_EF,Have_I_linked_accounts,Modified_By,Record_Image,Name,Owner,Secondary_Email,Tag`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          },
+        );
+        console.log("PlanBEmergencyFund response.data",response.data);
+        if (response.data?.data?.length > 0) {
+          return response.data; 
+        } else {
+          return { data: [], message: "No data available" };
+        }
+      }
+      return { data: [], message: "No data available" };
+    } catch (error) {
+      console.log('Getting Error1117777');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getPlanBEmergencyFund(email);
+      }
+    }
+  }
+
+  async getPlanBInsurance(email: any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    console.log("tokenFromDb", tokenFromDb);
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const userId = await this.getUserId(email);
+      
+      //const ownerId = await this.getOwnerId(email, access_token);
+      console.log("userId PlanBInsurance", userId, email);
+      console.log("PlanBInsurance url ",`${this.apiURL}/Plan_B_Insurance/search?criteria=(Contact.id:equals:${userId})&fields=Account,Calculated_3_months,Contact,Created_By,Currency,Do_I_have_enough,Email,Email_Opt_Out,Emergency_Fund_Goal,Exchange_Rate,Have_a_goal_for_EF,Have_I_linked_accounts,Modified_By,Record_Image,Name,Owner,Secondary_Email,Tag`)
+      console.log("access_token", access_token);
+      if (userId != "") {
+        const response = await axios.get(
+          `${this.apiURL}/Plan_B_Insurance/search?criteria=(Contact.id:equals:${userId})&fields=Account,Calculated_3_months,Contact,Created_By,Currency,Do_I_have_enough,Email,Email_Opt_Out,Emergency_Fund_Goal,Exchange_Rate,Have_a_goal_for_EF,Have_I_linked_accounts,Modified_By,Record_Image,Name,Owner,Secondary_Email,Tag`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          },
+        );
+        console.log("PlanBInsurance response.data",response.data);
+        if (response.data?.data?.length > 0) {
+          return response.data; 
+        } else {
+          return { data: [], message: "No data available" };
+        }
+      }
+      return { data: [], message: "No data available" };
+    } catch (error) {
+      console.log('Getting Error111777745');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getPlanBInsurance(email);
+      }
+    }
+  }
+
+  async getDebtonateDebt(email: any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    console.log("tokenFromDb", tokenFromDb);
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const userId = await this.getUserId(email);
+      
+      //const ownerId = await this.getOwnerId(email, access_token);
+      console.log("userId DebtonateDebt", userId, email);
+      console.log("DebtonateDebt url ",`${this.apiURL}/Debtonate_Debt/search?criteria=(Contact.id:equals:${userId})&fields=Account,Contact,Created_By,Month_Goal,Align_to_Pay_Cycle,Avoid_Buy_Now_Pay_Later,Contribute_Just_a_Bit_More,Control_CC_PD,Currency,Current_Debt_IR_Fees,Debtonate_Debt_Goal_Statement,Record_Image,Name,Owner,Email,Email_Opt_Out,Exchange_Rate,Have_a_Plan_and_Priority,Modified_By,Secondary_Email,Tag`)
+      console.log("access_token", access_token);
+      if (userId != "") {
+        const response = await axios.get(
+          `${this.apiURL}/Debtonate_Debt/search?criteria=(Contact.id:equals:${userId})&fields=Account,Contact,Created_By,Month_Goal,Align_to_Pay_Cycle,Avoid_Buy_Now_Pay_Later,Contribute_Just_a_Bit_More,Control_CC_PD,Currency,Current_Debt_IR_Fees,Debtonate_Debt_Goal_Statement,Record_Image,Name,Owner,Email,Email_Opt_Out,Exchange_Rate,Have_a_Plan_and_Priority,Modified_By,Secondary_Email,Tag`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          },
+        );
+        console.log("DebtonateDebt response.data",response.data);
+        if (response.data?.data?.length > 0) {
+          return response.data; 
+        } else {
+          return { data: [], message: "No data available" };
+        }
+      }
+      return { data: [], message: "No data available" };
+    } catch (error) {
+      console.log('Getting Error111777745');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getDebtonateDebt(email);
+      }
+    }
+  }  
+
+  
+
+  async getHouseHoldExpenses(email: any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    console.log("tokenFromDb", tokenFromDb);
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const userId = await this.getUserId(email);
+      
+      //const ownerId = await this.getOwnerId(email, access_token);
+      console.log("userId getHouseHoldExpenses", userId, email);
+      console.log("getHouseHoldExpenses url ",`${this.apiURL}/Household_Expenses/search?criteria=(Contact.id:equals:${userId})&fields=Car_Insurance_p_a,Car_Insurance_Pay_Frequency,Contact,Created_By,Credit_Cards_per_month,Currency,Electricity_p_a,Electricity_Pay_Frequency,Email,Email_Opt_Out,Exchange_Rate,Gas_p_a,Gas_Pay_Frequency,General_Non_Utilities_Household,General_Non_Utilities_Payment_Frequency,Home_Loan,Home_Loan_Repayment_Frequency,Home_Contents_Insurance_p_a,Household,Record_Image,Name,Multi_Line_1,Owner,Invest_Property_Pay_Frequency,Investment_Property_Loan_p_a,Modified_By,Other_Expenses_p_a,Other_Investment_Loan_p_a,Other_Investment_Loan_Pay_Freq,Personal_Laon_Pay_Freq,Personal_Loan_p_a,Private_Health_Insurance_p_a,Private_Health_Pay_Frequency,Secondary_Email,Tag,Water_p_a,Water_Pay_Frequency`)
+      console.log("access_token", access_token);
+      if (userId != "") {
+        const response = await axios.get(
+          `${this.apiURL}/Household_Expenses/search?criteria=(Contact.id:equals:${userId})&fields=Car_Insurance_p_a,Car_Insurance_Pay_Frequency,Contact,Created_By,Credit_Cards_per_month,Currency,Electricity_p_a,Electricity_Pay_Frequency,Email,Email_Opt_Out,Exchange_Rate,Gas_p_a,Gas_Pay_Frequency,General_Non_Utilities_Household,General_Non_Utilities_Payment_Frequency,Home_Loan,Home_Loan_Repayment_Frequency,Home_Contents_Insurance_p_a,Household,Record_Image,Name,Multi_Line_1,Owner,Invest_Property_Pay_Frequency,Investment_Property_Loan_p_a,Modified_By,Other_Expenses_p_a,Other_Investment_Loan_p_a,Other_Investment_Loan_Pay_Freq,Personal_Laon_Pay_Freq,Personal_Loan_p_a,Private_Health_Insurance_p_a,Private_Health_Pay_Frequency,Secondary_Email,Tag,Water_p_a,Water_Pay_Frequency`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          },
+        );
+        console.log("getHouseHoldExpenses response.data",response.data);
+        if (response.data?.data?.length > 0) {
+          return response.data; 
+        } else {
+          return { data: [], message: "No data available" };
+        }
+      }
+      return { data: [], message: "No data available" };
+    } catch (error) {
+      console.log('Getting Error11199');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getHouseHoldExpenses(email);
+      }
+    }
+  }
+
   async getNotes(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    //console.log("notes tokenFromDb", tokenFromDb);
+    console.log("notes tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
       
       const ownerId = await this.getOwnerId(email, access_token);
-      //console.log("notes userId", userId, email,ownerId);
+      console.log("notes userId", userId, email,ownerId);
       if (userId != "") {
         // const response = await axios.get(
         //   `${this.apiURL}/My_Notes/search?criteria=(Account.id:equals:${ownerId})&fields=Account,Current,Module,My_Notes,Name,Notes_Date`,
@@ -536,14 +766,14 @@ export class ZohoCRMService {
         //   },
         // );
         const response = await axios.get(
-          `${this.apiURL}/My_Notes/search?criteria=(Owner.id:equals:${ownerId})&fields=Account,Current,Module,My_Notes,Name,Notes_Date`,
+          `${this.apiURL}/My_Notes/search?criteria=(Owner.id:equals:${ownerId})&fields=Account,Created_By,Currency,Current,Email,Email_Opt_Out,Exchange_Rate,Modified_By,Module,My_Notes,Name,Record_Image,Owner,Notes_Date,Secondary_Email`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
             },
           },
         );
-        //console.log("notes response.data",response.data);
+        console.log("notes response.data",response.data);
         if (response.data?.data?.length > 0) {
           return response.data; 
         } else {
@@ -552,11 +782,55 @@ export class ZohoCRMService {
       }
       return { data: [], message: "No data available" };
     } catch (error) {
-      //console.log('Getting Error1118');
-      //console.log(error?.response?.data);
+      console.log('Getting Error1118');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.getSuperSorted(email);
+        return this.getNotes(email);
+      }
+    }
+  }
+
+  async getCoachNotes(email: any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    console.log("getCoachNotes tokenFromDb", tokenFromDb);
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const userId = await this.getUserId(email);
+      
+      const ownerId = await this.getOwnerId(email, access_token);
+      console.log("getCoachNotes userId", userId, email,ownerId);
+      if (userId != "") {
+        // const response = await axios.get(
+        //   `${this.apiURL}/My_Notes/search?criteria=(Account.id:equals:${ownerId})&fields=Account,Current,Module,My_Notes,Name,Notes_Date`,
+        //   {
+        //     headers: {
+        //       Authorization: `Zoho-oauthtoken ${access_token}`,
+        //     },
+        //   },
+        // );
+        const response = await axios.get(
+          `${this.apiURL}/Coaches_Notes/search?criteria=(Owner.id:equals:${ownerId})&fields=Account,Coach,Coach_Note_Type,Record_Image,Owner,Coaches_Notes,Created_By,Currency,Email,Email_Opt_Out,Exchange_Rate,Modified_By,Current,Module,Notes_Date,Name,Secondary_Email,Tag`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          },
+        );
+        console.log("getCoachNotes response.data",response.data);
+        if (response.data?.data?.length > 0) {
+          return response.data; 
+        } else {
+          return { data: [], message: "No data available" };
+        }
+      }
+      return { data: [], message: "No data available" };
+    } catch (error) {
+      console.log('Getting Error1118');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getCoachNotes(email);
       }
     }
   }
@@ -566,7 +840,7 @@ export class ZohoCRMService {
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const ownerId = await this.getOwnerId(email, access_token);
-      //console.log("ownerId", ownerId, email);
+      console.log("ownerId", ownerId, email);
       if (ownerId != "") {
         const response = await axios.get(
           `${this.apiURL}/Chapter_Exercises/search?criteria=(Created_By.id:equals:${ownerId})&fields=Name,Email,Created_By`,
@@ -581,8 +855,8 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      //console.log('Getting Error8');
-      //console.log(error?.response?.data);
+      console.log('Getting Error8');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getExercises(email);
@@ -610,8 +884,8 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      //console.log('Getting Error9');
-      //console.log(error?.response?.data);
+      console.log('Getting Error9');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getSummary(email);
@@ -639,8 +913,8 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      //console.log('Getting Error10');
-      //console.log(error?.response?.data);
+      console.log('Getting Error10');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getAdvice(email);
@@ -653,7 +927,7 @@ export class ZohoCRMService {
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const ownerId = await this.getUserDetails(email);
-      // //console.log("ownerId.........", ownerId)
+      console.log("ownerId.........", ownerId)
 
       if (ownerId != "") {
         const financialAccountsPromise = axios.get(
@@ -708,8 +982,8 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      //console.log('Getting Error11');
-      //console.log(error);
+      console.log('Getting Error11');
+      console.log(error);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getAssets(email);
@@ -740,7 +1014,7 @@ export class ZohoCRMService {
 
       return response.data;
     } catch (error) {
-      //console.log('Error adding assets with API', error?.response?.data);
+      console.log('Error adding assets with API', error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.addAsset(asset, email);
@@ -767,12 +1041,12 @@ export class ZohoCRMService {
         );
 
         if (assetResponse.status === 200) {
-          //console.log('Asset deleted from Assets API successfully');
+          console.log('Asset deleted from Assets API successfully');
           deleted = true;
           return assetResponse?.data;
         }
       } catch (assetError) {
-        //console.log('Error deleting asset from Assets API', assetError?.response?.data);
+        console.log('Error deleting asset from Assets API', assetError?.response?.data);
       }
 
       // If not deleted from Assets API, attempt to delete from the Financial Accounts API
@@ -788,18 +1062,18 @@ export class ZohoCRMService {
           );
 
           if (financialAccountResponse.status === 200) {
-            //console.log('Asset deleted from Financial Accounts API successfully');
+            console.log('Asset deleted from Financial Accounts API successfully');
             deleted = true;
             return financialAccountResponse?.data;
           }
         } catch (financialAccountError) {
-          //console.log('Error deleting asset from Financial Accounts API', financialAccountError?.response?.data);
+          console.log('Error deleting asset from Financial Accounts API', financialAccountError?.response?.data);
         }
       }
 
       // If not deleted from either API, asset ID was not found
       if (!deleted) {
-        //console.log('Asset ID not found');
+        console.log('Asset ID not found');
       }
     } catch (error) {
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
@@ -835,7 +1109,7 @@ export class ZohoCRMService {
 
       return response.data;
     } catch (error) {
-      //console.log('Error adding assets with API', error?.response?.data);
+      console.log('Error adding assets with API', error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.addLiability(liability, email);
@@ -858,11 +1132,11 @@ export class ZohoCRMService {
       );
 
       if (financialAccountResponse.status === 200) {
-        //console.log('Asset deleted from Financial Accounts API successfully');
+        console.log('Asset deleted from Financial Accounts API successfully');
         return financialAccountResponse?.data;
       }
     } catch (error) {
-      //console.log('Error adding assets with API', error?.response?.data);
+      console.log('Error adding assets with API', error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.deleteLiability(liabilityId);
@@ -877,8 +1151,8 @@ export class ZohoCRMService {
     // Filter assets based on the "apiSource" field
     const assetsWithAPI = assets.filter(asset => asset.apiSource);
     const assetsWithoutAPI = assets.filter(asset => !asset.apiSource);
-    // //console.log("assetsWithAPI", assetsWithAPI);
-    // //console.log("assetsWithoutAPI", assetsWithoutAPI);
+    console.log("assetsWithAPI", assetsWithAPI);
+    console.log("assetsWithoutAPI", assetsWithoutAPI);
 
     try {
       // Update assets with "apiSource" using the corresponding API
@@ -898,10 +1172,10 @@ export class ZohoCRMService {
               },
             }
           );
-          // //console.log("Update assets with API response", response.data);
+          console.log("Update assets with API response", response.data);
           // Handle the response as needed
         } catch (error) {
-          //console.log('Error updating assets with API', error?.response?.data);
+          console.log('Error updating assets with API', error?.response?.data);
           if (error?.response?.data?.code === 'INVALID_TOKEN') {
             await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
             return this.updateAssets(assets);
@@ -927,10 +1201,10 @@ export class ZohoCRMService {
               },
             }
           );
-          // //console.log("Update assets without API response", response.data);
+          console.log("Update assets without API response", response.data);
           // Handle the response as needed
         } catch (error) {
-          //console.log('Error updating assets without API', error?.response?.data);
+          console.log('Error updating assets without API', error?.response?.data);
           if (error?.response?.data?.code === 'INVALID_TOKEN') {
             await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
             return this.updateAssets(assets);
@@ -941,8 +1215,8 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      //console.log('Getting Error12');
-      //console.log(error?.response?.data);
+      console.log('Getting Error12');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.updateAssets(assets);
@@ -953,7 +1227,7 @@ export class ZohoCRMService {
   async updateProfile(datas: any, email: string): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
-    //console.log("profile datas", datas, email);
+    console.log("profile datas", datas, email);
     const requestData = {
       data: datas,
     };
@@ -968,11 +1242,11 @@ export class ZohoCRMService {
           },
         }
       );
-      // //console.log("updateAssets response", response)
+      console.log("updateAssets response", response)
       return response.data;
     } catch (error) {
-      //console.log('Getting Error13');
-      //console.log(error?.response?.data);
+      console.log('Getting Error13');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.updateProfile(datas, email);
@@ -1001,8 +1275,8 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      //console.log('Getting Error14');
-      //console.log(error?.response?.data);
+      console.log('Getting Error14');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getLiabilities(email);
@@ -1038,7 +1312,7 @@ export class ZohoCRMService {
         return { status: response.status, "message": "Update failed. Please try again later." };
       }
     } catch (error) {
-      //console.log('Error updating assets with API', error?.response?.data);
+      console.log('Error updating assets with API', error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.updateDependant(datas);
@@ -1076,7 +1350,7 @@ export class ZohoCRMService {
         return { status: response.status, "message": "Update failed. Please try again later." };
       }
     } catch (error) {
-      //console.log('Error updating assets with API', error?.response?.data);
+      console.log('Error updating assets with API', error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.updateEmployment(datas);
@@ -1114,7 +1388,7 @@ export class ZohoCRMService {
         return { status: response.status, "message": "Update failed. Please try again later." };
       }
     } catch (error) {
-      //console.log('Error updating assets with API', error?.response?.data);
+      console.log('Error updating assets with API', error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.updateExpenses(datas);
@@ -1152,7 +1426,7 @@ export class ZohoCRMService {
         return { status: response.status, "message": "Update failed. Please try again later." };
       }
     } catch (error) {
-      //console.log('Error updating assets with API', error?.response?.data);
+      console.log('Error updating assets with API', error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.updateExpenses(datas);
@@ -1182,7 +1456,7 @@ export class ZohoCRMService {
         }
       );
 
-      //console.log("response", response?.data?.data[0]?.details);
+      console.log("response", response?.data?.data[0]?.details);
 
       if (response.status === 200) {
         // Success message
@@ -1192,7 +1466,7 @@ export class ZohoCRMService {
         return { status: response.status, "message": "Update failed. Please try again later." };
       }
     } catch (error) {
-      //console.log('Error updating assets with API', error?.response?.data);
+      console.log('Error updating assets with API', error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.updateINA(datas);
@@ -1324,8 +1598,8 @@ export class ZohoCRMService {
       }
       return response.data;
     } catch (error) {
-      //console.log('Getting Error15');
-      //console.log(error?.response?.data);
+      console.log('Getting Error15');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getProfile(email);
@@ -1352,12 +1626,12 @@ export class ZohoCRMService {
         data: data,
       };
 
-      //console.log("config",config);
+      console.log("config",config);
 
       axios
         .request(config)
         .then(async (response) => {
-          //console.log(JSON.stringify(response.data));
+          console.log(JSON.stringify(response.data));
           const update_data = {
             access_token: response.data.access_token
           };
@@ -1366,8 +1640,8 @@ export class ZohoCRMService {
           resolve(response.data.access_token);
         })
         .catch((error) => {
-          //console.log('Getting Error2');
-          //console.log(error);
+          console.log('Getting Error2');
+          console.log(error);
           reject(error);
         });
     });
@@ -1394,7 +1668,7 @@ export class ZohoCRMService {
       axios
         .request(config)
         .then(async (response) => {
-          //console.log(JSON.stringify(response.data));
+          console.log(JSON.stringify(response.data));
           const update_data = {
             access_token: response.data.access_token
           };
@@ -1403,8 +1677,8 @@ export class ZohoCRMService {
           resolve(response.data.access_token);
         })
         .catch((error) => {
-          //console.log('Getting Error3');
-          //console.log(error);
+          console.log('Getting Error3');
+          console.log(error);
           reject(error);
         });
     });
@@ -1435,11 +1709,11 @@ export class ZohoCRMService {
         //   })
         // }
 
-        // //console.log("response?.data goals by account", response?.data);
+        console.log("response?.data goals by account", response?.data);
 
         if (response?.data?.data?.length > 0) {
           for (const goal of response.data.data) {
-            // //console.log("goal", goal);
+            console.log("goal", goal);
 
             const goalxcontacts = await axios.get(
               `${this.apiURL}/Goals_X_Contacts/search?criteria=(Goals.id:equals:${goal?.id})&fields=Goal_Owner_s,Goals`,
@@ -1465,15 +1739,15 @@ export class ZohoCRMService {
         //   }
         // );
 
-        // //console.log("goalxcontacts", goalxcontacts);
+        //console.log("goalxcontacts", goalxcontacts);
 
         return response.data;
       }
 
       return { data: [] };
     } catch (error) {
-      //console.log('Getting Error16');
-      //console.log(error?.response?.data);
+      console.log('Getting Error16');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getGoalsByAccount(email);
@@ -1497,7 +1771,7 @@ export class ZohoCRMService {
 
       return response.data;
     } catch (error) {
-      //console.log('Error updating assets with API', error?.response?.data);
+      console.log('Error updating assets with API', error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getGoalsById(id);
@@ -1511,7 +1785,7 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
 
-    //console.log('datas', datas);
+    console.log('datas', datas);
 
     const { currentHouseHoldOwners, Goal_Owner_s, ownerId, ...updatedDatas } = datas;
 
@@ -1531,7 +1805,7 @@ export class ZohoCRMService {
         }
       );
 
-      // //console.log("create goal owner", datas);
+      console.log("create goal owner", datas);
 
       if (datas?.Goal_Owner_s) {
         let tempOwner = [];
@@ -1559,7 +1833,7 @@ export class ZohoCRMService {
           tempOwner?.push(temp);
         }
 
-        //console.log("tempOwner", tempOwner)
+        console.log("tempOwner", tempOwner)
 
         const requestData = {
           data: tempOwner,
@@ -1576,7 +1850,7 @@ export class ZohoCRMService {
           }
         );
 
-        //console.log("createOwner", createOwner);
+        console.log("createOwner", createOwner);
       }
 
       if (response.status === 200 || response?.status == 201) {
@@ -1587,7 +1861,7 @@ export class ZohoCRMService {
         return { status: response.status, "message": "Create failed. Please try again later." };
       }
     } catch (error) {
-      //console.log('Error updating assets with API', error?.response?.data);
+      console.log('Error updating assets with API', error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.updateGoal(datas, goalRepository);
@@ -1601,21 +1875,21 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
 
-    //console.log("update goal data", datas);
+    console.log("update goal data", datas);
     const { currentGoalOwners, currentHouseHoldOwners, Goal_Owner2_s, Goal_Owner_s, ...updatedDatas } = datas;
     const requestData = {
       data: [updatedDatas],
     };
 
-    //console.log("requestData update", requestData);
-    // //console.log("datas", datas);
+    console.log("requestData update", requestData);
+    console.log("datas", datas);
     if (datas?.Current_Value) {
       const currentGoal = await this.getGoalsById(datas?.id);
-      // //console.log("currentGoal", currentGoal, datas);
+      console.log("currentGoal", currentGoal, datas);
 
       if (currentGoal?.data?.length > 0) {
         const { id, Description, Current_Value, Name, Target_Date, Is_Financial_Goal, Target_Value, Goal_Type, Status } = currentGoal?.data[0];
-        //console.log("updateGoal", id);
+        console.log("updateGoal", id);
 
         await goalRepository.create({ zohoGoalId: id, description: Description, money_have: datas?.Current_Value, title: Name, targetDate: Target_Date, isFinancial: Is_Financial_Goal, money_need: Target_Value, goalType: Goal_Type, status: Status });
       }
@@ -1635,7 +1909,7 @@ export class ZohoCRMService {
 
       if ((datas?.Goal_Owner_s?.id || datas?.Goal_Owner_s == 'Joint') && datas?.currentGoalOwners?.length > 0) {
         const cownerids = datas?.currentGoalOwners.map(owner => owner.id).join(',');
-        //console.log("cownerids", cownerids);
+        console.log("cownerids", cownerids);
 
         const goalxcontactsdelete = await axios.delete(
           `${this.apiURL}/Goals_X_Contacts?ids=${cownerids}&wf_trigger=true`,
@@ -1646,7 +1920,7 @@ export class ZohoCRMService {
           }
         );
 
-        //console.log("goalxcontactsdelete res", goalxcontactsdelete)
+        console.log("goalxcontactsdelete res", goalxcontactsdelete)
       }
 
       if (datas?.Goal_Owner_s?.id || datas?.Goal_Owner_s == 'Joint') {
@@ -1675,7 +1949,7 @@ export class ZohoCRMService {
           tempOwner?.push(temp);
         }
 
-        // //console.log("tempOwner", tempOwner)
+        console.log("tempOwner", tempOwner)
 
         const requestData = {
           data: tempOwner,
@@ -1692,7 +1966,7 @@ export class ZohoCRMService {
           }
         );
 
-        // //console.log("createOwner", createOwner);
+        console.log("createOwner", createOwner);
       }
 
       if (response.status === 200) {
@@ -1703,7 +1977,7 @@ export class ZohoCRMService {
         return { status: response.status, "message": "Update failed. Please try again later." };
       }
     } catch (error) {
-      //console.log('Error updating assets with API', error?.response?.data);
+      console.log('Error updating assets with API', error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.updateGoal(datas, goalRepository);
@@ -1734,8 +2008,8 @@ export class ZohoCRMService {
 
       return { data: [] };
     } catch (error) {
-      //console.log('Getting Error17');
-      //console.log(error?.response?.data);
+      console.log('Getting Error17');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.getAccounts(email);
@@ -1762,10 +2036,10 @@ export class ZohoCRMService {
           },
         }
       );
-      // //console.log("Update assets with API response", response.data);
+      console.log("Update assets with API response", response.data);
       // Handle the response as needed
     } catch (error) {
-      //console.log('Error updating assets with API', error?.response?.data);
+      console.log('Error updating assets with API', error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.updateAccounts(accounts);
@@ -1780,7 +2054,7 @@ export class ZohoCRMService {
 
     try {
       const ownerId = await this.getUserDetails(email); // need to send coach id from frontend not owner id
-      //console.log("owner id", ownerId);
+      console.log("owner id", ownerId);
 
       // Make a request to fetch all events for the specified owner
       const response = await axios.get(
@@ -1791,7 +2065,7 @@ export class ZohoCRMService {
           },
         }
       );
-      //console.log("response===========", response?.data?.data);
+      console.log("response===========", response?.data?.data);
 
       if (response?.data?.data) {
         const events = response.data.data;
@@ -1818,8 +2092,8 @@ export class ZohoCRMService {
         return false;
       }
     } catch (error) {
-      //console.log('Getting Error18');
-      //console.log(error?.response?.data);
+      console.log('Getting Error18');
+      console.log(error?.response?.data);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
         return this.checkScheduleAvailable(startTime, endTime, email);

@@ -50,7 +50,7 @@ export class GoalsController {
       }
 
       const res = await this.goalsService.createGoal(goalData);
-      //console.log("zoho create goal res", res);
+      console.log("zoho create goal res", res);
 
       const { currentHouseHoldOwners, ...updatedCreateGoalDto } = createGoalDto;
       let newData = { zohoGoalId: res?.zohoGoalId, ...updatedCreateGoalDto };

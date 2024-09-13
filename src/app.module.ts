@@ -34,6 +34,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes('profile', 'journals', 'exercises', 'summary', 'advice', 'assets', 'liabilities', 'asset', 'liability', 'income', 'expenses', 'goals', 'accounts', 'create-meeting', 'meetings','supersorted','notes','rollingaccountbalance');
+      .forRoutes('profile', 'journals', 'exercises', 'summary', 'advice', 'assets', 'liabilities', 'asset', 'liability', 'income', 'expenses', 'goals', 'accounts', 'create-meeting', 'meetings','supersorted','notes','rollingaccountbalance','planbestateplanwill','moneyonautodrive','planbemergencyfund','planbinsurance','debtonatedebt','householdexpenses','coachnotes');
   }
 }

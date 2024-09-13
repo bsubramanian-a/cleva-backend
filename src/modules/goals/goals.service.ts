@@ -17,7 +17,7 @@ export class GoalsService {
     try {
       return await this.goalRepository.create<Goal>(createGoalDto);
     } catch (error) {
-      //console.log(':error', error);
+      console.log(':error', error);
       throw new Error('Failed to create goal');
     }
   }
@@ -37,7 +37,7 @@ export class GoalsService {
       const goals = this.ZohoCRMService.getGoalsByAccount(email);
       return goals;
     } catch (err) {
-      //console.log('getGoalsByAccount', err);
+      console.log('getGoalsByAccount', err);
     }
   }
 
@@ -46,7 +46,7 @@ export class GoalsService {
       const goals = this.ZohoCRMService.updateGoal(data, this.goalRepository);
       return goals;
     } catch (err) {
-      //console.log('getGoalsByAccount', err);
+      console.log('getGoalsByAccount', err);
     }
   }
 
@@ -58,7 +58,7 @@ export class GoalsService {
       );
       return goals;
     } catch (err) {
-      //console.log('getGoalsByAccount', err);
+      console.log('getGoalsByAccount', err);
     }
   }
 
@@ -74,17 +74,17 @@ export class GoalsService {
       raw: true,
     });
 
-    //console.log("data", data);
+    console.log("data", data);
 
     const aggregatedData = {};
-    // //console.log("tabSelection", tabSelection); 
+    console.log("tabSelection", tabSelection); 
     // Aggregate the data based on the specified interval
     for (const entry of data) {
       const timestamp = entry.createdAt.toISOString();
       const currentValue = entry.money_have;
-      //console.log("current value", currentValue);
+      console.log("current value", currentValue);
       const intervalKey = await this.getIntervalKey(timestamp, tabSelection);
-      //console.log("intervalKey", intervalKey);
+      console.log("intervalKey", intervalKey);
 
       if (!aggregatedData[intervalKey]) {
         aggregatedData[intervalKey] = {
@@ -113,8 +113,8 @@ export class GoalsService {
     //   };
     // }
 
-    // //console.log("lastIntervalKey", lastIntervalKey);
-    // //console.log("aggregatedData", aggregatedData);
+    // console.log("lastIntervalKey", lastIntervalKey);
+    // console.log("aggregatedData", aggregatedData);
 
     // // Add the current value from Zoho to the last interval
     // aggregatedData[lastIntervalKey].sum += parseInt(todayValue);
@@ -134,7 +134,7 @@ export class GoalsService {
       chartData.y.push(parseInt(averageValue));
     });
 
-    //console.log("chartData", chartData);
+    console.log("chartData", chartData);
 
     return chartData;
   }

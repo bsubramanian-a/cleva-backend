@@ -45,16 +45,16 @@ export class AppService {
       };
 
       await transporter.sendMail(mailOptions);
-      //console.log('Verification email sent successfully');
+      console.log('Verification email sent successfully');
     } catch (error) {
       console.error('Error sending verification email:', error);
     }
   }
   
   async verifyEmail(loginData: any) {
-    //console.log("logindata", loginData);
+    console.log("logindata", loginData);
     const userType = loginData.user_type;
-    // //console.log("userType in verify email", userType);
+    console.log("userType in verify email", userType);
     let dbuser = await this.userService.findOneByUserEmail(loginData?.email);
 
     if(!dbuser){
@@ -64,7 +64,7 @@ export class AppService {
     if(userType == 'advisor_coach') {
       const coachResult = await this.ZohoCRMService.getCoaches(loginData?.email);
 
-      //console.log("coachResult", coachResult?.users);
+      console.log("coachResult", coachResult?.users);
 
       if(coachResult?.users?.length > 0){
         // const coach = coachResult?.users[0];
@@ -73,7 +73,7 @@ export class AppService {
 
         await this.userService.update(dbuser?.id, { otp: randomCode });
 
-        // //console.log("dbuser in coach", dbuser);
+        console.log("dbuser in coach", dbuser);
         await this.sendVerificationEmail(loginData?.email, randomCode);
 
         return {isUserExist: true};
@@ -86,7 +86,7 @@ export class AppService {
 
       if(user?.Email){
         const randomCode = generateRandomNumber();
-        //console.log("randomCode", randomCode);
+        console.log("randomCode", randomCode);
         await this.userService.update(dbuser?.id, { otp: randomCode });
         await this.sendVerificationEmail(user?.Email, randomCode);
 
@@ -167,16 +167,16 @@ export class AppService {
   
       return { status: isNewUser ? 'register' : 'login', token, user: userDetails };
     } catch (err) {
-      //console.log("login error", err);
+      console.log("login error", err);
     }
   }  
   
   async verifySocialEmail(data: any) {
     const userType = data.user_type;
     let email = data?.email;
-    //console.log("verifySocialEmail", email);
+    console.log("verifySocialEmail", email);
     const users = await this.ZohoCRMService.getUsers();
-    //console.log("users from zoho crm service", users)
+    console.log("users from zoho crm service", users)
     const user = users?.data?.find((user:any) => user?.Email === email);
     if(!user?.Email){
       return {isUserExist : false}
@@ -214,7 +214,7 @@ export class AppService {
         return {status: 'login', token, user: userDetails};
       }
     }catch(err){
-      //console.log("login error", err);
+      console.log("login error", err);
     }
   }
 
@@ -225,49 +225,49 @@ export class AppService {
       let isNewUser = false;
       let coach;
 
-      //console.log("user",user);
-      //console.log("loginData", loginData);
+      console.log("user",user);
+      console.log("loginData", loginData);
     
       if (!user) {
         isNewUser = true;
-        //console.log("yes new user", loginData);
+        console.log("yes new user", loginData);
         user = await this.userService.create(loginData);
       } else if(user.password == null) {
         let updateuser = await this.userService.update(user.id, { email: loginData.email, password: loginData.password });
-        //console.log("updateuser", updateuser);
+        console.log("updateuser", updateuser);
         user = await this.userService.findOneByUserEmail(loginData?.email);
-        //console.log("updated user", user);
+        console.log("updated user", user);
       }
 
 
-      //console.log("passwords",user.password, loginData.password)
+      console.log("passwords",user.password, loginData.password)
     
       if (user.password === loginData.password) {
         let zohoUser: any;
 
         if(userType == 'advisor_coach') {
-          //console.log("userType", userType);
+          console.log("userType", userType);
           let coach = await this.ZohoCRMService.getCoaches(user?.email);
           zohoUser = coach?.users[0];
         } else {
-          //console.log("userType", userType);
+          console.log("userType", userType);
           zohoUser = await this.ZohoCRMService.getUser(user?.email);
-          //console.log("zohoUser", zohoUser);
+          console.log("zohoUser", zohoUser);
           coach = await this.ZohoCRMService.getCoaches(zohoUser?.Owner?.email);          
-          //console.log("coach", coach);
+          console.log("coach", coach);
         }
 
-        // //console.log("zohoUser", zohoUser);
+        console.log("zohoUser", zohoUser);
         
         const payload = {email: user.email};
         const secretKey = process.env.SECRET_KEY;
         const token = jwt.sign(payload, secretKey);
-        //console.log("payload",payload)
-        //console.log("token",token)
-        //console.log("secretKey",secretKey)
+        console.log("payload",payload)
+        console.log("token",token)
+        console.log("secretKey",secretKey)
 
         const streamToken = await chatClient.createToken(zohoUser?.id?.toString());
-        //console.log("streamToken",streamToken)
+        console.log("streamToken",streamToken)
 
         const userDetails = {
           name: userType == 'advisor_coach' ? zohoUser?.full_name : zohoUser?.Full_Name,
@@ -277,21 +277,21 @@ export class AppService {
           userType,
           coach_url: userType == 'advisor_coach' ? "" : coach?.users[0]?.Zoho_Bookings_Link
         }
-        //console.log("userDetails",userDetails)
-        //console.log("isNewUser",isNewUser)
+        console.log("userDetails",userDetails)
+        console.log("isNewUser",isNewUser)
         
         if(isNewUser){
-          //console.log("coming inside new user")
+          console.log("coming inside new user")
           return {status: 'register', token, user: userDetails};
         }else{
-          //console.log("coming inside login")
+          console.log("coming inside login")
           return {status: 'login', token, user: userDetails};
         }
       } else {
         return {status: 403, message: "Incorrect password!"};
       }
     }catch(err){
-      //console.log("login error", err);
+      console.log("login error", err);
     }
   }  
 
@@ -301,7 +301,7 @@ export class AppService {
 
       return meetings;
     }catch(err){
-      //console.log("getJournal", err);
+      console.log("getJournal", err);
     }
   }
 
@@ -312,10 +312,10 @@ export class AppService {
   async getJournals(email){
     try{
       const journals = await this.ZohoCRMService.getJournals(email);
-      // //console.log("journals", journals);
+      console.log("journals", journals);
       return journals;
     }catch(err){
-      //console.log("getJournal", err);
+      console.log("getJournal", err);
     }
   }
 
@@ -326,16 +326,70 @@ export class AppService {
       const supersorted = await this.ZohoCRMService.getSuperSorted(email);
       return supersorted;
     }catch(err){
-      //console.log("getSuperSorted", err);
+      console.log("getSuperSorted", err);
     }
   }
+
+  async getPlanBEstatePlanWill(email){
+    try{ 
+      const planBEstatePlanWill = await this.ZohoCRMService.getPlanBEstatePlanWill(email);
+      return planBEstatePlanWill;
+    }catch(err){
+      console.log("getPlanBEstatePlanWill", err);
+    }
+  }
+
+  async getMoneyOnAutoDrive(email){
+    try{ 
+      const moneyOnAutoDrive = await this.ZohoCRMService.getMoneyOnAutoDrive(email);
+      return moneyOnAutoDrive;
+    }catch(err){
+      console.log("getMoneyOnAutoDrive", err);
+    }
+  }
+
+  async getPlanBEmergencyFund(email){
+    try{ 
+      const planBEmergencyFund = await this.ZohoCRMService.getPlanBEmergencyFund(email);
+      return planBEmergencyFund;
+    }catch(err){
+      console.log("getPlanBEmergencyFund", err);
+    }
+  }
+
+  async getPlanBInsurance(email){
+    try{ 
+      const planBInsurance = await this.ZohoCRMService.getPlanBInsurance(email);
+      return planBInsurance;
+    }catch(err){
+      console.log("getPlanBInsurance", err);
+    }
+  }
+
+  async getDebtonateDebt(email){
+    try{ 
+      const debtonateDebt = await this.ZohoCRMService.getDebtonateDebt(email);
+      return debtonateDebt;
+    }catch(err){
+      console.log("getDebtonateDebt", err);
+    }
+  }  
+
+  async getHouseHoldExpenses(email){
+    try{ 
+      const debtonateDebt = await this.ZohoCRMService.getHouseHoldExpenses(email);
+      return debtonateDebt;
+    }catch(err){
+      console.log("getHouseHoldExpenses", err);
+    }
+  } 
 
   async getRollingAccountBalance(email){
     try{ 
       const rollingaccountbalance = await this.ZohoCRMService.getRollingAccountBalance(email);
       return rollingaccountbalance;
     }catch(err){
-      //console.log("getSuperSorted", err);
+      console.log("getSuperSorted", err);
     }
   }
 
@@ -346,16 +400,27 @@ export class AppService {
       const notes = await this.ZohoCRMService.getNotes(email);
       return notes;
     }catch(err){
-      //console.log("getNotes", err);
+      console.log("getNotes", err);
     }
   }
+
+  async getCoachNotes(email){
+    try{ 
+      const notes = await this.ZohoCRMService.getCoachNotes(email);
+      return notes;
+    }catch(err){
+      console.log("getCoachNotes", err);
+    }
+  }
+
+  
 
   async getExercises(email){
     try{ 
       const excercises = await this.ZohoCRMService.getExercises(email);
       return excercises;
     }catch(err){
-      //console.log("getExercises", err);
+      console.log("getExercises", err);
     }
   }
 
@@ -364,7 +429,7 @@ export class AppService {
       const summaries = await this.ZohoCRMService.getSummary(email);
       return summaries;
     }catch(err){
-      //console.log("getSummary", err);
+      console.log("getSummary", err);
     }
   }
 
@@ -373,7 +438,7 @@ export class AppService {
       const advice = await this.ZohoCRMService.getAdvice(email);
       return advice;
     }catch(err){
-      //console.log("getAdvice", err);
+      console.log("getAdvice", err);
     }
   }
 
@@ -382,7 +447,7 @@ export class AppService {
       const assets = this.ZohoCRMService.getAssets(email);
       return assets;
     }catch(err){
-      //console.log("getAssets", err);
+      console.log("getAssets", err);
     }
   }
 
@@ -403,7 +468,7 @@ export class AppService {
       const liabilities = this.ZohoCRMService.getLiabilities(email);
       return liabilities;
     }catch(err){
-      //console.log("getLiabilities", err);
+      console.log("getLiabilities", err);
     }
   }
 
@@ -412,7 +477,7 @@ export class AppService {
       const liabilities = this.ZohoCRMService.getAccounts(email);
       return liabilities;
     }catch(err){
-      //console.log("getAccounts", err);
+      console.log("getAccounts", err);
     }
   }
 
@@ -427,10 +492,10 @@ export class AppService {
   async getProfile(email) {
     try{ 
       const profile = this.ZohoCRMService.getProfile(email);
-      //console.log("profile", profile);
+      console.log("profile", profile);
       return profile;
     }catch(err){
-      //console.log("getProfile", err);
+      console.log("getProfile", err);
     }
   }
 
@@ -443,7 +508,7 @@ export class AppService {
       const profile = this.ZohoCRMService.getAccount();
       return profile;
     }catch(err){
-      //console.log("getProfile", err);
+      console.log("getProfile", err);
     }
   }
 
