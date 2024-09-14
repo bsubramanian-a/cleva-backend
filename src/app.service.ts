@@ -266,8 +266,9 @@ export class AppService {
         console.log("token",token)
         console.log("secretKey",secretKey)
 
-        const streamToken = await chatClient.createToken(zohoUser?.id?.toString());
-        console.log("streamToken",streamToken)
+        //const streamToken = await chatClient.createToken(zohoUser?.id?.toString());
+        //console.log("streamToken",streamToken)
+        const streamToken = "testtoken";
 
         const userDetails = {
           name: userType == 'advisor_coach' ? zohoUser?.full_name : zohoUser?.Full_Name,
