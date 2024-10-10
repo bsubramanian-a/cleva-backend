@@ -1254,6 +1254,39 @@ export class ZohoCRMService {
     }
   }
 
+  async updatePlanBEstatePlanWill(datas: any, email: string): Promise<any> {
+    console.log("coming inside updatePlanBEstatePlanWill");
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    console.log("profile datas", datas, email);
+    const requestData = {
+      data: datas,
+    };
+    try {
+      const response = await axios.put(
+        `${this.apiURL}/Contacts?searchColumn=Email&searchValue=${email}`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log("updatePlanBEstatePlanWill response", response.data.data)
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error13');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updateProfile(datas, email);
+      }
+    }
+  }
+
+  
+
   async getLiabilities(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;

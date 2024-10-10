@@ -205,6 +205,12 @@ export class AppController {
     return this.appService.getPlanBEstatePlanWill(email);
   }
 
+  @Put('planbestateplanwill')
+  updatePlanBEstatePlanWill(@Body() datas: any, @Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.updatePlanBEstatePlanWill(datas, email);
+  }
+
   @Get('moneyonautodrive')
   async getMoneyOnAutoDrive(@Req() req: any) {
     const email = req?.user?.email;
