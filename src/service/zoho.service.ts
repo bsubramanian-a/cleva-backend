@@ -640,11 +640,11 @@ export class ZohoCRMService {
       
       //const ownerId = await this.getOwnerId(email, access_token);
       console.log("userId PlanBInsurance", userId, email);
-      console.log("PlanBInsurance url ",`${this.apiURL}/Plan_B_Insurance/search?criteria=(Contact.id:equals:${userId})&fields=Account,Calculated_3_months,Contact,Created_By,Currency,Do_I_have_enough,Email,Email_Opt_Out,Emergency_Fund_Goal,Exchange_Rate,Have_a_goal_for_EF,Have_I_linked_accounts,Modified_By,Record_Image,Name,Owner,Secondary_Email,Tag`)
+      console.log("PlanBInsurance url ",`${this.apiURL}/Plan_B_Insurance/search?criteria=(Contact.id:equals:${userId})&fields=Account,Contact,Created_By,Currency,Email,Email_Opt_Out,Exchange_Rate,Have_an_INA,Have_Child_Trauma_Cover,Have_Health_Cover,Have_IP_Cover,Have_Life_Cover,Have_TPD_Cover,Have_Trauma_Cover,Modified_By,Paying_for_the_right_amount,Record_Image,Name,Owner,Plan_B_Insurance_Goal_Statement,Premiums_are_Competitive,Secondary_Email,Tag`)
       console.log("access_token", access_token);
       if (userId != "") {
         const response = await axios.get(
-          `${this.apiURL}/Plan_B_Insurance/search?criteria=(Contact.id:equals:${userId})&fields=Account,Calculated_3_months,Contact,Created_By,Currency,Do_I_have_enough,Email,Email_Opt_Out,Emergency_Fund_Goal,Exchange_Rate,Have_a_goal_for_EF,Have_I_linked_accounts,Modified_By,Record_Image,Name,Owner,Secondary_Email,Tag`,
+          `${this.apiURL}/Plan_B_Insurance/search?criteria=(Contact.id:equals:${userId})&fields=Account,Contact,Created_By,Currency,Email,Email_Opt_Out,Exchange_Rate,Have_an_INA,Have_Child_Trauma_Cover,Have_Health_Cover,Have_IP_Cover,Have_Life_Cover,Have_TPD_Cover,Have_Trauma_Cover,Modified_By,Paying_for_the_right_amount,Record_Image,Name,Owner,Plan_B_Insurance_Goal_Statement,Premiums_are_Competitive,Secondary_Email,Tag`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
