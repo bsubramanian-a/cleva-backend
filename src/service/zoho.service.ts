@@ -58,7 +58,7 @@ export class ZohoCRMService {
         }
       );
 
-      console.log("contact search response", response?.data?.data);
+      console.log("contact search response1", response?.data?.data);
 
       if (response?.data?.data?.length > 0) {
         return response?.data?.data[0];
@@ -149,10 +149,10 @@ export class ZohoCRMService {
         }
       );
 
-      console.log("contact search response", response?.data?.data);
+      console.log("contact search response2", response?.data?.data);
 
       if (response?.data?.data?.length > 0) {
-        console.log("contact search response account name", response?.data?.data[0]?.Account_Name);
+        console.log("contact search response3 account name", response?.data?.data[0]?.Account_Name);
         return response?.data?.data[0]?.Account_Name?.id || '';
       }
 
