@@ -251,6 +251,12 @@ export class AppController {
     return this.appService.getHouseHoldExpenses(email);
   }
 
+  @Put('householdexpenses')
+  updateHouseHoldExpenses(@Body() datas: any, @Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.updateHouseHoldExpenses(datas, email);
+  }
+
   @Get('rollingaccountbalance')
   async getRollingAccountBalance(@Req() req: any) {
     const email = req?.user?.email;

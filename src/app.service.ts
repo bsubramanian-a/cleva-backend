@@ -508,6 +508,10 @@ export class AppService {
     return await this.ZohoCRMService.updatePlanBEstatePlanWill(datas, email);
   }  
 
+  async updateHouseHoldExpenses(datas: any, email:string) {
+    return await this.ZohoCRMService.updateHouseHoldExpenses(datas, email);
+  }   
+
   async getAccount() {
     try{ 
       const profile = this.ZohoCRMService.getAccount();

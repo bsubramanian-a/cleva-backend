@@ -1280,11 +1280,44 @@ export class ZohoCRMService {
       console.log(error?.response?.data);
       if (error?.response?.data?.code == 'INVALID_TOKEN') {
         await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
-        return this.updateProfile(datas, email);
+        return this.updatePlanBEstatePlanWill(datas, email);
       }
     }
   }
 
+  async updateHouseHoldExpenses(datas: any, email: string): Promise<any> {
+    console.log("coming inside updateHouseHoldExpenses");
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    console.log("profile datas", datas, email);
+    const requestData = {
+      data: datas,
+    };
+    try {
+      const response = await axios.put(
+        `${this.apiURL}/Household_Expenses?searchColumn=Email&searchValue=${email}`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log("updateHouseHoldExpenses response", response.data.data)
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error updateHouseHoldExpenses');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updateHouseHoldExpenses(datas, email);
+      }
+    }
+  }
+
+
+  
   
 
   async getLiabilities(email: any): Promise<any> {
