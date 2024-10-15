@@ -4,9 +4,9 @@ import { ZohoCRMService } from './service/zoho.service';
 import { UsersService } from './modules/users/users.service';
 import * as jwt from 'jsonwebtoken';
 import * as nodemailer from 'nodemailer';
-import { StreamChat } from 'stream-chat';
+// import { StreamChat } from 'stream-chat';
 
-const chatClient = new StreamChat(process.env.STREAM_KEY, process.env.STREAM_SECRET);
+// const chatClient = new StreamChat(process.env.STREAM_KEY, process.env.STREAM_SECRET);
 
 const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
@@ -154,12 +154,20 @@ export class AppService {
       const secretKey = process.env.SECRET_KEY;
       const token = jwt.sign(payload, secretKey);
 
-      const streamToken = await chatClient.createToken(zohoUser?.id?.toString());
+      // const streamToken = await chatClient.createToken(zohoUser?.id?.toString());
+
+      // const userDetails = {
+      //   name: zohoUser?.Full_Name,
+      //   id: zohoUser?.id,
+      //   streamToken,
+      //   owner: zohoUser?.Owner,
+      //   userType,
+      //   coach_url: userType == 'advisor_coach' ? "" : coach?.users[0]?.Zoho_Bookings_Link
+      // }
 
       const userDetails = {
         name: zohoUser?.Full_Name,
         id: zohoUser?.id,
-        streamToken,
         owner: zohoUser?.Owner,
         userType,
         coach_url: userType == 'advisor_coach' ? "" : coach?.users[0]?.Zoho_Bookings_Link
@@ -197,12 +205,20 @@ export class AppService {
       const secretKey = process.env.SECRET_KEY;
       const token = jwt.sign(payload, secretKey);
 
-      const streamToken = await chatClient.createToken(zohoUser?.id?.toString());
+      // const streamToken = await chatClient.createToken(zohoUser?.id?.toString());
+
+      // const userDetails = {
+      //   name: zohoUser?.Full_Name,
+      //   id: zohoUser?.id,
+      //   streamToken,
+      //   owner: zohoUser?.Owner,
+      //   userType,
+      //   coach_url: userType == 'advisor_coach' ? "" : coach?.users[0]?.Zoho_Bookings_Link
+      // }
 
       const userDetails = {
         name: zohoUser?.Full_Name,
         id: zohoUser?.id,
-        streamToken,
         owner: zohoUser?.Owner,
         userType,
         coach_url: userType == 'advisor_coach' ? "" : coach?.users[0]?.Zoho_Bookings_Link
@@ -268,12 +284,19 @@ export class AppService {
 
         //const streamToken = await chatClient.createToken(zohoUser?.id?.toString());
         //console.log("streamToken",streamToken)
-        const streamToken = "testtoken";
+        //const streamToken = "testtoken";
 
+        // const userDetails = {
+        //   name: userType == 'advisor_coach' ? zohoUser?.full_name : zohoUser?.Full_Name,
+        //   id: zohoUser?.id,
+        //   streamToken,
+        //   owner: zohoUser?.Owner,
+        //   userType,
+        //   coach_url: userType == 'advisor_coach' ? "" : coach?.users[0]?.Zoho_Bookings_Link
+        // }
         const userDetails = {
           name: userType == 'advisor_coach' ? zohoUser?.full_name : zohoUser?.Full_Name,
           id: zohoUser?.id,
-          streamToken,
           owner: zohoUser?.Owner,
           userType,
           coach_url: userType == 'advisor_coach' ? "" : coach?.users[0]?.Zoho_Bookings_Link
