@@ -235,6 +235,22 @@ export class AppController {
     return this.appService.getPlanBInsurance(email);
   }
 
+  @Get('insuranceneedanalysis')
+  async getInsuranceNeedAnalysis(@Req() req: any) {
+    const email = req?.user?.email;
+    console.log("req",req.user)
+    console.log("email", email);
+    return this.appService.getInsuranceNeedAnalysis(email);
+  }
+
+  @Get('financialaccounts')
+  async getFinancialAccounts(@Req() req: any) {
+    const email = req?.user?.email;
+    console.log("req",req.user)
+    console.log("email", email);
+    return this.appService.getFinancialAccounts(email);
+  }
+
   @Get('debtonatedebt')
   async getDebtonateDebt(@Req() req: any) {
     const email = req?.user?.email;

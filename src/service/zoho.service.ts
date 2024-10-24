@@ -149,6 +149,8 @@ export class ZohoCRMService {
         }
       );
 
+
+
       console.log("contact search response2", response?.data?.data);
 
       if (response?.data?.data?.length > 0) {
@@ -631,6 +633,84 @@ export class ZohoCRMService {
     }
   }
 
+  async getInsuranceNeedAnalysis(email: any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    console.log("tokenFromDb", tokenFromDb);
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const userId = await this.getUserId(email);
+      
+      //const ownerId = await this.getOwnerId(email, access_token);
+      console.log("userId InsuranceNeedAnalysis", userId, email);
+      console.log("InsuranceNeedAnalysis url ",`${this.apiURL}/INA/search?criteria=(Client_Name.id:equals:${userId})&fields=Allowance_Emergency,Allowance_Funeral,Allowance_Home_Mods,Allowance_Medical,Child_Edu_Allowance,Client_Name,Created_By,Currency,Email,Email_Opt_Out,Exchange_Rate,Name,Household,Record_Image,Multi_Line_1,Owner,Modified_By,Number_of_Income_Yrs,Other_Allowances_Consideration,Replace_Income_p_a,Secondary_Email,Tag,Total_Liabilities`)
+      console.log("access_token", access_token);
+      if (userId != "") {
+        const response = await axios.get(
+          `${this.apiURL}/INA/search?criteria=(Client_Name.id:equals:${userId})&fields=Allowance_Emergency,Allowance_Funeral,Allowance_Home_Mods,Allowance_Medical,Child_Edu_Allowance,Client_Name,Created_By,Currency,Email,Email_Opt_Out,Exchange_Rate,Name,Household,Record_Image,Multi_Line_1,Owner,Modified_By,Number_of_Income_Yrs,Other_Allowances_Consideration,Replace_Income_p_a,Secondary_Email,Tag,Total_Liabilities`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          },
+        );
+        console.log("InsuranceNeedAnalysis response.data",response.data);
+        const returnedData = response.data?.data;
+        if (returnedData?.length > 0) {          
+          return response.data; 
+        } else {
+          return { data: [], message: "No data available" };
+        }
+      }
+      return { data: [], message: "No data available" };
+    } catch (error) {
+      console.log('Getting Error111777745');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getInsuranceNeedAnalysis(email);
+      }
+    }
+  }
+
+  async getFinancialAccounts(email: any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    console.log("tokenFromDb", tokenFromDb);
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const userId = await this.getUserId(email);
+      
+      //const ownerId = await this.getOwnerId(email, access_token);
+      console.log("userId InsuranceNeedAnalysis", userId, email);
+      console.log("InsuranceNeedAnalysis url ",`${this.apiURL}/Financial_Accounts/search?criteria=(Primary_Owner.id:equals:${userId})&fields=Equity,Month,Year1,Year3,Months,Year,Year2,Months1,Year4,Account_Type,Household,AFC Applicable,AFC_Applicable,As_At,As_At_Date,Asset_or_Liability,Beneficiary,Beneficiary_Name,Benefit_Period,Benefit_Type,Centrelink_Deductible_p_a,Client_wishes_to_Retain,Complying,Comprehensive_Cover,Concessional,Continuance_Option,Created_By,Currency,Current_Repayment_Amount,Current_Value,Date_Commenced,Deductible,Email,Email_Opt_Out,Exchange_Rate,Exit_Fee_Costs,Record_Image,Name,Owner,Liability_Status,Accounts,Frequency,Goal_Date,Good_Debt_Bad_Debt,Guaranteed_Period,HH_Anniversary_Date,Inception_Date,Insurance_Notes_Comments,Insurance_Premium_p_a,Interest_Rate,Interest_Type,Investment_Style,Is_Emergency_Fund,Is_Insurance_Financial_Account,Last_4_Digits,Life_Cover,Life_Insured,Linked_Asset_Value,Loan_End_Date_If_Applicable,LVR,Modified_By,Nomination_Type,Non_Concessional,Occupation_Type,Ownership_Type,Payment_Gross_p_a,Payment_Indexation,Pension_Type,Plan_Name,Premium_Structure,Preserved_Amount,Primary_Owner,Product_Provider,Superannuation_Fund,Purchase_Price,Purpose_of_the_Debt_Loan,Related_Assets,Related_Goals,Renewal_Date,Repayment_Type,Repayment_Amount,Residual_Capital_Value,Restricted_Non_Preserved,Reversionary,Risk_Profile,Salary_Continuance,Salary_Sacrifice_P_a,Secondary_Email,Secondary_Owner,SGC,Since_Inception,SMSF,Start_Date,Tag,Tax_Deductible,Tax_Deductible_Amount,Tax_Free,Tax_Free_Component,Taxed_Component,Term_Months,Term_at_Purchase_yrs_if_applicable,Term_Remaining_Months,TPD_Cover,Transition_to_Retired,Trauma_Cover,Unrestricted_Non_Preserved,Untaxed_Component,Waiting_Period,With_Offset_Account,Within_Super1,Within_Super`)
+      console.log("access_token", access_token);
+      if (userId != "") {
+        const response = await axios.get(
+          `${this.apiURL}/Financial_Accounts/search?criteria=(Primary_Owner.id:equals:${userId})&fields=Equity,Month,Year1,Year3,Months,Year,Year2,Months1,Year4,Account_Type,Household,AFC Applicable,AFC_Applicable,As_At,As_At_Date,Asset_or_Liability,Beneficiary,Beneficiary_Name,Benefit_Period,Benefit_Type,Centrelink_Deductible_p_a,Client_wishes_to_Retain,Complying,Comprehensive_Cover,Concessional,Continuance_Option,Created_By,Currency,Current_Repayment_Amount,Current_Value,Date_Commenced,Deductible,Email,Email_Opt_Out,Exchange_Rate,Exit_Fee_Costs,Record_Image,Name,Owner,Liability_Status,Accounts,Frequency,Goal_Date,Good_Debt_Bad_Debt,Guaranteed_Period,HH_Anniversary_Date,Inception_Date,Insurance_Notes_Comments,Insurance_Premium_p_a,Interest_Rate,Interest_Type,Investment_Style,Is_Emergency_Fund,Is_Insurance_Financial_Account,Last_4_Digits,Life_Cover,Life_Insured,Linked_Asset_Value,Loan_End_Date_If_Applicable,LVR,Modified_By,Nomination_Type,Non_Concessional,Occupation_Type,Ownership_Type,Payment_Gross_p_a,Payment_Indexation,Pension_Type,Plan_Name,Premium_Structure,Preserved_Amount,Primary_Owner,Product_Provider,Superannuation_Fund,Purchase_Price,Purpose_of_the_Debt_Loan,Related_Assets,Related_Goals,Renewal_Date,Repayment_Type,Repayment_Amount,Residual_Capital_Value,Restricted_Non_Preserved,Reversionary,Risk_Profile,Salary_Continuance,Salary_Sacrifice_P_a,Secondary_Email,Secondary_Owner,SGC,Since_Inception,SMSF,Start_Date,Tag,Tax_Deductible,Tax_Deductible_Amount,Tax_Free,Tax_Free_Component,Taxed_Component,Term_Months,Term_at_Purchase_yrs_if_applicable,Term_Remaining_Months,TPD_Cover,Transition_to_Retired,Trauma_Cover,Unrestricted_Non_Preserved,Untaxed_Component,Waiting_Period,With_Offset_Account,Within_Super1,Within_Super`,
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${access_token}`,
+            },
+          },
+        );
+        console.log("getFinancialAccounts response.data",response.data);
+        const returnedData = response.data?.data;
+        if (returnedData?.length > 0) {          
+          return response.data; 
+        } else {
+          return { data: [], message: "No data available" };
+        }
+      }
+      return { data: [], message: "No data available" };
+    } catch (error) {
+      console.log('Getting Error111777745');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getFinancialAccounts(email);
+      }
+    }
+  }
+
   async getPlanBInsurance(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     console.log("tokenFromDb", tokenFromDb);
@@ -652,8 +732,20 @@ export class ZohoCRMService {
           },
         );
         console.log("PlanBInsurance response.data",response.data);
-        if (response.data?.data?.length > 0) {
-          return response.data; 
+        const returnedData = response.data?.data;
+        if (returnedData?.length > 0) {
+          if (returnedData[0].Account) {
+            const accountResponse = await axios.get(
+              `${this.apiURL}/Plan_B_Insurance/search?criteria=(Contact.id:equals:${returnedData[0].Account?.id})&fields=Account,Contact,Created_By,Currency,Email,Email_Opt_Out,Exchange_Rate,Have_an_INA,Have_Child_Trauma_Cover,Have_Health_Cover,Have_IP_Cover,Have_Life_Cover,Have_TPD_Cover,Have_Trauma_Cover,Modified_By,Paying_for_the_right_amount,Record_Image,Name,Owner,Plan_B_Insurance_Goal_Statement,Premiums_are_Competitive,Secondary_Email,Tag`,
+              {
+                headers: {
+                  Authorization: `Zoho-oauthtoken ${access_token}`,
+                },
+              },
+            );      
+            return { contactData:response.data, accountData:accountResponse.data };      
+          }
+          return { contactData:response.data }; 
         } else {
           return { data: [], message: "No data available" };
         }
@@ -931,7 +1023,7 @@ export class ZohoCRMService {
 
       if (ownerId != "") {
         const financialAccountsPromise = axios.get(
-          `${this.apiURL}/Financial_Accounts/search?criteria=((Household.id:equals:${ownerId})and(Asset_or_Liability:equals:Asset))&fields=Name,Email,Asset_or_Liability,Currency,Current_Value,Household`,
+          `${this.apiURL}/Financial_Accounts/search?criteria=((Household.id:equals:${ownerId})and(Asset_or_Liability:equals:Asset))&fields=Equity,Month,Year1,Year3,Months,Year,Year2,Months1,Year4,Account_Type,Household,AFC Applicable,AFC_Applicable,As_At,As_At_Date,Asset_or_Liability,Beneficiary,Beneficiary_Name,Benefit_Period,Benefit_Type,Centrelink_Deductible_p_a,Client_wishes_to_Retain,Complying,Comprehensive_Cover,Concessional,Continuance_Option,Created_By,Currency,Current_Repayment_Amount,Current_Value,Date_Commenced,Deductible,Email,Email_Opt_Out,Exchange_Rate,Exit_Fee_Costs,Record_Image,Name,Owner,Liability_Status,Accounts,Frequency,Goal_Date,Good_Debt_Bad_Debt,Guaranteed_Period,HH_Anniversary_Date,Inception_Date,Insurance_Notes_Comments,Insurance_Premium_p_a,Interest_Rate,Interest_Type,Investment_Style,Is_Emergency_Fund,Is_Insurance_Financial_Account,Last_4_Digits,Life_Cover,Life_Insured,Linked_Asset_Value,Loan_End_Date_If_Applicable,LVR,Modified_By,Nomination_Type,Non_Concessional,Occupation_Type,Ownership_Type,Payment_Gross_p_a,Payment_Indexation,Pension_Type,Plan_Name,Premium_Structure,Preserved_Amount,Primary_Owner,Product_Provider,Superannuation_Fund,Purchase_Price,Purpose_of_the_Debt_Loan,Related_Assets,Related_Goals,Renewal_Date,Repayment_Type,Repayment_Amount,Residual_Capital_Value,Restricted_Non_Preserved,Reversionary,Risk_Profile,Salary_Continuance,Salary_Sacrifice_P_a,Secondary_Email,Secondary_Owner,SGC,Since_Inception,SMSF,Start_Date,Tag,Tax_Deductible,Tax_Deductible_Amount,Tax_Free,Tax_Free_Component,Taxed_Component,Term_Months,Term_at_Purchase_yrs_if_applicable,Term_Remaining_Months,TPD_Cover,Transition_to_Retired,Trauma_Cover,Unrestricted_Non_Preserved,Untaxed_Component,Waiting_Period,With_Offset_Account,Within_Super1,Within_Super`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
@@ -1328,7 +1420,7 @@ export class ZohoCRMService {
 
       if (ownerId != "") {
         const response = await axios.get(
-          `${this.apiURL}/Financial_Accounts/search?criteria=((Household.id:equals:${ownerId})and(Asset_or_Liability:equals:Liability))&fields=Name,Email,Asset_or_Liability,Currency,Current_Value,Household`,
+          `${this.apiURL}/Financial_Accounts/search?criteria=((Household.id:equals:${ownerId})and(Asset_or_Liability:equals:Liability))&fields=Equity,Month,Year1,Year3,Months,Year,Year2,Months1,Year4,Account_Type,Household,AFC Applicable,AFC_Applicable,As_At,As_At_Date,Asset_or_Liability,Beneficiary,Beneficiary_Name,Benefit_Period,Benefit_Type,Centrelink_Deductible_p_a,Client_wishes_to_Retain,Complying,Comprehensive_Cover,Concessional,Continuance_Option,Created_By,Currency,Current_Repayment_Amount,Current_Value,Date_Commenced,Deductible,Email,Email_Opt_Out,Exchange_Rate,Exit_Fee_Costs,Record_Image,Name,Owner,Liability_Status,Accounts,Frequency,Goal_Date,Good_Debt_Bad_Debt,Guaranteed_Period,HH_Anniversary_Date,Inception_Date,Insurance_Notes_Comments,Insurance_Premium_p_a,Interest_Rate,Interest_Type,Investment_Style,Is_Emergency_Fund,Is_Insurance_Financial_Account,Last_4_Digits,Life_Cover,Life_Insured,Linked_Asset_Value,Loan_End_Date_If_Applicable,LVR,Modified_By,Nomination_Type,Non_Concessional,Occupation_Type,Ownership_Type,Payment_Gross_p_a,Payment_Indexation,Pension_Type,Plan_Name,Premium_Structure,Preserved_Amount,Primary_Owner,Product_Provider,Superannuation_Fund,Purchase_Price,Purpose_of_the_Debt_Loan,Related_Assets,Related_Goals,Renewal_Date,Repayment_Type,Repayment_Amount,Residual_Capital_Value,Restricted_Non_Preserved,Reversionary,Risk_Profile,Salary_Continuance,Salary_Sacrifice_P_a,Secondary_Email,Secondary_Owner,SGC,Since_Inception,SMSF,Start_Date,Tag,Tax_Deductible,Tax_Deductible_Amount,Tax_Free,Tax_Free_Component,Taxed_Component,Term_Months,Term_at_Purchase_yrs_if_applicable,Term_Remaining_Months,TPD_Cover,Transition_to_Retired,Trauma_Cover,Unrestricted_Non_Preserved,Untaxed_Component,Waiting_Period,With_Offset_Account,Within_Super1,Within_Super`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
@@ -2061,7 +2153,7 @@ export class ZohoCRMService {
 
       if (ownerId != "") {
         const response = await axios.get(
-          `${this.apiURL}/Financial_Accounts/search?criteria=(Household.id:equals:${ownerId})&sort_by=Created_Time&sort_order=desc`,
+          `${this.apiURL}/Financial_Accounts/search?criteria=(Household.id:equals:${ownerId})&sort_by=Created_Time&sort_order=desc&fields=Equity,Month,Year1,Year3,Months,Year,Year2,Months1,Year4,Account_Type,Household,AFC Applicable,AFC_Applicable,As_At,As_At_Date,Asset_or_Liability,Beneficiary,Beneficiary_Name,Benefit_Period,Benefit_Type,Centrelink_Deductible_p_a,Client_wishes_to_Retain,Complying,Comprehensive_Cover,Concessional,Continuance_Option,Created_By,Currency,Current_Repayment_Amount,Current_Value,Date_Commenced,Deductible,Email,Email_Opt_Out,Exchange_Rate,Exit_Fee_Costs,Record_Image,Name,Owner,Liability_Status,Accounts,Frequency,Goal_Date,Good_Debt_Bad_Debt,Guaranteed_Period,HH_Anniversary_Date,Inception_Date,Insurance_Notes_Comments,Insurance_Premium_p_a,Interest_Rate,Interest_Type,Investment_Style,Is_Emergency_Fund,Is_Insurance_Financial_Account,Last_4_Digits,Life_Cover,Life_Insured,Linked_Asset_Value,Loan_End_Date_If_Applicable,LVR,Modified_By,Nomination_Type,Non_Concessional,Occupation_Type,Ownership_Type,Payment_Gross_p_a,Payment_Indexation,Pension_Type,Plan_Name,Premium_Structure,Preserved_Amount,Primary_Owner,Product_Provider,Superannuation_Fund,Purchase_Price,Purpose_of_the_Debt_Loan,Related_Assets,Related_Goals,Renewal_Date,Repayment_Type,Repayment_Amount,Residual_Capital_Value,Restricted_Non_Preserved,Reversionary,Risk_Profile,Salary_Continuance,Salary_Sacrifice_P_a,Secondary_Email,Secondary_Owner,SGC,Since_Inception,SMSF,Start_Date,Tag,Tax_Deductible,Tax_Deductible_Amount,Tax_Free,Tax_Free_Component,Taxed_Component,Term_Months,Term_at_Purchase_yrs_if_applicable,Term_Remaining_Months,TPD_Cover,Transition_to_Retired,Trauma_Cover,Unrestricted_Non_Preserved,Untaxed_Component,Waiting_Period,With_Offset_Account,Within_Super1,Within_Super`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,

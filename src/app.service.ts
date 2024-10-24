@@ -390,6 +390,28 @@ export class AppService {
     }
   }
 
+  async getInsuranceNeedAnalysis(email){
+    try{ 
+      const insuranceNeedAnalysis = await this.ZohoCRMService.getInsuranceNeedAnalysis(email);
+      return insuranceNeedAnalysis;
+    }catch(err){
+      console.log("getInsuranceNeedAnalysis", err);
+    }
+  }
+
+  async getFinancialAccounts(email){
+    try{ 
+      const insuranceNeedAnalysis = await this.ZohoCRMService.getFinancialAccounts(email);
+      return insuranceNeedAnalysis;
+    }catch(err){
+      console.log("getFinancialAccounts", err);
+    }
+  }
+
+  
+
+  
+
   async getDebtonateDebt(email){
     try{ 
       const debtonateDebt = await this.ZohoCRMService.getDebtonateDebt(email);
