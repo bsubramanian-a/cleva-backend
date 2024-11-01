@@ -1377,6 +1377,72 @@ export class ZohoCRMService {
     }
   }
 
+  async updatePlanBInsurance(datas: any, email: string): Promise<any> {
+    console.log("coming inside updatePlanBInsurance");
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    console.log("profile datas", datas, email);
+    const requestData = {
+      data: datas,
+    };
+    try {
+      const response = await axios.put(
+        `${this.apiURL}/INA?searchColumn=id&searchValue=${datas?.id}`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log("updatePlanBInsurance response", response.data.data)
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error13');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updatePlanBInsurance(datas, email);
+      }
+    }
+  }
+
+  
+
+  async updateFinancialAccounts(datas: any, email: string): Promise<any> {
+    console.log("coming inside updateFinancialAccounts");
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    console.log("updateFinancialAccounts datas", datas, email);
+
+
+    const requestData = {
+      data: datas,
+    };
+    try {
+      const response = await axios.put(
+        `${this.apiURL}/Financial_Accounts`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log("updateFinancialAccounts response", response.data.data)
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error updateFinancialAccounts');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updateFinancialAccounts(datas, email);
+      }
+    }
+  }
+
   async updateHouseHoldExpenses(datas: any, email: string): Promise<any> {
     console.log("coming inside updateHouseHoldExpenses");
     const tokenFromDb = await this.oauthService.findAll();

@@ -235,6 +235,14 @@ export class AppController {
     return this.appService.getPlanBInsurance(email);
   }
 
+  @Put('planbinsurance')
+  updatePlanBInsurance(@Body() datas: any, @Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.updatePlanBInsurance(datas, email);
+  }
+
+  
+
   @Get('insuranceneedanalysis')
   async getInsuranceNeedAnalysis(@Req() req: any) {
     const email = req?.user?.email;
@@ -249,6 +257,12 @@ export class AppController {
     console.log("req",req.user)
     console.log("email", email);
     return this.appService.getFinancialAccounts(email);
+  }
+
+  @Put('financialaccounts')
+  updateFinancialAccounts(@Body() datas: any, @Req() req: any) {
+    const email = req?.user?.email;
+    return this.appService.updateFinancialAccounts(datas, email);
   }
 
   @Get('debtonatedebt')

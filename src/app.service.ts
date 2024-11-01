@@ -553,8 +553,18 @@ export class AppService {
     return await this.ZohoCRMService.updatePlanBEstatePlanWill(datas, email);
   }  
 
+  async updatePlanBInsurance(datas: any, email:string) {
+    return await this.ZohoCRMService.updatePlanBInsurance(datas, email);
+  } 
+
+  
+
   async updateHouseHoldExpenses(datas: any, email:string) {
     return await this.ZohoCRMService.updateHouseHoldExpenses(datas, email);
+  }   
+
+  async updateFinancialAccounts(datas: any, email:string) {
+    return await this.ZohoCRMService.updateFinancialAccounts(datas, email);
   }   
 
   async getAccount() {
