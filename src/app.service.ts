@@ -527,6 +527,17 @@ export class AppService {
     }
   }
 
+  async getSpecificAccount(email, accountID) {
+    try{ 
+      const account = this.ZohoCRMService.getSpecificAccount(email, accountID);
+      return account;
+    }catch(err){
+      console.log("getSpecificAccount", err);
+    }
+  }
+
+  
+
   async addLiability(asset: any, email:string) {
     return await this.ZohoCRMService.addLiability(asset, email);
   }

@@ -114,13 +114,7 @@ export class AppController {
     return this.appService.addMeeting(meetingData);
   }
 
-  @Get('meetings/:type')
-  @ApiTags('Meeting Management')
-  @ApiOperation({ summary: 'Get Meeting Type', description: 'This is used to get type of meeting.' }) 
-  async getMeetings(@Req() req: any, @Param('type') type: string) {
-    const email = req?.user?.email;
-    return this.appService.getMeetings(email, type);
-  }
+  
 
   @Post('end-meeting')
   @ApiTags('Meeting Management')
@@ -415,5 +409,19 @@ export class AppController {
   async getAccounts(@Req() req: any) {
     const email = req?.user?.email;
     return this.appService.getAccounts(email);
+  }
+
+  @Get('get_account/:accountId')
+  async getSpecificAccount(@Req() req: any, @Param('accountId') accountId:string) {
+    const email = req?.user?.email;
+    return this.appService.getSpecificAccount(email, accountId);
+  }
+
+  @Get('meetings/:type')
+  @ApiTags('Meeting Management')
+  @ApiOperation({ summary: 'Get Meeting Type', description: 'This is used to get type of meeting.' }) 
+  async getMeetings(@Req() req: any, @Param('type') type: string) {
+    const email = req?.user?.email;
+    return this.appService.getMeetings(email, type);
   }
 }

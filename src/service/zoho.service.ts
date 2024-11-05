@@ -1356,7 +1356,7 @@ export class ZohoCRMService {
     };
     try {
       const response = await axios.put(
-        `${this.apiURL}/Contacts?searchColumn=Email&searchValue=${email}`,
+        `${this.apiURL}/Plan_B_Estate_Plan_Will`,
         requestData,
         {
           headers: {
@@ -2208,6 +2208,32 @@ export class ZohoCRMService {
       }
       return { "message": error?.message };
       // Handle other errors as needed
+    }
+  }
+
+  async getSpecificAccount(email: any, accountID:any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+    try {
+      const response = await axios.get(
+        `${this.apiURL}/Accounts/search?criteria=(id:equals:${accountID})`,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+          },
+        }
+      );
+
+      console.log("getSpecificAccount response", response);
+
+      return response.data;
+    } catch (error) {
+      console.log('Getting Error1888');
+      console.log(error?.response?.data);
+      if (error?.response?.data?.code == 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.getSpecificAccount(email, accountID);
+      }
     }
   }
 
