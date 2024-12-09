@@ -417,6 +417,11 @@ export class AppController {
     return this.appService.getSpecificAccount(email, accountId);
   }
 
+  @Put('put_account')
+  async putSpecificAccount(@Body() datas: any) {   
+    return this.appService.updateSpecificAccount(datas);
+  }
+
   @Get('meetings/:type')
   @ApiTags('Meeting Management')
   @ApiOperation({ summary: 'Get Meeting Type', description: 'This is used to get type of meeting.' }) 

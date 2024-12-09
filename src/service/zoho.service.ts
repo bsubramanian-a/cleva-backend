@@ -2237,6 +2237,44 @@ export class ZohoCRMService {
     }
   }
 
+  async updateSpecificAccount(datas:any): Promise<any> {
+    const tokenFromDb = await this.oauthService.findAll();
+    const access_token = tokenFromDb[0]?.dataValues?.access_token;
+
+    const requestData = {
+      data: [
+        {
+          "id": datas?.id,
+          "Target_Emergency_Fund": datas?.Target_Emergency_Fund
+        }
+      ],
+    };
+
+    try {
+      const response = await axios.put(
+        `${this.apiURL}/Accounts`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Zoho-oauthtoken ${access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log("Update account with API response", response.data);
+      // Handle the response as needed
+    } catch (error) {
+      console.log('Error updating assets with API', error?.response?.data);
+      if (error?.response?.data?.code === 'INVALID_TOKEN') {
+        await this.refreshAccessToken(tokenFromDb[0]?.dataValues?.id);
+        return this.updateSpecificAccount(datas);
+      }
+      // Handle other errors as needed
+    }
+  }
+
+  
+
   async getAccounts(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;

@@ -536,6 +536,17 @@ export class AppService {
     }
   }
 
+  async updateSpecificAccount(datas) {
+    try{ 
+      const account = this.ZohoCRMService.updateSpecificAccount(datas);
+      return account;
+    }catch(err){
+      console.log("updateSpecificAccount", err);
+    }
+  }
+
+  
+
   
 
   async addLiability(asset: any, email:string) {
