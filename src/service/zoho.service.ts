@@ -58,7 +58,7 @@ export class ZohoCRMService {
         }
       );
 
-      console.log("contact search response1", response?.data?.data);
+      //console.log("contact search response1", response?.data?.data);
 
       if (response?.data?.data?.length > 0) {
         return response?.data?.data[0];
@@ -136,8 +136,8 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
 
-    console.log("tokenFromDb", tokenFromDb); 
-    console.log("access_token", access_token);
+    //console.log("tokenFromDb", tokenFromDb); 
+    //console.log("access_token", access_token);
 
     try {
       const response = await axios.get(
@@ -151,11 +151,11 @@ export class ZohoCRMService {
 
 
 
-      console.log("contact search response2", response?.data?.data);
+      console.log("user details", response?.data?.data);
 
       if (response?.data?.data?.length > 0) {
-        console.log("contact search response3 account name", response?.data?.data[0]?.Account_Name);
-        return response?.data?.data[0]?.Account_Name?.id || '';
+        // console.log("contact search response3 account name", response?.data?.data[0]?.Account_Name);
+        return response?.data?.data[0]?.id || '';
       }
 
       return '';
@@ -227,7 +227,7 @@ export class ZohoCRMService {
           },
         },
       );
-      console.log("users from zoho 2", response.data);
+      //console.log("users from zoho 2", response.data);
       return response.data;
     } catch (error) {
       console.log('Getting Error4');
@@ -358,7 +358,7 @@ export class ZohoCRMService {
     const user: any = await this.getUserById(userId);
     const coach: any = await this.getCoachById(coachId);
 
-    console.log("coach", coach);
+    //console.log("coach", coach);
 
     const meetingData = {
       "$meeting_details": {
@@ -387,7 +387,7 @@ export class ZohoCRMService {
       "Remind_At": result?.zohoFormattedReminder
     }
 
-    console.log("meeting data", meetingData);
+    //console.log("meeting data", meetingData);
 
     const requestData = {
       data: [meetingData],
@@ -404,7 +404,7 @@ export class ZohoCRMService {
           },
         }
       );
-      console.log("Create meeting with API response", response?.data, response?.data?.data[0]?.details);
+      //console.log("Create meeting with API response", response?.data, response?.data?.data[0]?.details);
     } catch (error) {
       console.log('Error creating meeting with API', error?.response);
       if (error?.response?.data?.code === 'INVALID_TOKEN') {
@@ -445,15 +445,15 @@ export class ZohoCRMService {
 
   async getRollingAccountBalance(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    console.log("tokenFromDb", tokenFromDb);
+    //console.log("tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
       
       //const ownerId = await this.getOwnerId(email, access_token);
-      console.log("userId rolling account balance", userId, email);
-      console.log("rolling account balance url ",`${this.apiURL}/Rolling_Acct_Balance/search?criteria=(Contact.id:equals:${userId})&fields=Account_Type,As_At_Date,Contact,Created_By,Currency,Current_Balance,Email,Email_Opt_Out,Exchange_Rate,Financial_Accounts,Is_Account,Is_Contact,Is_Rolled_Up_Summary,Modified_By,Record_Image,Name,Owner,Secondary_Email,Tag`)
-      console.log("access_token", access_token);
+      // console.log("userId rolling account balance", userId, email);
+      // console.log("rolling account balance url ",`${this.apiURL}/Rolling_Acct_Balance/search?criteria=(Contact.id:equals:${userId})&fields=Account_Type,As_At_Date,Contact,Created_By,Currency,Current_Balance,Email,Email_Opt_Out,Exchange_Rate,Financial_Accounts,Is_Account,Is_Contact,Is_Rolled_Up_Summary,Modified_By,Record_Image,Name,Owner,Secondary_Email,Tag`)
+      //console.log("access_token", access_token);
       if (userId != "") {
         const response = await axios.get(
           `${this.apiURL}/Rolling_Acct_Balance/search?criteria=(Contact.id:equals:${userId})&fields=Account_Type,As_At_Date,Contact,Created_By,Currency,Current_Balance,Email,Email_Opt_Out,Exchange_Rate,Financial_Accounts,Is_Account,Is_Contact,Is_Rolled_Up_Summary,Modified_By,Record_Image,Name,Owner,Secondary_Email,Tag`,
@@ -463,7 +463,7 @@ export class ZohoCRMService {
             },
           },
         );
-        console.log("rolling account balance response.data",response.data);
+        //console.log("rolling account balance response.data",response.data);
         if (response.data?.data?.length > 0) {
           return response.data; 
         } else {
@@ -483,15 +483,15 @@ export class ZohoCRMService {
 
   async getSuperSorted(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    console.log("tokenFromDb", tokenFromDb);
+    //console.log("tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
       
       //const ownerId = await this.getOwnerId(email, access_token);
-      console.log("userId supersorted", userId, email);
-      console.log("super sorted url ",`${this.apiURL}/Super_Sorted/search?criteria=(Contact.id:equals:${userId})&fields=Advantage_Rules_Tax_Benefits,Aust_Fixed_Income,Australian_Equities,Coach_Super_Notes,Contact,Contribute_a_Bit_More,Created_By,Currency,Date_Edited,Date_Edited_Coach,Email,Email_Opt_Out,Exchange_Rate,Fees_Insurance_Multiple_Accounts,Have_Enough_On_Track,Infrastructure,International_Equities,Intnl_Fixed_Income,Invested_Above_Average_Super_Fund,Invested_Needs_Goals_Objectives,Linked_to_Account,Modified_By,My_Super_Notes,Property,Retirement_Goal_Text,Retirement_Goal,Secondary_Email,Record_Image,Name,Owner,Super_Sorted_Scale,Super_Sorted_Score,Super_Target_Goal,Super_Target_Age_Goal,Super_Target_Goal_Date,Tag,Understanding_of_Insurance_in_Super,Valid_Death_Benefit`)
-      console.log("access_token", access_token);
+      // console.log("userId supersorted", userId, email);
+      // console.log("super sorted url ",`${this.apiURL}/Super_Sorted/search?criteria=(Contact.id:equals:${userId})&fields=Advantage_Rules_Tax_Benefits,Aust_Fixed_Income,Australian_Equities,Coach_Super_Notes,Contact,Contribute_a_Bit_More,Created_By,Currency,Date_Edited,Date_Edited_Coach,Email,Email_Opt_Out,Exchange_Rate,Fees_Insurance_Multiple_Accounts,Have_Enough_On_Track,Infrastructure,International_Equities,Intnl_Fixed_Income,Invested_Above_Average_Super_Fund,Invested_Needs_Goals_Objectives,Linked_to_Account,Modified_By,My_Super_Notes,Property,Retirement_Goal_Text,Retirement_Goal,Secondary_Email,Record_Image,Name,Owner,Super_Sorted_Scale,Super_Sorted_Score,Super_Target_Goal,Super_Target_Age_Goal,Super_Target_Goal_Date,Tag,Understanding_of_Insurance_in_Super,Valid_Death_Benefit`)
+      //console.log("access_token", access_token);
       if (userId != "") {
         const response = await axios.get(
           `${this.apiURL}/Super_Sorted/search?criteria=(Contact.id:equals:${userId})&fields=Year_Actual1,Year_Benchmark2,Year_Outperformance,Year_Actual2,Year_Benchmark,Year_Outperformance2,Year_Actual,Year_Benchmark1,Year_Outperformance1,Month_Actual,Month_Benchmark,Month_Outperformance,Formula_2,Advantage_Rules_Tax_Benefits,As_At,Aust_Fixed_Income,Aust_Fixed_Income_Actual,Australian_Equities,Australian_Equities_Actual,Coach_Super_Notes,Contact,Contribute_a_Bit_More,Created_By,Currency,Current_HH_Super_Balance,Date_Edited,Date_Edited_Coach,Email,Email_Opt_Out,Exchange_Rate,Fees_Insurance_Multiple_Accounts,Have_Enough_On_Track,Infrastructure,Infrastructure_Actual,International_Equities,International_Equities_Actual,Intnl_Fixed_Income,Intnl_Fixed_Income_Actual,Invested_Above_Average_Super_Fund,Invested_Needs_Goals_Objectives,Is_Account,Is_Contacts,Linked_to_Account,Modified_By,My_Super_Notes,Property,Property_Actual,Retirement_Goal_Text,Retirement_Goal,Secondary_Email,Record_Image,Name,Owner,Super_Sorted_Scale,Super_Sorted_Score,Super_Target_Goal,Super_Target_Age_Goal,Super_Target_Goal_Date,Tag,Formula_1,Understanding_of_Insurance_in_Super,Valid_Death_Benefit`,
@@ -501,7 +501,7 @@ export class ZohoCRMService {
             },
           },
         );
-        console.log("super sorted response.data",response.data);
+        //console.log("super sorted response.data",response.data);
         if (response.data?.data?.length > 0) {
           return response.data; 
         } else {
@@ -521,15 +521,15 @@ export class ZohoCRMService {
 
   async getPlanBEstatePlanWill(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    console.log("tokenFromDb", tokenFromDb);
+    //console.log("tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
       
       //const ownerId = await this.getOwnerId(email, access_token);
-      console.log("userId getPlanBEstatePlanWill", userId, email);
-      console.log("getPlanBEstatePlanWill url ",`${this.apiURL}/Plan_B_Estate_Plan_Will/search?criteria=(Contact.id:equals:${userId})&fields=Account,Beneficiary_Name,Contact,Created_By,Currency,Date_last_reviewed,Do_you_have_a_POA,Do_you_have_a_will,Do_you_have_beneficiary_on_superfund,Email,Email_Opt_Out,Estate_Plan_Will_Up_To_Date,Exchange_Rate,Executor_of_your_Will,Have_a_Will_Estate_Plan,Is_it_current,Key_Life_Changes_Since_Last_Review,Location_of_the_Will,Modified_By,Plan_B_EPW_Goal_Statement,Record_Image,Name,Owner,Secondary_Email,Tag`)
-      console.log("access_token", access_token);
+      // console.log("userId getPlanBEstatePlanWill", userId, email);
+      // console.log("getPlanBEstatePlanWill url ",`${this.apiURL}/Plan_B_Estate_Plan_Will/search?criteria=(Contact.id:equals:${userId})&fields=Account,Beneficiary_Name,Contact,Created_By,Currency,Date_last_reviewed,Do_you_have_a_POA,Do_you_have_a_will,Do_you_have_beneficiary_on_superfund,Email,Email_Opt_Out,Estate_Plan_Will_Up_To_Date,Exchange_Rate,Executor_of_your_Will,Have_a_Will_Estate_Plan,Is_it_current,Key_Life_Changes_Since_Last_Review,Location_of_the_Will,Modified_By,Plan_B_EPW_Goal_Statement,Record_Image,Name,Owner,Secondary_Email,Tag`)
+      //console.log("access_token", access_token);
       if (userId != "") {
         const response = await axios.get(
           `${this.apiURL}/Plan_B_Estate_Plan_Will/search?criteria=(Contact.id:equals:${userId})&fields=Account,Beneficiary_Name,Contact,Created_By,Currency,Date_last_reviewed,Do_you_have_a_POA,Do_you_have_a_will,Do_you_have_beneficiary_on_superfund,Email,Email_Opt_Out,Estate_Plan_Will_Up_To_Date,Exchange_Rate,Executor_of_your_Will,Have_a_Will_Estate_Plan,Is_it_current,Key_Life_Changes_Since_Last_Review,Location_of_the_Will,Modified_By,Plan_B_EPW_Goal_Statement,Record_Image,Name,Owner,Secondary_Email,Tag`,
@@ -539,7 +539,7 @@ export class ZohoCRMService {
             },
           },
         );
-        console.log("PlanBEstatePlanWill response.data",response.data);
+        //console.log("PlanBEstatePlanWill response.data",response.data);
         if (response.data?.data?.length > 0) {
           return response.data; 
         } else {
@@ -559,15 +559,15 @@ export class ZohoCRMService {
 
   async getMoneyOnAutoDrive(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    console.log("tokenFromDb", tokenFromDb);
+    //console.log("tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
       
       //const ownerId = await this.getOwnerId(email, access_token);
-      console.log("userId MoneyOnAutoDrive", userId, email);
-      console.log("MoneyOnAutoDrive url ",`${this.apiURL}/Money_on_Auto_Drive/search?criteria=(Contact.id:equals:${userId})&fields=Account,Contact,Created_By,Create_your_MOAD_Plan,Currency,Email,Email_Opt_Out,Exchange_Rate,Have_a_list_of_Sav_exp,Last_Reviewed,MOAD_Goal_Statement,Modified_By,Record_Image,Name,Owner,Review_Every_12_months,Secondary_Email,Tag,Turn_On_Maintain_MOAD`)
-      console.log("access_token", access_token);
+      // console.log("userId MoneyOnAutoDrive", userId, email);
+      // console.log("MoneyOnAutoDrive url ",`${this.apiURL}/Money_on_Auto_Drive/search?criteria=(Contact.id:equals:${userId})&fields=Account,Contact,Created_By,Create_your_MOAD_Plan,Currency,Email,Email_Opt_Out,Exchange_Rate,Have_a_list_of_Sav_exp,Last_Reviewed,MOAD_Goal_Statement,Modified_By,Record_Image,Name,Owner,Review_Every_12_months,Secondary_Email,Tag,Turn_On_Maintain_MOAD`)
+      //console.log("access_token", access_token);
       if (userId != "") {
         const response = await axios.get(
           `${this.apiURL}/Money_on_Auto_Drive/search?criteria=(Contact.id:equals:${userId})&fields=Account,Contact,Created_By,Create_your_MOAD_Plan,Currency,Email,Email_Opt_Out,Exchange_Rate,Have_a_list_of_Sav_exp,Last_Reviewed,MOAD_Goal_Statement,Modified_By,Record_Image,Name,Owner,Review_Every_12_months,Secondary_Email,Tag,Turn_On_Maintain_MOAD`,
@@ -577,7 +577,7 @@ export class ZohoCRMService {
             },
           },
         );
-        console.log("MoneyOnAutoDrive response.data",response.data);
+        //console.log("MoneyOnAutoDrive response.data",response.data);
         if (response.data?.data?.length > 0) {
           return response.data; 
         } else {
@@ -597,7 +597,7 @@ export class ZohoCRMService {
 
   async getPlanBEmergencyFund(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    console.log("tokenFromDb", tokenFromDb);
+    //console.log("tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
@@ -605,7 +605,7 @@ export class ZohoCRMService {
       //const ownerId = await this.getOwnerId(email, access_token);
       console.log("userId PlanBEmergencyFund", userId, email);
       console.log("PlanBEmergencyFund url ",`${this.apiURL}/Plan_B_Emergency_Fund/search?criteria=(Contact.id:equals:${userId})&fields=Account,Calculated_3_months,Contact,Created_By,Currency,Do_I_have_enough,Email,Email_Opt_Out,Emergency_Fund_Goal,Exchange_Rate,Have_a_goal_for_EF,Have_I_linked_accounts,Modified_By,Record_Image,Name,Owner,Secondary_Email,Tag`)
-      console.log("access_token", access_token);
+      //console.log("access_token", access_token);
       if (userId != "") {
         const response = await axios.get(
           `${this.apiURL}/Plan_B_Emergency_Fund/search?criteria=(Contact.id:equals:${userId})&fields=Account,Calculated_3_months,Contact,Created_By,Currency,Do_I_have_enough,Email,Email_Opt_Out,Emergency_Fund_Goal,Exchange_Rate,Have_a_goal_for_EF,Have_I_linked_accounts,Modified_By,Record_Image,Name,Owner,Secondary_Email,Tag`,
@@ -635,15 +635,15 @@ export class ZohoCRMService {
 
   async getInsuranceNeedAnalysis(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    console.log("tokenFromDb", tokenFromDb);
+    //console.log("tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
       
       //const ownerId = await this.getOwnerId(email, access_token);
-      console.log("userId InsuranceNeedAnalysis", userId, email);
-      console.log("InsuranceNeedAnalysis url ",`${this.apiURL}/INA/search?criteria=(Client_Name.id:equals:${userId})&fields=Allowance_Emergency,Allowance_Funeral,Allowance_Home_Mods,Allowance_Medical,Child_Edu_Allowance,Client_Name,Created_By,Currency,Email,Email_Opt_Out,Exchange_Rate,Name,Household,Record_Image,Multi_Line_1,Owner,Modified_By,Number_of_Income_Yrs,Other_Allowances_Consideration,Replace_Income_p_a,Secondary_Email,Tag,Total_Liabilities`)
-      console.log("access_token", access_token);
+      // console.log("userId InsuranceNeedAnalysis", userId, email);
+      // console.log("InsuranceNeedAnalysis url ",`${this.apiURL}/INA/search?criteria=(Client_Name.id:equals:${userId})&fields=Allowance_Emergency,Allowance_Funeral,Allowance_Home_Mods,Allowance_Medical,Child_Edu_Allowance,Client_Name,Created_By,Currency,Email,Email_Opt_Out,Exchange_Rate,Name,Household,Record_Image,Multi_Line_1,Owner,Modified_By,Number_of_Income_Yrs,Other_Allowances_Consideration,Replace_Income_p_a,Secondary_Email,Tag,Total_Liabilities`)
+      //console.log("access_token", access_token);
       if (userId != "") {
         const response = await axios.get(
           `${this.apiURL}/INA/search?criteria=(Client_Name.id:equals:${userId})&fields=Allowance_Emergency,Allowance_Funeral,Allowance_Home_Mods,Allowance_Medical,Child_Edu_Allowance,Client_Name,Created_By,Currency,Email,Email_Opt_Out,Exchange_Rate,Name,Household,Record_Image,Multi_Line_1,Owner,Modified_By,Number_of_Income_Yrs,Other_Allowances_Consideration,Replace_Income_p_a,Secondary_Email,Tag,Total_Liabilities`,
@@ -653,7 +653,7 @@ export class ZohoCRMService {
             },
           },
         );
-        console.log("InsuranceNeedAnalysis response.data",response.data);
+        //console.log("InsuranceNeedAnalysis response.data",response.data);
         const returnedData = response.data?.data;
         if (returnedData?.length > 0) {          
           return response.data; 
@@ -674,15 +674,15 @@ export class ZohoCRMService {
 
   async getFinancialAccounts(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    console.log("tokenFromDb", tokenFromDb);
+    //console.log("tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
       
       //const ownerId = await this.getOwnerId(email, access_token);
-      console.log("userId InsuranceNeedAnalysis", userId, email);
-      console.log("InsuranceNeedAnalysis url ",`${this.apiURL}/Financial_Accounts/search?criteria=(Primary_Owner.id:equals:${userId})&fields=Equity,Month,Year1,Year3,Months,Year,Year2,Months1,Year4,Account_Type,Household,AFC Applicable,AFC_Applicable,As_At,As_At_Date,Asset_or_Liability,Beneficiary,Beneficiary_Name,Benefit_Period,Benefit_Type,Centrelink_Deductible_p_a,Client_wishes_to_Retain,Complying,Comprehensive_Cover,Concessional,Continuance_Option,Created_By,Currency,Current_Repayment_Amount,Current_Value,Date_Commenced,Deductible,Email,Email_Opt_Out,Exchange_Rate,Exit_Fee_Costs,Record_Image,Name,Owner,Liability_Status,Accounts,Frequency,Goal_Date,Good_Debt_Bad_Debt,Guaranteed_Period,HH_Anniversary_Date,Inception_Date,Insurance_Notes_Comments,Insurance_Premium_p_a,Interest_Rate,Interest_Type,Investment_Style,Is_Emergency_Fund,Is_Insurance_Financial_Account,Last_4_Digits,Life_Cover,Life_Insured,Linked_Asset_Value,Loan_End_Date_If_Applicable,LVR,Modified_By,Nomination_Type,Non_Concessional,Occupation_Type,Ownership_Type,Payment_Gross_p_a,Payment_Indexation,Pension_Type,Plan_Name,Premium_Structure,Preserved_Amount,Primary_Owner,Product_Provider,Superannuation_Fund,Purchase_Price,Purpose_of_the_Debt_Loan,Related_Assets,Related_Goals,Renewal_Date,Repayment_Type,Repayment_Amount,Residual_Capital_Value,Restricted_Non_Preserved,Reversionary,Risk_Profile,Salary_Continuance,Salary_Sacrifice_P_a,Secondary_Email,Secondary_Owner,SGC,Since_Inception,SMSF,Start_Date,Tag,Tax_Deductible,Tax_Deductible_Amount,Tax_Free,Tax_Free_Component,Taxed_Component,Term_Months,Term_at_Purchase_yrs_if_applicable,Term_Remaining_Months,TPD_Cover,Transition_to_Retired,Trauma_Cover,Unrestricted_Non_Preserved,Untaxed_Component,Waiting_Period,With_Offset_Account,Within_Super1,Within_Super`)
-      console.log("access_token", access_token);
+      // console.log("userId InsuranceNeedAnalysis", userId, email);
+      // console.log("InsuranceNeedAnalysis url ",`${this.apiURL}/Financial_Accounts/search?criteria=(Primary_Owner.id:equals:${userId})&fields=Equity,Month,Year1,Year3,Months,Year,Year2,Months1,Year4,Account_Type,Household,AFC Applicable,AFC_Applicable,As_At,As_At_Date,Asset_or_Liability,Beneficiary,Beneficiary_Name,Benefit_Period,Benefit_Type,Centrelink_Deductible_p_a,Client_wishes_to_Retain,Complying,Comprehensive_Cover,Concessional,Continuance_Option,Created_By,Currency,Current_Repayment_Amount,Current_Value,Date_Commenced,Deductible,Email,Email_Opt_Out,Exchange_Rate,Exit_Fee_Costs,Record_Image,Name,Owner,Liability_Status,Accounts,Frequency,Goal_Date,Good_Debt_Bad_Debt,Guaranteed_Period,HH_Anniversary_Date,Inception_Date,Insurance_Notes_Comments,Insurance_Premium_p_a,Interest_Rate,Interest_Type,Investment_Style,Is_Emergency_Fund,Is_Insurance_Financial_Account,Last_4_Digits,Life_Cover,Life_Insured,Linked_Asset_Value,Loan_End_Date_If_Applicable,LVR,Modified_By,Nomination_Type,Non_Concessional,Occupation_Type,Ownership_Type,Payment_Gross_p_a,Payment_Indexation,Pension_Type,Plan_Name,Premium_Structure,Preserved_Amount,Primary_Owner,Product_Provider,Superannuation_Fund,Purchase_Price,Purpose_of_the_Debt_Loan,Related_Assets,Related_Goals,Renewal_Date,Repayment_Type,Repayment_Amount,Residual_Capital_Value,Restricted_Non_Preserved,Reversionary,Risk_Profile,Salary_Continuance,Salary_Sacrifice_P_a,Secondary_Email,Secondary_Owner,SGC,Since_Inception,SMSF,Start_Date,Tag,Tax_Deductible,Tax_Deductible_Amount,Tax_Free,Tax_Free_Component,Taxed_Component,Term_Months,Term_at_Purchase_yrs_if_applicable,Term_Remaining_Months,TPD_Cover,Transition_to_Retired,Trauma_Cover,Unrestricted_Non_Preserved,Untaxed_Component,Waiting_Period,With_Offset_Account,Within_Super1,Within_Super`)
+      //console.log("access_token", access_token);
       if (userId != "") {
         const response = await axios.get(
           `${this.apiURL}/Financial_Accounts/search?criteria=(Primary_Owner.id:equals:${userId})&fields=Equity,Month,Year1,Year3,Months,Year,Year2,Months1,Year4,Account_Type,Household,AFC Applicable,AFC_Applicable,As_At,As_At_Date,Asset_or_Liability,Beneficiary,Beneficiary_Name,Benefit_Period,Benefit_Type,Centrelink_Deductible_p_a,Client_wishes_to_Retain,Complying,Comprehensive_Cover,Concessional,Continuance_Option,Created_By,Currency,Current_Repayment_Amount,Current_Value,Date_Commenced,Deductible,Email,Email_Opt_Out,Exchange_Rate,Exit_Fee_Costs,Record_Image,Name,Owner,Liability_Status,Accounts,Frequency,Goal_Date,Good_Debt_Bad_Debt,Guaranteed_Period,HH_Anniversary_Date,Inception_Date,Insurance_Notes_Comments,Insurance_Premium_p_a,Interest_Rate,Interest_Type,Investment_Style,Is_Emergency_Fund,Is_Insurance_Financial_Account,Last_4_Digits,Life_Cover,Life_Insured,Linked_Asset_Value,Loan_End_Date_If_Applicable,LVR,Modified_By,Nomination_Type,Non_Concessional,Occupation_Type,Ownership_Type,Payment_Gross_p_a,Payment_Indexation,Pension_Type,Plan_Name,Premium_Structure,Preserved_Amount,Primary_Owner,Product_Provider,Superannuation_Fund,Purchase_Price,Purpose_of_the_Debt_Loan,Related_Assets,Related_Goals,Renewal_Date,Repayment_Type,Repayment_Amount,Residual_Capital_Value,Restricted_Non_Preserved,Reversionary,Risk_Profile,Salary_Continuance,Salary_Sacrifice_P_a,Secondary_Email,Secondary_Owner,SGC,Since_Inception,SMSF,Start_Date,Tag,Tax_Deductible,Tax_Deductible_Amount,Tax_Free,Tax_Free_Component,Taxed_Component,Term_Months,Term_at_Purchase_yrs_if_applicable,Term_Remaining_Months,TPD_Cover,Transition_to_Retired,Trauma_Cover,Unrestricted_Non_Preserved,Untaxed_Component,Waiting_Period,With_Offset_Account,Within_Super1,Within_Super`,
@@ -692,7 +692,7 @@ export class ZohoCRMService {
             },
           },
         );
-        console.log("getFinancialAccounts response.data",response.data);
+        //console.log("getFinancialAccounts response.data",response.data);
         const returnedData = response.data?.data;
         if (returnedData?.length > 0) {          
           return response.data; 
@@ -713,7 +713,7 @@ export class ZohoCRMService {
 
   async getPlanBInsurance(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    console.log("tokenFromDb", tokenFromDb);
+    //console.log("tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
@@ -721,7 +721,7 @@ export class ZohoCRMService {
       //const ownerId = await this.getOwnerId(email, access_token);
       console.log("userId PlanBInsurance", userId, email);
       console.log("PlanBInsurance url ",`${this.apiURL}/Plan_B_Insurance/search?criteria=(Contact.id:equals:${userId})&fields=Account,Contact,Created_By,Currency,Email,Email_Opt_Out,Exchange_Rate,Have_an_INA,Have_Child_Trauma_Cover,Have_Health_Cover,Have_IP_Cover,Have_Life_Cover,Have_TPD_Cover,Have_Trauma_Cover,Modified_By,Paying_for_the_right_amount,Record_Image,Name,Owner,Plan_B_Insurance_Goal_Statement,Premiums_are_Competitive,Secondary_Email,Tag`)
-      console.log("access_token", access_token);
+      //console.log("access_token", access_token);
       if (userId != "") {
         const response = await axios.get(
           `${this.apiURL}/Plan_B_Insurance/search?criteria=(Contact.id:equals:${userId})&fields=Account,Contact,Created_By,Currency,Email,Email_Opt_Out,Exchange_Rate,Have_an_INA,Have_Child_Trauma_Cover,Have_Health_Cover,Have_IP_Cover,Have_Life_Cover,Have_TPD_Cover,Have_Trauma_Cover,Modified_By,Paying_for_the_right_amount,Record_Image,Name,Owner,Plan_B_Insurance_Goal_Statement,Premiums_are_Competitive,Secondary_Email,Tag`,
@@ -763,7 +763,7 @@ export class ZohoCRMService {
 
   async getDebtonateDebt(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    console.log("tokenFromDb", tokenFromDb);
+    //console.log("tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
@@ -771,7 +771,7 @@ export class ZohoCRMService {
       //const ownerId = await this.getOwnerId(email, access_token);
       console.log("userId DebtonateDebt", userId, email);
       console.log("DebtonateDebt url ",`${this.apiURL}/Debtonate_Debt/search?criteria=(Contact.id:equals:${userId})&fields=Account,Contact,Created_By,Month_Goal,Align_to_Pay_Cycle,Avoid_Buy_Now_Pay_Later,Contribute_Just_a_Bit_More,Control_CC_PD,Currency,Current_Debt_IR_Fees,Debtonate_Debt_Goal_Statement,Record_Image,Name,Owner,Email,Email_Opt_Out,Exchange_Rate,Have_a_Plan_and_Priority,Modified_By,Secondary_Email,Tag`)
-      console.log("access_token", access_token);
+      //console.log("access_token", access_token);
       if (userId != "") {
         const response = await axios.get(
           `${this.apiURL}/Debtonate_Debt/search?criteria=(Contact.id:equals:${userId})&fields=Account,Contact,Created_By,Month_Goal,Align_to_Pay_Cycle,Avoid_Buy_Now_Pay_Later,Contribute_Just_a_Bit_More,Control_CC_PD,Currency,Current_Debt_IR_Fees,Debtonate_Debt_Goal_Statement,Record_Image,Name,Owner,Email,Email_Opt_Out,Exchange_Rate,Have_a_Plan_and_Priority,Modified_By,Secondary_Email,Tag`,
@@ -803,15 +803,15 @@ export class ZohoCRMService {
 
   async getHouseHoldExpenses(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    console.log("tokenFromDb", tokenFromDb);
+    //console.log("tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
       
       //const ownerId = await this.getOwnerId(email, access_token);
-      console.log("userId getHouseHoldExpenses", userId, email);
-      console.log("getHouseHoldExpenses url ",`${this.apiURL}/Household_Expenses/search?criteria=(Contact.id:equals:${userId})&fields=Car_Insurance_p_a,Car_Insurance_Pay_Frequency,Contact,Created_By,Credit_Cards_per_month,Currency,Electricity_p_a,Electricity_Pay_Frequency,Email,Email_Opt_Out,Exchange_Rate,Gas_p_a,Gas_Pay_Frequency,General_Non_Utilities_Household,General_Non_Utilities_Payment_Frequency,Home_Loan,Home_Loan_Repayment_Frequency,Home_Contents_Insurance_p_a,Household,Record_Image,Name,Multi_Line_1,Owner,Invest_Property_Pay_Frequency,Investment_Property_Loan_p_a,Modified_By,Other_Expenses_p_a,Other_Investment_Loan_p_a,Other_Investment_Loan_Pay_Freq,Personal_Laon_Pay_Freq,Personal_Loan_p_a,Private_Health_Insurance_p_a,Private_Health_Pay_Frequency,Secondary_Email,Tag,Water_p_a,Water_Pay_Frequency,Home_Contents_Pay_Frequency,Household_Expenses_Notes_Comments`)
-      console.log("access_token", access_token);
+      // console.log("userId getHouseHoldExpenses", userId, email);
+      // console.log("getHouseHoldExpenses url ",`${this.apiURL}/Household_Expenses/search?criteria=(Contact.id:equals:${userId})&fields=Car_Insurance_p_a,Car_Insurance_Pay_Frequency,Contact,Created_By,Credit_Cards_per_month,Currency,Electricity_p_a,Electricity_Pay_Frequency,Email,Email_Opt_Out,Exchange_Rate,Gas_p_a,Gas_Pay_Frequency,General_Non_Utilities_Household,General_Non_Utilities_Payment_Frequency,Home_Loan,Home_Loan_Repayment_Frequency,Home_Contents_Insurance_p_a,Household,Record_Image,Name,Multi_Line_1,Owner,Invest_Property_Pay_Frequency,Investment_Property_Loan_p_a,Modified_By,Other_Expenses_p_a,Other_Investment_Loan_p_a,Other_Investment_Loan_Pay_Freq,Personal_Laon_Pay_Freq,Personal_Loan_p_a,Private_Health_Insurance_p_a,Private_Health_Pay_Frequency,Secondary_Email,Tag,Water_p_a,Water_Pay_Frequency,Home_Contents_Pay_Frequency,Household_Expenses_Notes_Comments`)
+      //console.log("access_token", access_token);
       if (userId != "") {
         const response = await axios.get(
           `${this.apiURL}/Household_Expenses/search?criteria=(Contact.id:equals:${userId})&fields=Car_Insurance_p_a,Car_Insurance_Pay_Frequency,Contact,Created_By,Credit_Cards_per_month,Currency,Electricity_p_a,Electricity_Pay_Frequency,Email,Email_Opt_Out,Exchange_Rate,Gas_p_a,Gas_Pay_Frequency,General_Non_Utilities_Household,General_Non_Utilities_Payment_Frequency,Home_Loan,Home_Loan_Repayment_Frequency,Home_Contents_Insurance_p_a,Household,Record_Image,Name,Multi_Line_1,Owner,Invest_Property_Pay_Frequency,Investment_Property_Loan_p_a,Modified_By,Other_Expenses_p_a,Other_Investment_Loan_p_a,Other_Investment_Loan_Pay_Freq,Personal_Laon_Pay_Freq,Personal_Loan_p_a,Private_Health_Insurance_p_a,Private_Health_Pay_Frequency,Secondary_Email,Tag,Water_p_a,Water_Pay_Frequency,Home_Contents_Pay_Frequency,Household_Expenses_Notes_Comments`,
@@ -821,7 +821,7 @@ export class ZohoCRMService {
             },
           },
         );
-        console.log("getHouseHoldExpenses response.data",response.data);
+        //console.log("getHouseHoldExpenses response.data",response.data);
         if (response.data?.data?.length > 0) {
           return response.data; 
         } else {
@@ -841,13 +841,13 @@ export class ZohoCRMService {
 
   async getNotes(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    console.log("notes tokenFromDb", tokenFromDb);
+    //console.log("notes tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
       
       const ownerId = await this.getOwnerId(email, access_token);
-      console.log("notes userId", userId, email,ownerId);
+      //console.log("notes userId", userId, email,ownerId);
       if (userId != "") {
         // const response = await axios.get(
         //   `${this.apiURL}/My_Notes/search?criteria=(Account.id:equals:${ownerId})&fields=Account,Current,Module,My_Notes,Name,Notes_Date`,
@@ -865,7 +865,7 @@ export class ZohoCRMService {
             },
           },
         );
-        console.log("notes response.data",response.data);
+        //console.log("notes response.data",response.data);
         if (response.data?.data?.length > 0) {
           return response.data; 
         } else {
@@ -885,13 +885,13 @@ export class ZohoCRMService {
 
   async getCoachNotes(email: any): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
-    console.log("getCoachNotes tokenFromDb", tokenFromDb);
+    //console.log("getCoachNotes tokenFromDb", tokenFromDb);
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const userId = await this.getUserId(email);
       
       const ownerId = await this.getOwnerId(email, access_token);
-      console.log("getCoachNotes userId", userId, email,ownerId);
+      //console.log("getCoachNotes userId", userId, email,ownerId);
       if (userId != "") {
         // const response = await axios.get(
         //   `${this.apiURL}/My_Notes/search?criteria=(Account.id:equals:${ownerId})&fields=Account,Current,Module,My_Notes,Name,Notes_Date`,
@@ -909,7 +909,7 @@ export class ZohoCRMService {
             },
           },
         );
-        console.log("getCoachNotes response.data",response.data);
+        //console.log("getCoachNotes response.data",response.data);
         if (response.data?.data?.length > 0) {
           return response.data; 
         } else {
@@ -932,7 +932,7 @@ export class ZohoCRMService {
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const ownerId = await this.getOwnerId(email, access_token);
-      console.log("ownerId", ownerId, email);
+      //console.log("ownerId", ownerId, email);
       if (ownerId != "") {
         const response = await axios.get(
           `${this.apiURL}/Chapter_Exercises/search?criteria=(Created_By.id:equals:${ownerId})&fields=Name,Email,Created_By`,
@@ -1019,11 +1019,11 @@ export class ZohoCRMService {
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
     try {
       const ownerId = await this.getUserDetails(email);
-      console.log("ownerId.........", ownerId)
+      //console.log("ownerId.........", ownerId)
 
       if (ownerId != "") {
         const financialAccountsPromise = axios.get(
-          `${this.apiURL}/Financial_Accounts/search?criteria=((Household.id:equals:${ownerId})and(Asset_or_Liability:equals:Asset))&fields=Equity,Month,Year1,Year3,Months,Year,Year2,Months1,Year4,Account_Type,Household,AFC Applicable,AFC_Applicable,As_At,As_At_Date,Asset_or_Liability,Beneficiary,Beneficiary_Name,Benefit_Period,Benefit_Type,Centrelink_Deductible_p_a,Client_wishes_to_Retain,Complying,Comprehensive_Cover,Concessional,Continuance_Option,Created_By,Currency,Current_Repayment_Amount,Current_Value,Date_Commenced,Deductible,Email,Email_Opt_Out,Exchange_Rate,Exit_Fee_Costs,Record_Image,Name,Owner,Liability_Status,Accounts,Frequency,Goal_Date,Good_Debt_Bad_Debt,Guaranteed_Period,HH_Anniversary_Date,Inception_Date,Insurance_Notes_Comments,Insurance_Premium_p_a,Interest_Rate,Interest_Type,Investment_Style,Is_Emergency_Fund,Is_Insurance_Financial_Account,Last_4_Digits,Life_Cover,Life_Insured,Linked_Asset_Value,Loan_End_Date_If_Applicable,LVR,Modified_By,Nomination_Type,Non_Concessional,Occupation_Type,Ownership_Type,Payment_Gross_p_a,Payment_Indexation,Pension_Type,Plan_Name,Premium_Structure,Preserved_Amount,Primary_Owner,Product_Provider,Superannuation_Fund,Purchase_Price,Purpose_of_the_Debt_Loan,Related_Assets,Related_Goals,Renewal_Date,Repayment_Type,Repayment_Amount,Residual_Capital_Value,Restricted_Non_Preserved,Reversionary,Risk_Profile,Salary_Continuance,Salary_Sacrifice_P_a,Secondary_Email,Secondary_Owner,SGC,Since_Inception,SMSF,Start_Date,Tag,Tax_Deductible,Tax_Deductible_Amount,Tax_Free,Tax_Free_Component,Taxed_Component,Term_Months,Term_at_Purchase_yrs_if_applicable,Term_Remaining_Months,TPD_Cover,Transition_to_Retired,Trauma_Cover,Unrestricted_Non_Preserved,Untaxed_Component,Waiting_Period,With_Offset_Account,Within_Super1,Within_Super`,
+          `${this.apiURL}/Financial_Accounts/search?criteria=((Primary_Owner.id:equals:${ownerId})and(Asset_or_Liability:equals:Asset))&fields=Equity,Month,Year1,Year3,Months,Year,Year2,Months1,Year4,Account_Type,Household,AFC Applicable,AFC_Applicable,As_At,As_At_Date,Asset_or_Liability,Beneficiary,Beneficiary_Name,Benefit_Period,Benefit_Type,Centrelink_Deductible_p_a,Client_wishes_to_Retain,Complying,Comprehensive_Cover,Concessional,Continuance_Option,Created_By,Currency,Current_Repayment_Amount,Current_Value,Date_Commenced,Deductible,Email,Email_Opt_Out,Exchange_Rate,Exit_Fee_Costs,Record_Image,Name,Owner,Liability_Status,Accounts,Frequency,Goal_Date,Good_Debt_Bad_Debt,Guaranteed_Period,HH_Anniversary_Date,Inception_Date,Insurance_Notes_Comments,Insurance_Premium_p_a,Interest_Rate,Interest_Type,Investment_Style,Is_Emergency_Fund,Is_Insurance_Financial_Account,Last_4_Digits,Life_Cover,Life_Insured,Linked_Asset_Value,Loan_End_Date_If_Applicable,LVR,Modified_By,Nomination_Type,Non_Concessional,Occupation_Type,Ownership_Type,Payment_Gross_p_a,Payment_Indexation,Pension_Type,Plan_Name,Premium_Structure,Preserved_Amount,Primary_Owner,Product_Provider,Superannuation_Fund,Purchase_Price,Purpose_of_the_Debt_Loan,Related_Assets,Related_Goals,Renewal_Date,Repayment_Type,Repayment_Amount,Residual_Capital_Value,Restricted_Non_Preserved,Reversionary,Risk_Profile,Salary_Continuance,Salary_Sacrifice_P_a,Secondary_Email,Secondary_Owner,SGC,Since_Inception,SMSF,Start_Date,Tag,Tax_Deductible,Tax_Deductible_Amount,Tax_Free,Tax_Free_Component,Taxed_Component,Term_Months,Term_at_Purchase_yrs_if_applicable,Term_Remaining_Months,TPD_Cover,Transition_to_Retired,Trauma_Cover,Unrestricted_Non_Preserved,Untaxed_Component,Waiting_Period,With_Offset_Account,Within_Super1,Within_Super`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
@@ -1133,7 +1133,7 @@ export class ZohoCRMService {
         );
 
         if (assetResponse.status === 200) {
-          console.log('Asset deleted from Assets API successfully');
+          //console.log('Asset deleted from Assets API successfully');
           deleted = true;
           return assetResponse?.data;
         }
@@ -1154,7 +1154,7 @@ export class ZohoCRMService {
           );
 
           if (financialAccountResponse.status === 200) {
-            console.log('Asset deleted from Financial Accounts API successfully');
+            //console.log('Asset deleted from Financial Accounts API successfully');
             deleted = true;
             return financialAccountResponse?.data;
           }
@@ -1224,7 +1224,7 @@ export class ZohoCRMService {
       );
 
       if (financialAccountResponse.status === 200) {
-        console.log('Asset deleted from Financial Accounts API successfully');
+        //console.log('Asset deleted from Financial Accounts API successfully');
         return financialAccountResponse?.data;
       }
     } catch (error) {
@@ -1243,8 +1243,8 @@ export class ZohoCRMService {
     // Filter assets based on the "apiSource" field
     const assetsWithAPI = assets.filter(asset => asset.apiSource);
     const assetsWithoutAPI = assets.filter(asset => !asset.apiSource);
-    console.log("assetsWithAPI", assetsWithAPI);
-    console.log("assetsWithoutAPI", assetsWithoutAPI);
+    // console.log("assetsWithAPI", assetsWithAPI);
+    // console.log("assetsWithoutAPI", assetsWithoutAPI);
 
     try {
       // Update assets with "apiSource" using the corresponding API
@@ -1264,7 +1264,7 @@ export class ZohoCRMService {
               },
             }
           );
-          console.log("Update assets with API response", response.data);
+          //console.log("Update assets with API response", response.data);
           // Handle the response as needed
         } catch (error) {
           console.log('Error updating assets with API', error?.response?.data);
@@ -1293,7 +1293,7 @@ export class ZohoCRMService {
               },
             }
           );
-          console.log("Update assets without API response", response.data);
+          //console.log("Update assets without API response", response.data);
           // Handle the response as needed
         } catch (error) {
           console.log('Error updating assets without API', error?.response?.data);
@@ -1319,7 +1319,7 @@ export class ZohoCRMService {
   async updateProfile(datas: any, email: string): Promise<any> {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
-    console.log("profile datas", datas, email);
+    //console.log("profile datas", datas, email);
     const requestData = {
       data: datas,
     };
@@ -1334,7 +1334,7 @@ export class ZohoCRMService {
           },
         }
       );
-      console.log("updateAssets response", response)
+      //console.log("updateAssets response", response)
       return response.data;
     } catch (error) {
       console.log('Getting Error13');
@@ -1347,10 +1347,10 @@ export class ZohoCRMService {
   }
 
   async updatePlanBEstatePlanWill(datas: any, email: string): Promise<any> {
-    console.log("coming inside updatePlanBEstatePlanWill");
+    //console.log("coming inside updatePlanBEstatePlanWill");
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
-    console.log("profile datas", datas, email);
+    //console.log("profile datas", datas, email);
     const requestData = {
       data: datas,
     };
@@ -1365,7 +1365,7 @@ export class ZohoCRMService {
           },
         }
       );
-      console.log("updatePlanBEstatePlanWill response", response.data.data)
+      //console.log("updatePlanBEstatePlanWill response", response.data.data)
       return response.data;
     } catch (error) {
       console.log('Getting Error13');
@@ -1378,10 +1378,10 @@ export class ZohoCRMService {
   }
 
   async updatePlanBInsurance(datas: any, email: string): Promise<any> {
-    console.log("coming inside updatePlanBInsurance");
+    //console.log("coming inside updatePlanBInsurance");
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
-    console.log("profile datas", datas, email);
+    //console.log("profile datas", datas, email);
     const requestData = {
       data: datas,
     };
@@ -1396,7 +1396,7 @@ export class ZohoCRMService {
           },
         }
       );
-      console.log("updatePlanBInsurance response", response.data.data)
+      //console.log("updatePlanBInsurance response", response.data.data)
       return response.data;
     } catch (error) {
       console.log('Getting Error13');
@@ -1411,10 +1411,10 @@ export class ZohoCRMService {
   
 
   async updateFinancialAccounts(datas: any, email: string): Promise<any> {
-    console.log("coming inside updateFinancialAccounts");
+    //console.log("coming inside updateFinancialAccounts");
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
-    console.log("updateFinancialAccounts datas", datas, email);
+    //console.log("updateFinancialAccounts datas", datas, email);
 
 
     const requestData = {
@@ -1431,7 +1431,7 @@ export class ZohoCRMService {
           },
         }
       );
-      console.log("updateFinancialAccounts response", response.data.data)
+      //console.log("updateFinancialAccounts response", response.data.data)
       return response.data;
     } catch (error) {
       console.log('Getting Error updateFinancialAccounts');
@@ -1444,10 +1444,10 @@ export class ZohoCRMService {
   }
 
   async updateHouseHoldExpenses(datas: any, email: string): Promise<any> {
-    console.log("coming inside updateHouseHoldExpenses");
+    //console.log("coming inside updateHouseHoldExpenses");
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
-    console.log("profile datas", datas, email);
+    //console.log("profile datas", datas, email);
     const requestData = {
       data: datas,
     };
@@ -1462,7 +1462,7 @@ export class ZohoCRMService {
           },
         }
       );
-      console.log("updateHouseHoldExpenses response", response.data.data)
+      //console.log("updateHouseHoldExpenses response", response.data.data)
       return response.data;
     } catch (error) {
       console.log('Getting Error updateHouseHoldExpenses');
@@ -1680,7 +1680,7 @@ export class ZohoCRMService {
         }
       );
 
-      console.log("response", response?.data?.data[0]?.details);
+      //console.log("response", response?.data?.data[0]?.details);
 
       if (response.status === 200) {
         // Success message
@@ -1850,12 +1850,12 @@ export class ZohoCRMService {
         data: data,
       };
 
-      console.log("config",config);
+      //console.log("config",config);
 
       axios
         .request(config)
         .then(async (response) => {
-          console.log(JSON.stringify(response.data));
+          //console.log(JSON.stringify(response.data));
           const update_data = {
             access_token: response.data.access_token
           };
@@ -1892,7 +1892,7 @@ export class ZohoCRMService {
       axios
         .request(config)
         .then(async (response) => {
-          console.log(JSON.stringify(response.data));
+          //console.log(JSON.stringify(response.data));
           const update_data = {
             access_token: response.data.access_token
           };
@@ -1933,11 +1933,11 @@ export class ZohoCRMService {
         //   })
         // }
 
-        console.log("response?.data goals by account", response?.data);
+        //console.log("response?.data goals by account", response?.data);
 
         if (response?.data?.data?.length > 0) {
           for (const goal of response.data.data) {
-            console.log("goal", goal);
+            //console.log("goal", goal);
 
             const goalxcontacts = await axios.get(
               `${this.apiURL}/Goals_X_Contacts/search?criteria=(Goals.id:equals:${goal?.id})&fields=Goal_Owner_s,Goals`,
@@ -2009,7 +2009,7 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
 
-    console.log('datas', datas);
+    //console.log('datas', datas);
 
     const { currentHouseHoldOwners, Goal_Owner_s, ownerId, ...updatedDatas } = datas;
 
@@ -2029,7 +2029,7 @@ export class ZohoCRMService {
         }
       );
 
-      console.log("create goal owner", datas);
+      //console.log("create goal owner", datas);
 
       if (datas?.Goal_Owner_s) {
         let tempOwner = [];
@@ -2057,7 +2057,7 @@ export class ZohoCRMService {
           tempOwner?.push(temp);
         }
 
-        console.log("tempOwner", tempOwner)
+        //console.log("tempOwner", tempOwner)
 
         const requestData = {
           data: tempOwner,
@@ -2074,7 +2074,7 @@ export class ZohoCRMService {
           }
         );
 
-        console.log("createOwner", createOwner);
+        //console.log("createOwner", createOwner);
       }
 
       if (response.status === 200 || response?.status == 201) {
@@ -2099,21 +2099,21 @@ export class ZohoCRMService {
     const tokenFromDb = await this.oauthService.findAll();
     const access_token = tokenFromDb[0]?.dataValues?.access_token;
 
-    console.log("update goal data", datas);
+    //console.log("update goal data", datas);
     const { currentGoalOwners, currentHouseHoldOwners, Goal_Owner2_s, Goal_Owner_s, ...updatedDatas } = datas;
     const requestData = {
       data: [updatedDatas],
     };
 
-    console.log("requestData update", requestData);
-    console.log("datas", datas);
+    // console.log("requestData update", requestData);
+    // console.log("datas", datas);
     if (datas?.Current_Value) {
       const currentGoal = await this.getGoalsById(datas?.id);
-      console.log("currentGoal", currentGoal, datas);
+      //console.log("currentGoal", currentGoal, datas);
 
       if (currentGoal?.data?.length > 0) {
         const { id, Description, Current_Value, Name, Target_Date, Is_Financial_Goal, Target_Value, Goal_Type, Status } = currentGoal?.data[0];
-        console.log("updateGoal", id);
+        //console.log("updateGoal", id);
 
         await goalRepository.create({ zohoGoalId: id, description: Description, money_have: datas?.Current_Value, title: Name, targetDate: Target_Date, isFinancial: Is_Financial_Goal, money_need: Target_Value, goalType: Goal_Type, status: Status });
       }
@@ -2133,7 +2133,7 @@ export class ZohoCRMService {
 
       if ((datas?.Goal_Owner_s?.id || datas?.Goal_Owner_s == 'Joint') && datas?.currentGoalOwners?.length > 0) {
         const cownerids = datas?.currentGoalOwners.map(owner => owner.id).join(',');
-        console.log("cownerids", cownerids);
+        //console.log("cownerids", cownerids);
 
         const goalxcontactsdelete = await axios.delete(
           `${this.apiURL}/Goals_X_Contacts?ids=${cownerids}&wf_trigger=true`,
@@ -2144,7 +2144,7 @@ export class ZohoCRMService {
           }
         );
 
-        console.log("goalxcontactsdelete res", goalxcontactsdelete)
+        //console.log("goalxcontactsdelete res", goalxcontactsdelete)
       }
 
       if (datas?.Goal_Owner_s?.id || datas?.Goal_Owner_s == 'Joint') {
@@ -2173,7 +2173,7 @@ export class ZohoCRMService {
           tempOwner?.push(temp);
         }
 
-        console.log("tempOwner", tempOwner)
+        //console.log("tempOwner", tempOwner)
 
         const requestData = {
           data: tempOwner,
@@ -2190,7 +2190,7 @@ export class ZohoCRMService {
           }
         );
 
-        console.log("createOwner", createOwner);
+        //console.log("createOwner", createOwner);
       }
 
       if (response.status === 200) {
@@ -2224,7 +2224,7 @@ export class ZohoCRMService {
         }
       );
 
-      console.log("getSpecificAccount response", response);
+      //console.log("getSpecificAccount response", response);
 
       return response.data;
     } catch (error) {
@@ -2261,7 +2261,7 @@ export class ZohoCRMService {
           },
         }
       );
-      console.log("Update account with API response", response.data);
+      //console.log("Update account with API response", response.data);
       // Handle the response as needed
     } catch (error) {
       console.log('Error updating assets with API', error?.response?.data);
@@ -2281,9 +2281,14 @@ export class ZohoCRMService {
     try {
       const ownerId = await this.getUserDetails(email);
 
+      console.log("email in getAccounts", email);
+      console.log("ownerId", ownerId);
+      
+      console.log(`${this.apiURL}/Financial_Accounts/search?criteria=((Household.id:equals:${ownerId})or(Primary_Owner.id:equals:${ownerId})or(Secondary_Owner.id:equals:${ownerId}))&sort_by=Created_Time&sort_order=desc&fields=Equity,Month,Year1,Year3,Months,Year,Year2,Months1,Year4,Account_Type,Household,AFC Applicable,AFC_Applicable,As_At,As_At_Date,Asset_or_Liability,Beneficiary,Beneficiary_Name,Benefit_Period,Benefit_Type,Centrelink_Deductible_p_a,Client_wishes_to_Retain,Complying,Comprehensive_Cover,Concessional,Continuance_Option,Created_By,Currency,Current_Repayment_Amount,Current_Value,Date_Commenced,Deductible,Email,Email_Opt_Out,Exchange_Rate,Exit_Fee_Costs,Record_Image,Name,Owner,Liability_Status,Accounts,Frequency,Goal_Date,Good_Debt_Bad_Debt,Guaranteed_Period,HH_Anniversary_Date,Inception_Date,Insurance_Notes_Comments,Insurance_Premium_p_a,Interest_Rate,Interest_Type,Investment_Style,Is_Emergency_Fund,Is_Insurance_Financial_Account,Last_4_Digits,Life_Cover,Life_Insured,Linked_Asset_Value,Loan_End_Date_If_Applicable,LVR,Modified_By,Nomination_Type,Non_Concessional,Occupation_Type,Ownership_Type,Payment_Gross_p_a,Payment_Indexation,Pension_Type,Plan_Name,Premium_Structure,Preserved_Amount,Primary_Owner,Product_Provider,Superannuation_Fund,Purchase_Price,Purpose_of_the_Debt_Loan,Related_Assets,Related_Goals,Renewal_Date,Repayment_Type,Repayment_Amount,Residual_Capital_Value,Restricted_Non_Preserved,Reversionary,Risk_Profile,Salary_Continuance,Salary_Sacrifice_P_a,Secondary_Email,Secondary_Owner,SGC,Since_Inception,SMSF,Start_Date,Tag,Tax_Deductible,Tax_Deductible_Amount,Tax_Free,Tax_Free_Component,Taxed_Component,Term_Months,Term_at_Purchase_yrs_if_applicable,Term_Remaining_Months,TPD_Cover,Transition_to_Retired,Trauma_Cover,Unrestricted_Non_Preserved,Untaxed_Component,Waiting_Period,With_Offset_Account,Within_Super1,Within_Super,Modified_Time`)
+
       if (ownerId != "") {
         const response = await axios.get(
-          `${this.apiURL}/Financial_Accounts/search?criteria=(Household.id:equals:${ownerId})&sort_by=Created_Time&sort_order=desc&fields=Equity,Month,Year1,Year3,Months,Year,Year2,Months1,Year4,Account_Type,Household,AFC Applicable,AFC_Applicable,As_At,As_At_Date,Asset_or_Liability,Beneficiary,Beneficiary_Name,Benefit_Period,Benefit_Type,Centrelink_Deductible_p_a,Client_wishes_to_Retain,Complying,Comprehensive_Cover,Concessional,Continuance_Option,Created_By,Currency,Current_Repayment_Amount,Current_Value,Date_Commenced,Deductible,Email,Email_Opt_Out,Exchange_Rate,Exit_Fee_Costs,Record_Image,Name,Owner,Liability_Status,Accounts,Frequency,Goal_Date,Good_Debt_Bad_Debt,Guaranteed_Period,HH_Anniversary_Date,Inception_Date,Insurance_Notes_Comments,Insurance_Premium_p_a,Interest_Rate,Interest_Type,Investment_Style,Is_Emergency_Fund,Is_Insurance_Financial_Account,Last_4_Digits,Life_Cover,Life_Insured,Linked_Asset_Value,Loan_End_Date_If_Applicable,LVR,Modified_By,Nomination_Type,Non_Concessional,Occupation_Type,Ownership_Type,Payment_Gross_p_a,Payment_Indexation,Pension_Type,Plan_Name,Premium_Structure,Preserved_Amount,Primary_Owner,Product_Provider,Superannuation_Fund,Purchase_Price,Purpose_of_the_Debt_Loan,Related_Assets,Related_Goals,Renewal_Date,Repayment_Type,Repayment_Amount,Residual_Capital_Value,Restricted_Non_Preserved,Reversionary,Risk_Profile,Salary_Continuance,Salary_Sacrifice_P_a,Secondary_Email,Secondary_Owner,SGC,Since_Inception,SMSF,Start_Date,Tag,Tax_Deductible,Tax_Deductible_Amount,Tax_Free,Tax_Free_Component,Taxed_Component,Term_Months,Term_at_Purchase_yrs_if_applicable,Term_Remaining_Months,TPD_Cover,Transition_to_Retired,Trauma_Cover,Unrestricted_Non_Preserved,Untaxed_Component,Waiting_Period,With_Offset_Account,Within_Super1,Within_Super`,
+          `${this.apiURL}/Financial_Accounts/search?criteria=((Household.id:equals:${ownerId})or(Primary_Owner.id:equals:${ownerId})or(Secondary_Owner.id:equals:${ownerId}))&sort_by=Created_Time&sort_order=desc&fields=Equity,Month,Year1,Year3,Months,Year,Year2,Months1,Year4,Account_Type,Household,AFC Applicable,AFC_Applicable,As_At,As_At_Date,Asset_or_Liability,Beneficiary,Beneficiary_Name,Benefit_Period,Benefit_Type,Centrelink_Deductible_p_a,Client_wishes_to_Retain,Complying,Comprehensive_Cover,Concessional,Continuance_Option,Created_By,Currency,Current_Repayment_Amount,Current_Value,Date_Commenced,Deductible,Email,Email_Opt_Out,Exchange_Rate,Exit_Fee_Costs,Record_Image,Name,Owner,Liability_Status,Accounts,Frequency,Goal_Date,Good_Debt_Bad_Debt,Guaranteed_Period,HH_Anniversary_Date,Inception_Date,Insurance_Notes_Comments,Insurance_Premium_p_a,Interest_Rate,Interest_Type,Investment_Style,Is_Emergency_Fund,Is_Insurance_Financial_Account,Last_4_Digits,Life_Cover,Life_Insured,Linked_Asset_Value,Loan_End_Date_If_Applicable,LVR,Modified_By,Nomination_Type,Non_Concessional,Occupation_Type,Ownership_Type,Payment_Gross_p_a,Payment_Indexation,Pension_Type,Plan_Name,Premium_Structure,Preserved_Amount,Primary_Owner,Product_Provider,Superannuation_Fund,Purchase_Price,Purpose_of_the_Debt_Loan,Related_Assets,Related_Goals,Renewal_Date,Repayment_Type,Repayment_Amount,Residual_Capital_Value,Restricted_Non_Preserved,Reversionary,Risk_Profile,Salary_Continuance,Salary_Sacrifice_P_a,Secondary_Email,Secondary_Owner,SGC,Since_Inception,SMSF,Start_Date,Tag,Tax_Deductible,Tax_Deductible_Amount,Tax_Free,Tax_Free_Component,Taxed_Component,Term_Months,Term_at_Purchase_yrs_if_applicable,Term_Remaining_Months,TPD_Cover,Transition_to_Retired,Trauma_Cover,Unrestricted_Non_Preserved,Untaxed_Component,Waiting_Period,With_Offset_Account,Within_Super1,Within_Super,Modified_Time`,
           {
             headers: {
               Authorization: `Zoho-oauthtoken ${access_token}`,
@@ -2324,7 +2329,7 @@ export class ZohoCRMService {
           },
         }
       );
-      console.log("Update assets with API response", response.data);
+      //console.log("Update assets with API response", response.data);
       // Handle the response as needed
     } catch (error) {
       console.log('Error updating assets with API', error?.response?.data);
@@ -2342,7 +2347,7 @@ export class ZohoCRMService {
 
     try {
       const ownerId = await this.getUserDetails(email); // need to send coach id from frontend not owner id
-      console.log("owner id", ownerId);
+      //console.log("owner id", ownerId);
 
       // Make a request to fetch all events for the specified owner
       const response = await axios.get(
@@ -2353,7 +2358,7 @@ export class ZohoCRMService {
           },
         }
       );
-      console.log("response===========", response?.data?.data);
+      //console.log("response===========", response?.data?.data);
 
       if (response?.data?.data) {
         const events = response.data.data;
